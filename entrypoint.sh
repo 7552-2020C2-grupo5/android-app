@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Utilizando usuario $EXPO_USER"
+
 LOG_FILE=/app/build.log
 
 cd /app/bookbnb
