@@ -1,6 +1,6 @@
 setup:
   config:
-    SERVER_PORT: "${PORT}"
+    PORT: "${PORT}"
     EXPO_USERNAME: "${EXPO_USERNAME}"
     EXPO_PASSWORD: "${EXPO_PASSWORD}"
 
