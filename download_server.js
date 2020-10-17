@@ -21,9 +21,10 @@ const server = http.createServer((req, res) => {
   get_download_link()
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/html');
+  res.write('<meta charset="UTF-8">')
   res.write('<p style="text-align: center;"><strong>El link de descarga es <br /></strong></p>')
-  if (download_link) {
-    res.write(`<p style="text-align: center;"> Todavía está buildeando :( </p>`);
+  if (!download_link) {
+    res.write('<p style="text-align: center;"> Todavía está buildeando :( </p>');
   } else {
     res.write(`<p style="text-align: center;"> <a href=""> ${download_link} </a></p>`);
   }
