@@ -1,11 +1,13 @@
+setup:
+  config:
+    SERVER_PORT: "${PORT}"
+    EXPO_USERNAME: "${EXPO_USERNAME}"
+    EXPO_PASSWORD: "${EXPO_PASSWORD}"
+
 build:
   docker:
     web: Dockerfile
 
 run:
-  config:
-    SERVER_PORT: "${PORT}"
-    EXPO_USERNAME: "${EXPO_USERNAME}"
-    EXPO_PASSWORD: "${EXPO_PASSWORD}"
   web: ./entrypoint.sh
 
