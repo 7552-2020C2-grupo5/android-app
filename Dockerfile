@@ -1,5 +1,8 @@
 FROM node:lts-stretch-slim
 
+ENV EXPO_USER=
+ENV EXPO_PASSWORD=
+
 ADD . /app
 
 RUN 	apt-get update &&\
@@ -9,4 +12,4 @@ RUN 	apt-get update &&\
 
 WORKDIR /app
 
-CMD ["./entrypoint.sh"]
+CMD ["/bin/bash -c ./entrypoint.sh"]

@@ -1,7 +1,7 @@
 setup:
   config:
     PORT: "${PORT}"
-    EXPO_USERNAME: "${EXPO_USERNAME}"
+    EXPO_USER: "${EXPO_USER}"
     EXPO_PASSWORD: "${EXPO_PASSWORD}"
 
 build:
