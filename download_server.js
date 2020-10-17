@@ -26,7 +26,7 @@ const server = http.createServer((req, res) => {
   if (!download_link) {
     res.write('<p style="text-align: center;"> Todavía está buildeando :( </p>');
   } else {
-    res.write(`<p style="text-align: center;"> <a href=""> ${download_link} </a></p>`);
+    res.write(`<p style="text-align: center;"> <a href="${download_link}"> ${download_link} </a></p>`);
   }
   res.end();
 });
