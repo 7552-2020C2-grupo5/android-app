@@ -1,10 +1,11 @@
 FROM node:lts-stretch-slim
 
+ADD . /app
+
 RUN 	apt-get update &&\
 	apt-get install -y procps &&\
-	npm install --global expo-cli 
+	cd /app/bookbnb && npm install
 
 WORKDIR /app
-ADD entrypoint.sh .
 
 CMD ["./entrypoint.sh"]

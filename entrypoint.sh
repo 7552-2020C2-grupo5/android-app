@@ -4,7 +4,7 @@ LOG_FILE=/app/build.log
 
 cd /app/bookbnb
 
-#expo login -u $EXPO_USER -p $EXPO_PASSWORD && expo build:android --type apk | tee $LOG_FILE
+expo login -u $EXPO_USER -p $EXPO_PASSWORD && expo build:android --type apk | tee $LOG_FILE
 
 cd /app
 
