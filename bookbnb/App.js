@@ -1,13 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Appbar, Button, withTheme, Provider as PaperProvider } from 'react-native-paper';
+import { ProfileScreen } from './Screens/Profile'
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Hey! this is a test</Text>
-      <StatusBar style="auto" />
-    </View>
+    <PaperProvider>
+      <ProfileScreen/>
+    </PaperProvider>
   );
 }
 
