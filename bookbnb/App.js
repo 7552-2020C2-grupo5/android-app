@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Appbar, Button, withTheme, Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { ProfileScreen } from './Screens/Profile'
+import { View, StatusBar, Text, StyleSheet } from 'react-native';
 
 export default function App() {
   return (
-    <PaperProvider>
+    <View>
       <ProfileScreen/>
-    </PaperProvider>
+    </View>
   );
 }
 
