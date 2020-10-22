@@ -18,13 +18,37 @@ const ProfileRowData = (props) => {
 }
 
 export default function ProfileScreen(props) {
+    var initial = {
+        first_name: 'nothing',
+        last_name: 'nothing',
+        email: 'nothing',
+        avatar: 'nothing'
+    }
+    const [data, setData] = React.useState(initial);
+
+    React.useEffect(() => {
+        fetch('https://reqres.in/api/users/2').then((response) => {
+            response.json().then((value) => {
+                setData({
+                    first_name: value.data.first_name,
+                    last_name: value.data.last_name,
+                    email: value.data.email,
+                    avatar: value.data.avatar
+                });
+            }).catch((err) => { setData(initial) })
+        }).catch((err) => {
+            setData(initial)
+        })
+    }, []);
+
     return (
         <View style={styles.container}>
-            <Avatar.Image size={110} source={{uri: avatar_url}} style={{marginTop: 50}}/>
+            <Avatar.Image size={110} source={{uri: data.avatar}} style={{marginTop: 50}}/>
             <DataTable>
                 <ProfileRowData/>
-                <ProfileRowData keyValue="Nombre" value="Tomas"/>
-                <ProfileRowData keyValue="Email" value="tflopez@fi.uba.ar"/>
+                <ProfileRowData keyValue="Nombre" value={data.first_name}/>
+                <ProfileRowData keyValue="Apellido" value={data.last_name}/>
+                <ProfileRowData keyValue="Email" value={data.email}/>
                 <ProfileRowData keyValue="Fecha de nacimiento" value="18 de marzo de 1996"/>
                 <ProfileRowData keyValue="Edad" value="24 años"/>
             </DataTable>
