@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DataTable, Avatar } from 'react-native-paper';
 import { StyleSheet, View, Text } from 'react-native';
 
-var avatar_url = 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg';
+var avatar_url = 'https://s.gravatar.com/avatar/4b078d8d53d96c17ef187a93db816fe8?s=80';
 
 const ProfileRowData = (props) => {
     return (
@@ -20,7 +20,7 @@ const ProfileRowData = (props) => {
 export default function ProfileScreen(props) {
     return (
         <View style={styles.container}>
-            <Avatar.Image size={110} src={{avatar_url}} style={{marginTop: 50}}/>
+            <Avatar.Image size={110} source={{uri: avatar_url}} style={{marginTop: 50}}/>
             <DataTable>
                 <ProfileRowData/>
                 <ProfileRowData keyValue="Nombre" value="Tomas"/>
