@@ -1,0 +1,3 @@
+[submodule "bookbnb/requester"]
+	path = bookbnb/requester
+	url = git@github.com:7552-2020C2-grupo5/server-requester.git
