@@ -1,24 +1,20 @@
 import * as React from 'react'
 import { Snackbar, Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, StyleSheet } from 'react-native';
 
-function Publication(props) {
+function PublicationCardMinimal(props) {
     return (
-        <Card {...props}>
+        <Card {...props} style={styles.publicationCard}>
             <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
             <Card.Content>
-                <Title> {props.title} </Title>
-                <Paragraph>{props.description}</Paragraph>
+                <Title> {props.publication.title} </Title>
+                <Paragraph>{props.publication.description}</Paragraph>
             </Card.Content>
-            <Card.Actions>
-              <Button>Cancel</Button>
-              <Button>Ok</Button>
+            <Card.Actions style={styles.actions} >
             </Card.Actions>
         </Card>
     );
 }
-
-//@refresh reset
 
 function SnackBar(props) {
     const [snackbar, setSnackbar] = React.useState(true);
@@ -32,4 +28,15 @@ function SnackBar(props) {
     );
 }
 
-export { Publication, SnackBar }
+const styles = StyleSheet.create({
+    publicationCard: {
+        margin: 7,
+    },
+    actions: {
+        justifyContent: 'flex-end',
+        flex: 1,
+        flexDirection: 'row'
+    }
+});
+
+export { PublicationCardMinimal, SnackBar }
