@@ -24,6 +24,7 @@
     },
     "android": {
       "package": "com.taller2.bookbnb",
+      "googleServicesFile": "./google-services.json"
     }
   }
 }

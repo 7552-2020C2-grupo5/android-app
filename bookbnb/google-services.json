@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "323498260525",
+    "firebase_url": "https://bookbnb-3c67c.firebaseio.com",
+    "project_id": "bookbnb-3c67c",
+    "storage_bucket": "bookbnb-3c67c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323498260525:android:f40dd9654adc085b6d20a4",
+        "android_client_info": {
+          "package_name": "com.taller2.bookbnb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "323498260525-irodasbifo350ic2lftmj226ltink5mp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.taller2.bookbnb",
+            "certificate_hash": "79fc8fea2759bfdea2ffd6949fb3d2fa282ceca9"
+          }
+        },
+        {
+          "client_id": "323498260525-msfq4fq39iav3vlb2rj64ncjl9oh6b94.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEZML3QG8KaNvYS2LgTzp_ElHXGICHYGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323498260525-msfq4fq39iav3vlb2rj64ncjl9oh6b94.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

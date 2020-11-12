@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
-import { Publication } from '../components/components'
+import { ScrollView, StyleSheet, View, Text, SafeAreaView } from 'react-native';
+import { PublicationCardMinimal } from '../components/components';
 import { Divider } from 'react-native-paper';
 import { Requester } from '../requester/requester';
 
@@ -18,16 +18,14 @@ export default function PublicationsScreen(props) {
     let actualPublications = []
     for(let i = 0; i < publications.length; i++) {
         console.log(publications[i].title)
-        actualPublications.push(<Publication title={publications[i].title} description={publications[i].description} key={i}/>)
+        actualPublications.push(<PublicationCardMinimal onPress={() => { props.navigation.navigate('Publicacion', {publication: publications[i]}) }} publication={publications[i]} key={i}/>)
     }
 
     return (
         <ScrollView>
-            <Divider/>
             <View style={styles.publication}>
                 {actualPublications}
             </View>
-            <Divider/>
         </ScrollView>
     );
 }
