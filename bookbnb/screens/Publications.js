@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ScrollView, StyleSheet, View, Text, SafeAreaView } from 'react-native';
-import { PublicationCardMinimal } from '../components/components';
+import { PublicationCardMinimal, AddNewButton } from '../components/components';
 import { Divider } from 'react-native-paper';
 import { Requester } from '../requester/requester';
 
@@ -22,11 +22,14 @@ export default function PublicationsScreen(props) {
     }
 
     return (
-        <ScrollView>
-            <View style={styles.publication}>
-                {actualPublications}
-            </View>
-        </ScrollView>
+        <View style={{flex: 1}}>
+            <ScrollView>
+                <View style={styles.publication}>
+                    {actualPublications}
+                </View>
+            </ScrollView>
+            <AddNewButton onPress={() => props.navigation.navigate('new_publication')} />
+        </View>
     );
 }
 

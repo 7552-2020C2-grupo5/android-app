@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Snackbar, Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
-import { AsyncStorage, StyleSheet } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { AsyncStorage, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 
 function PublicationCardMinimal(props) {
     return (
@@ -13,6 +14,38 @@ function PublicationCardMinimal(props) {
             <Card.Actions style={styles.actions} >
             </Card.Actions>
         </Card>
+    );
+}
+
+function AddNewButton(props) {
+    const styles = StyleSheet.create({
+        addNew: {
+            position: 'absolute',
+            bottom: 20,
+            right: 20,
+        },
+    });
+    return (
+        <View style={styles.addNew}>
+            <Icon
+                {...props}
+                underlayColor='black'
+                Component={TouchableHighlight}
+                raised={true}
+                size={30}
+                name='add'
+                type='material'
+                color='#5273a4'
+                reverse={true}
+            />
+        </View>
+    );
+}
+
+
+function AppLogo(props) {
+    return (
+        <Text style={styles.appLogo}> BookBnB </Text>
     );
 }
 
@@ -29,6 +62,11 @@ function SnackBar(props) {
 }
 
 const styles = StyleSheet.create({
+    appLogo: {
+        fontSize: 50,
+        margin: 30,
+        fontWeight: 'bold',
+    },
     publicationCard: {
         margin: 7,
     },
@@ -39,4 +77,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export { PublicationCardMinimal, SnackBar }
+export { PublicationCardMinimal, SnackBar, AppLogo, AddNewButton }
