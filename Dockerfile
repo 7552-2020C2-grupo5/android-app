@@ -1,4 +1,4 @@
-FROM node:lts-stretch-slim
+FROM bycedric/expo-cli 
 
 ENV EXPO_USER=
 ENV EXPO_PASSWORD=
