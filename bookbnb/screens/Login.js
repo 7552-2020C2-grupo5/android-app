@@ -36,9 +36,6 @@ export default function LoginScreen(props) {
 }
 
 const styles = StyleSheet.create({
-    appTitle: {
-        fontSize: 60,
-    },
     container: {
         flex: 1,
         justifyContent: 'center',
