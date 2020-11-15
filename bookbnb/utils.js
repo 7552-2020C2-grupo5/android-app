@@ -3,6 +3,8 @@
 import * as firebase from 'firebase';
 import * as Google from 'expo-google-app-auth';
 
+const PUBLICATIONS_ENDPOINT = "https://bookbnb5-publications.herokuapp.com/v1/publication"
+
 function login(username='eve.holt@reqres.in', password='cityslicka', token_callback) {
     var user = username;
     var pass = 'none';
@@ -38,4 +40,26 @@ async function doGoogleLogin() {
     loginResult = await firebase.auth().signInWithCredential(credential);
 }
 
-export { doGoogleLogin, login}
+async function postPublication(publication) {
+    fetch(PUBLICATIONS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            title: publication.title,
+            description: publication.description,
+            rooms: publication.rooms,
+            beds: publication.beds,
+            bathrooms: publication.bathrooms,
+            price_per_night: publication.price_per_night,
+        })
+    }).then(async response => {
+        var response_json = await response.json()
+        console.log(response_json)
+    }).catch(error => {
+        console.log('error')
+    })
+}
+
+export { doGoogleLogin, login, postPublication }

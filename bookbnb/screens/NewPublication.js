@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Divider, TextInput, Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
+import { CameraInput } from '../components/camera';
+import { postPublication } from '../utils';
 
 function SimpleTextInput(props) {
-    const [text, setText] = React.useState('');
-
     const styles = StyleSheet.create({
         input: {
             width: 330,
@@ -30,23 +30,62 @@ function SimpleTextInput(props) {
 }
 
 function NewPublicationScreen(props) {
+    const [publication, setPublication] = React.useState({
+        title: '',
+        description: '',
+        rooms: '',
+        beds: '',
+        bathrooms: '',
+        price_per_night: '',
+    });
+
+    function handlePublish() {
+        console.log(publication)
+        postPublication(publication)
+    }
+
     return (
         <ScrollView>
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <View style={{padding: 30}}>
+                    <CameraInput/>
                     <Text style={{fontWeight: 'bold'}}> Título de la publicación </Text>
-                    <SimpleTextInput/>
+                    <SimpleTextInput onChangeText={text => {
+                        var _publication = publication;
+                        _publication.title = text;
+                        setPublication(_publication);
+                        }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de cuartos </Text>
-                    <SimpleTextInput/>
+                    <SimpleTextInput onChangeText={text => {
+                        var _publication = publication;
+                        _publication.rooms = Number(text);
+                        setPublication(_publication);
+                        }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de camas </Text>
-                    <SimpleTextInput/>
+                    <SimpleTextInput onChangeText={text => {
+                        var _publication = publication;
+                        _publication.beds = Number(text);
+                        setPublication(_publication);
+                        }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de baños </Text>
-                    <SimpleTextInput/>
+                    <SimpleTextInput onChangeText={text => {
+                        var _publication = publication;
+                        _publication.bathrooms = Number(text);
+                        setPublication(_publication);
+                        }} />
                     <Text style={{fontWeight: 'bold'}}> Precio por noche </Text>
-                    <SimpleTextInput/>
+                    <SimpleTextInput onChangeText={text => {
+                        var _publication = publication;
+                        _publication.price_per_night = Number(text);
+                        setPublication(_publication);
+                        }} />
                     <Text style={{fontWeight: 'bold'}}> Descripción </Text>
-                    <SimpleTextInput multiline={true}/>
-                    <Button dark={true} mode="contained"> Publicar </Button>
+                    <SimpleTextInput multiline={true} onChangeText={text => {
+                        var _publication = publication;
+                        _publication.description = text;
+                        setPublication(_publication);
+                        }} />
+                    <Button dark={true} onPress={handlePublish} mode="contained"> Publicar </Button>
                 </View>
             </View>
         </ScrollView>

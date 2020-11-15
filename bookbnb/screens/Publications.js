@@ -4,6 +4,8 @@ import { PublicationCardMinimal, AddNewButton } from '../components/components';
 import { Divider } from 'react-native-paper';
 import { Requester } from '../requester/requester';
 
+//@refresh reset
+
 export default function PublicationsScreen(props) {
     const [publications, setPublications] = React.useState([])
 
