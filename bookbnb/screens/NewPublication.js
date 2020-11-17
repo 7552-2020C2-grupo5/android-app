@@ -46,9 +46,10 @@ function NewPublicationScreen(props) {
 
     return (
         <ScrollView>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <View style={{padding: 30}}>
-                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10}}>
+            <View style={styles.container}>
+                <View style={{padding: 10}}>
+                    <Text style={{fontSize: 50, fontWeight: 'bold', textAlign: 'left'}}> Publicá </Text>
+                    <View style={styles.cameraView}>
                         <CameraInput/>
                     </View>
                     <Text style={{fontWeight: 'bold'}}> Título de la publicación </Text>
@@ -93,6 +94,20 @@ function NewPublicationScreen(props) {
         </ScrollView>
     );
 }
+
+const styles = StyleSheet.create({
+    container : {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    cameraView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    }
+})
 
 export { NewPublicationScreen }
 

@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import { PublicationCardMinimal, AddNewButton } from '../components/components';
 import { Divider } from 'react-native-paper';
 import { Requester } from '../requester/requester';
+import { SafeAreaStyle } from '../styles/GlobalStyles';
 
 //@refresh reset
 

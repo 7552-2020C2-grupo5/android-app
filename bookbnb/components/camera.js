@@ -66,7 +66,7 @@ function CameraInput(props) {
         <View style={{width: 300, height: 300, borderWidth: 3}}>
             <Image
                 source={{uri: DEFAULT_IMG}}
-                style={{flex: 1, width: '100%', height: undefined, aspectRatio: 1, borderWidht: 3}}
+                style={{flex: 1, width: '100%', height: undefined, aspectRatio: 1}}
             />
             <Button
                 style={{bottom: 10, right: 10, position: 'absolute'}}

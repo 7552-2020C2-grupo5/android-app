@@ -1,9 +1,11 @@
 import { StyleSheet, Platform } from 'react-native';
 
-export default StyleSheet.create({
+let SafeAreaStyle = StyleSheet.create({
     droidSafeArea: {
         flex: 1,
         backgroundColor: 'white',
-        paddingTop: Platform.OS === 'android' ? 30 : 0
+        paddingTop: Platform.OS === 'android' ? 25 : 0
     },
 });
+
+export { SafeAreaStyle }

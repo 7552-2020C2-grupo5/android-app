@@ -9,11 +9,12 @@ import { ReservationsScreen } from './screens/Reservations'
 import { RecomendationsScreen } from './screens/Recomendations'
 import { NewPublicationScreen } from './screens/NewPublication'
 import { SearchScreen } from './screens/Search'
-import { View, StatusBar, Text, StyleSheet } from 'react-native';
+import { View, StatusBar, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { SnackBar } from './components/components';
+import { SafeAreaStyle } from './styles/GlobalStyles';
 
 var firebaseConfig = {
   apiKey: "AIzaSyCEZML3QG8KaNvYS2LgTzp_ElHXGICHYGU",
@@ -40,7 +41,7 @@ function Publications() {
   );
 }
 
-export default function App() {
+function Screens() {
   const [logged, setLogged] = React.useState(false);
 
   React.useEffect(() => {
@@ -64,5 +65,13 @@ export default function App() {
         </Drawer.Navigator>
       )}
     </NavigationContainer>
+  );
+}
+
+export default function App() {
+  return (
+    <SafeAreaView style={SafeAreaStyle.droidSafeArea}>
+      <Screens/>
+    </SafeAreaView>
   );
 }
