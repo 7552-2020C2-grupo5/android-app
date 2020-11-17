@@ -5,11 +5,8 @@ import { Camera } from 'expo-camera';
 
 //@refresh reset
 
-function CameraInput(props) {
-    const [photo, setPhoto] = React.useState('');
+function CameraPreview(props) {
     const [camera, setCamera] = React.useState(null);
-    const [takenPhoto, setTakenPhoto] = React.useState(false);
-    const [showPreview, setShowPreview] = React.useState(false);
 
     React.useEffect(() => {
         (async () => {
@@ -18,74 +15,74 @@ function CameraInput(props) {
     }, []);
 
     async function takePhoto() {
-        let photo = null;
         try {
-            photo = await camera.takePictureAsync({
+            let photo = await camera.takePictureAsync({
                 quality: 0.5,
                 base64: true,
                 skipProcessing: true
             })
             console.log('foto tomada')
-            setPhoto(photo);
-            setTakenPhoto(true);
-            setShowPreview(false);
-            console.log(photo)
+            props.onPhoto(photo);
         } catch(e) {
             console.log(`Ocurrio un error! ${e}`)
         }
     }
 
-    console.log(takenPhoto)
-
-    if (!showPreview && photo) {
-        return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <Image
-                    source={{uri: `data:image/gif;base64,${photo.base64}`}}
-                    style={{flex: 1, width: '100%', height: undefined, aspectRatio: 1}}
-                />
-                <Button
-                    style={{top: -60}}
-                    dark={true}
-                    onPress={() => setShowPreview(true)}
-                    mode="contained">
-                    Tomar foto
-                </Button>
-            </View>
-        );
-    }
-
-
-    return(
-        showPreview == false ? (
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                    <Button
-                        dark={true}
-                        onPress={() => setShowPreview(true)}
-                        mode="contained">
-                        Preview
-                    </Button>
-                </View>
-        ) : (
-            <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
-                <View style={{height:300, width:300}}>
-                    <Camera
-                        radio="1:1"
-                        ref={ref => { setCamera(ref) }}
-                        onCameraReady={() => console.log('Camera ready!')}
-                        type={Camera.Constants.Type.front}
-                        style={{flex: 1}}
-                    />
-                    <Button
-                        dark={true}
-                        onPress={takePhoto}
-                        mode="contained">
-                        Tomar foto!
-                    </Button>
-                </View>
-            </View>
-        )
+    return (
+        <>
+            <Camera
+                radio="1:1"
+                ref={ref => { setCamera(ref) }}
+                onCameraReady={() => console.log('Camera ready!')}
+                type={Camera.Constants.Type.back}
+                style={{flex: 1}}
+            />
+            <Button
+                style={{bottom: 10, right: 10, position: 'absolute'}}
+                dark={true}
+                onPress={takePhoto}
+                mode="contained">
+                Tomar foto!
+            </Button>
+        </>
     );
 }
 
-export { CameraInput }
+
+function CameraInput(props) {
+    const [photo, setPhoto] = React.useState('');
+    const [showPreview, setShowPreview] = React.useState(false);
+
+    let DEFAULT_IMG = "https://i.stack.imgur.com/y9DpT.jpg"
+
+    console.log(`Showpreview = ${showPreview}`)
+    console.log(photo)
+
+    if (photo) {
+        DEFAULT_IMG = `data:image/gif;base64,${photo.base64}`
+    }
+
+    return(showPreview == false ? (
+        <View style={{width: 300, height: 300, borderWidth: 3}}>
+            <Image
+                source={{uri: DEFAULT_IMG}}
+                style={{flex: 1, width: '100%', height: undefined, aspectRatio: 1, borderWidht: 3}}
+            />
+            <Button
+                style={{bottom: 10, right: 10, position: 'absolute'}}
+                dark={true}
+                onPress={() => setShowPreview(true)}
+                icon='camera'
+                mode="contained">
+                Agregar foto
+            </Button>
+        </View>
+    ) : (
+        <View style={{width: 300, height: 300, borderWidth: 3}}>
+            <CameraPreview onPhoto={value => {setPhoto(value); setShowPreview(false)}}/>
+        </View>
+    ));
+}
+
+
+export { CameraInput, CameraPreview }

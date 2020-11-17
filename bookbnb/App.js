@@ -16,11 +16,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SnackBar } from './components/components';
 
 var firebaseConfig = {
-  apiKey: "AIzaSyCt6nmt87OkmIYj8EqS4Xwev_Dr_jEmxnE",
+  apiKey: "AIzaSyCEZML3QG8KaNvYS2LgTzp_ElHXGICHYGU",
   authDomain: "bookbnb-3c67c.firebaseapp.com",
 };
 
-if (firebase.apps.length) {
+if (!firebase.apps.length) {
+  console.log('Inicializando app de firebase')
   firebase.initializeApp(firebaseConfig);
 }
 
@@ -45,6 +46,7 @@ export default function App() {
   React.useEffect(() => {
     console.log(`Logged = ${logged}`)
   }, [logged])
+
 
   return (
     <NavigationContainer>

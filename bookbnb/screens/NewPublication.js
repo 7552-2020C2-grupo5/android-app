@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Divider, TextInput, Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
-import { CameraInput } from '../components/camera';
+import { CameraInput, CameraPreview } from '../components/camera';
 import { postPublication } from '../utils';
 
 function SimpleTextInput(props) {
@@ -48,7 +48,9 @@ function NewPublicationScreen(props) {
         <ScrollView>
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <View style={{padding: 30}}>
-                    <CameraInput/>
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10}}>
+                        <CameraInput/>
+                    </View>
                     <Text style={{fontWeight: 'bold'}}> Título de la publicación </Text>
                     <SimpleTextInput onChangeText={text => {
                         var _publication = publication;
