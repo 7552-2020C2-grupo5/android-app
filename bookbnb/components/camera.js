@@ -2,6 +2,7 @@ import * as React from 'react';
 import { View, Text, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Camera } from 'expo-camera';
+import * as firebase from 'firebase';
 
 //@refresh reset
 
@@ -62,6 +63,12 @@ function CameraInput(props) {
         DEFAULT_IMG = `data:image/gif;base64,${photo.base64}`
     }
 
+    async function _handleTakePhoto(value) {
+        setPhoto(value);
+        setShowPreview(true);
+        props.onPhoto(photo)
+    }
+
     return(showPreview == false ? (
         <View style={{width: 300, height: 300, borderWidth: 3}}>
             <Image
@@ -79,7 +86,7 @@ function CameraInput(props) {
         </View>
     ) : (
         <View style={{width: 300, height: 300, borderWidth: 3}}>
-            <CameraPreview onPhoto={value => {setPhoto(value); setShowPreview(false)}}/>
+            <CameraPreview onPhoto={_handleTakePhoto}/>
         </View>
     ));
 }

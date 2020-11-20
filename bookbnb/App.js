@@ -15,21 +15,27 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { SnackBar } from './components/components';
 import { SafeAreaStyle } from './styles/GlobalStyles';
+import Geocoder from 'react-native-geocoding';
+
+
+//@refresh reset
 
 var firebaseConfig = {
   apiKey: "AIzaSyCEZML3QG8KaNvYS2LgTzp_ElHXGICHYGU",
   authDomain: "bookbnb-3c67c.firebaseapp.com",
+  storageBucket: 'bookbnb-3c67c.appspot.com',
 };
+
+firebase.initializeApp(firebaseConfig);
+Geocoder.init(firebaseConfig.apiKey)
 
 if (!firebase.apps.length) {
   console.log('Inicializando app de firebase')
-  firebase.initializeApp(firebaseConfig);
 }
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-//@refresh reset
 
 function Publications() {
   return (

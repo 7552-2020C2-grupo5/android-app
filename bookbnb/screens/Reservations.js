@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, ScrollView, StatusBar, Text, Title, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 
 export default function ReservationsScreen(props) {
     return (

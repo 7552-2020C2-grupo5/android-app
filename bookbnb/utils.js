@@ -62,4 +62,50 @@ async function postPublication(publication) {
     })
 }
 
-export { doGoogleLogin, login, postPublication }
+// MAPS
+//
+const DECODE_URL = "https://us1.locationiq.com/v1/reverse.php"
+const ENCODE_URL = "https://us1.locationiq.com/v1/search.php"
+const ACCESS_TOKEN = "pk.6504284c5b80234a71c42b240e54012e"
+
+async function geoDecode(latitude, longitude) {
+    console.log(`geodecoding for latitude=${latitude}, longitude=${longitude}`)
+
+    var url = DECODE_URL + "?key=" + ACCESS_TOKEN + "&format=json&lat=" + latitude + "&lon=" + longitude
+
+    // TODO: corregir
+    return fetch(url, {
+        method: 'GET',
+    }).then(response => {
+        return response.json().then(value => {
+            return {
+                address: value.display_name
+            }
+        })
+    }).catch(e => {
+        console.log(`Ocurrió un error ${e}`)
+    })
+}
+
+async function geoEncode(str) {
+    console.log(`geoencoding for str=${str}`)
+
+    var url = ENCODE_URL + "?key=" + ACCESS_TOKEN + "&format=json&q=" + encodeURIComponent(str)
+
+    //TODO pasar a await
+    return fetch(url, {
+        method: 'GET',
+    }).then(response => {
+        return response.json().then(value => {
+            console.log(value)
+            return {
+                latitude: Number(value[0].lat),
+                longitude: Number(value[0].lon)
+            }
+        })
+    }).catch(e => {
+        console.log(`Ocurrió un error ${e}`)
+    })
+}
+
+export { doGoogleLogin, login, postPublication, geoEncode, geoDecode }

@@ -4,6 +4,8 @@ import { Divider, TextInput, Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
 import { CameraInput, CameraPreview } from '../components/camera';
 import { postPublication } from '../utils';
+import * as firebase from 'firebase';
+import MapView from 'react-native-maps';
 
 function SimpleTextInput(props) {
     const styles = StyleSheet.create({
@@ -37,11 +39,30 @@ function NewPublicationScreen(props) {
         beds: '',
         bathrooms: '',
         price_per_night: '',
+        image_blob: [],
     });
 
     function handlePublish() {
         console.log(publication)
         postPublication(publication)
+    }
+
+    // TODO: mover a requester
+    async function handlePhotoTaken(photo) {
+        publication.image_blob.push(photo)
+        setPublication(publication)
+
+        try {
+            const response = await fetch(photo.uri);
+            const blob = await response.blob();
+
+            // acá deberíamos usar algo como uuid() para generar identificadores únicos
+            const ref = firebase.storage().ref().child('testing');
+            await ref.put(blob)
+            const url = ref.getDownloadURL().then(url => console.log(`URL es : ${url}`))
+        } catch(e) {
+            console.log(e.message)
+        }
     }
 
     return (
@@ -50,7 +71,7 @@ function NewPublicationScreen(props) {
                 <View style={{padding: 10}}>
                     <Text style={{fontSize: 50, fontWeight: 'bold', textAlign: 'left'}}> Publicá </Text>
                     <View style={styles.cameraView}>
-                        <CameraInput/>
+                        <CameraInput onPhoto={handlePhotoTaken}/>
                     </View>
                     <Text style={{fontWeight: 'bold'}}> Título de la publicación </Text>
                     <SimpleTextInput onChangeText={text => {
