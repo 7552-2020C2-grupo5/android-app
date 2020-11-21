@@ -21,7 +21,15 @@ export default function PublicationsScreen(props) {
     let actualPublications = []
     for(let i = 0; i < publications.length; i++) {
         console.log(publications[i].title)
-        actualPublications.push(<PublicationCardMinimal onPress={() => { props.navigation.navigate('Publicacion', {publication: publications[i]}) }} publication={publications[i]} key={i}/>)
+        actualPublications.push(
+            <PublicationCardMinimal
+                onPress={() => {
+                    props.navigation.navigate('Publicacion', {publication: publications[i]})
+                }}
+                publication={publications[i]}
+                key={i}
+            />
+        )
     }
 
     return (

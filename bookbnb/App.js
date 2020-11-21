@@ -26,11 +26,11 @@ var firebaseConfig = {
   storageBucket: 'bookbnb-3c67c.appspot.com',
 };
 
-firebase.initializeApp(firebaseConfig);
 Geocoder.init(firebaseConfig.apiKey)
 
 if (!firebase.apps.length) {
   console.log('Inicializando app de firebase')
+  firebase.initializeApp(firebaseConfig);
 }
 
 const Drawer = createDrawerNavigator();
@@ -48,7 +48,7 @@ function Publications() {
 }
 
 function Screens() {
-  const [logged, setLogged] = React.useState(false);
+  const [logged, setLogged] = React.useState(true);
 
   React.useEffect(() => {
     console.log(`Logged = ${logged}`)

@@ -1,21 +1,9 @@
 import * as React from 'react';
 import { DataTable, Avatar } from 'react-native-paper';
 import { StyleSheet, View, Text } from 'react-native';
+import { ProfileRowData } from '../components/components';
 
 var avatar_url = 'https://s.gravatar.com/avatar/4b078d8d53d96c17ef187a93db816fe8?s=80';
-
-const ProfileRowData = (props) => {
-    return (
-        <DataTable.Row style={{justifyContent: 'flex-start'}}>
-            <DataTable.Cell>
-                <Text style={{fontWeight: 'bold'}}>{props.keyValue}</Text>
-            </DataTable.Cell>
-            <DataTable.Cell style={{justifyContent: 'flex-end'}}>
-                <Text> {props.value} </Text>
-            </DataTable.Cell>
-        </DataTable.Row>
-    );
-}
 
 export default function ProfileScreen(props) {
     var initial = {
@@ -66,5 +54,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export { ProfileScreen }
+export { ProfileScreen, ProfileRowData }
 
