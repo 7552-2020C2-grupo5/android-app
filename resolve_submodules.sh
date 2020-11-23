@@ -7,9 +7,7 @@ REQUESTER_PATH=bookbnb/requester
 FETCH_URL=https://github.com/7552-2020C2-grupo5/server-requester.git
 
 _do_resolve() {
-        cd $REQUESTER_PATH
-        git clone $FETCH_URL
-        cd -
+        git clone $FETCH_URL $REQUESTER_PATH
 }
 
 echo "Resolviendo submodulos $FETCH_URL"
