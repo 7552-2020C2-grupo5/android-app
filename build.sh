@@ -2,6 +2,8 @@
 
 echo "Utilizando usuario $EXPO_USER"
 
+./resolve_submodules.sh
+
 LOG_FILE=/app/build.log
 LINK_FILE="app.link"
 
