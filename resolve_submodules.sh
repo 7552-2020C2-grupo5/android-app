@@ -14,4 +14,4 @@ _do_resolve() {
 
 echo "Resolviendo submodulos $FETCH_URL"
 
-_do_resolve()
+_do_resolve
