@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Paragraph, Title, Image, ScrollView, StyleSheet, View, Text } from 'react-native';
 import { Button, Chip, Card, Divider, TextInput, List } from 'react-native-paper';
 
-//@refresh reset
-
 
 function Comment(props) {
     return (
@@ -24,7 +22,7 @@ class QuestionComment extends React.Component {
     }
 
     toggleSelect = () => {
-        if(this.state.selected){
+        if (this.state.selected) {
             this.setState({
                 answer: this.state.answer,
                 selected: false,
@@ -34,18 +32,20 @@ class QuestionComment extends React.Component {
             this.setState({
                 answer: this.state.answer,
                 backgroundColor: '#aaf',
-                selected: true,
+                selected: true
             })
         }
     }
 
     setAnswer = (answer) => {
+        console.log(`seteando answer en ${answer}, valor actual ${this.state.answer}`)
         if (this.state.answer) {
             return
         }
         this.setState({
             answer: answer,
-            backgroundColor: this.state.backgroundColor
+            backgroundColor: '#ffa',
+            selected: false,
         })
         this.props.onPress(null)
     }
@@ -58,7 +58,6 @@ class QuestionComment extends React.Component {
             } else {
                 this.props.onPress(this)
             }
-            this.toggleSelect()
         }
     }
 
@@ -87,18 +86,27 @@ function AnswerComment(props) {
 }
 
 
-function CommentsSection(props){
+function OwnerCommentsSection(props){
     const [selectedComment, setSelectedComment] = React.useState(null)
     const [currentComment, setCurrentComment] = React.useState(null)
-    const ref = React.useRef(null);
 
-    console.log(selectedComment)
+    function handleSelectComment(ref) {
+        if(!ref) {
+            setSelectedComment(null)
+            return
+        }
+        if(selectedComment) {
+            selectedComment.toggleSelect()
+        }
+        ref.toggleSelect()
+        setSelectedComment(ref)
+    }
 
     return (
         <View style={{padding: 9}}>
-            <QuestionComment text="Hola, tiene pileta?" onPress={id => setSelectedComment(id)}/>
-            <QuestionComment text="Hola, tiene pileta?" onPress={id => setSelectedComment(id)}/>
-            <QuestionComment text="Hola, tiene pileta?" onPress={id => setSelectedComment(id)}/>
+            <QuestionComment text="Hola, tiene pileta?" onPress={ref => handleSelectComment(ref)}/>
+            <QuestionComment text="Hola, tiene pileta?" onPress={ref => handleSelectComment(ref)}/>
+            <QuestionComment text="Hola, tiene pileta?" onPress={ref => handleSelectComment(ref)}/>
             { selectedComment?
                 <>
                     <TextInput mode="outlined" onChangeText={value => setCurrentComment(value)} />
@@ -110,9 +118,31 @@ function CommentsSection(props){
     );
 }
 
+function GuestCommentsSection(props) {
+    const [questions, setQuestions] = React.useState([])
+    const [currentComment, setCurrentComment] = React.useState(null)
 
+    function handleNewQuestion() {
+        setQuestions(questions.concat([currentComment]))
+        setCurrentComment('')
+    }
+
+    return (
+        <View style={{padding: 9}}>
+            {
+                questions.map(value => {
+                    return <QuestionComment key={value} text={value}/>
+                })
+            }
+            <TextInput mode="outlined" onChangeText={value => setCurrentComment(value)} />
+            <Button onPress={handleNewQuestion}> Enviar </Button>
+        </View>
+    );
+}
 
 export default function PublicationScreen(props) {
+    var ownPublication = false
+
     var publication = props.route.params.publication
 
     return (
@@ -133,7 +163,7 @@ export default function PublicationScreen(props) {
                 <List.Item title="Precio por noche" right={() => <Text>ARG $ {publication.price_per_night}</Text>}/>
             </List.Section>
             <Divider/>
-            <CommentsSection/>
+            <GuestCommentsSection/>
         </ScrollView>
     );
 }
