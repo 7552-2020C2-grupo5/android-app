@@ -5,7 +5,7 @@ import { Input } from 'react-native-elements';
 import { CameraInput, CameraPreview } from '../components/camera';
 import { postPublication } from '../utils';
 import * as firebase from 'firebase';
-import MapView from 'react-native-maps';
+import Map from '../components/maps';
 
 function SimpleTextInput(props) {
     const styles = StyleSheet.create({
@@ -103,6 +103,7 @@ function NewPublicationScreen(props) {
                         _publication.price_per_night = Number(text);
                         setPublication(_publication);
                         }} />
+                    <Map/>
                     <Text style={{fontWeight: 'bold'}}> Descripción </Text>
                     <SimpleTextInput multiline={true} onChangeText={text => {
                         var _publication = publication;
