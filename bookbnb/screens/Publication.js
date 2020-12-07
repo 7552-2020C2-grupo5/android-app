@@ -4,7 +4,26 @@ import { Chip, Card, Divider, TextInput, List } from 'react-native-paper';
 
 function Comment(props) {
     return (
-        <Text> Hola mundo</Text>
+        <View style={{flexDirection: 'row', flex: 1}}>
+            <Text style={{padding: 8, fontSize: 14, flex: 1, fontWeight: 'bold'}}>{props.text}</Text>
+        </View>
+    );
+}
+
+function QuestionComment(props) {
+    return (
+        <Card style={{backgroundColor: '#ffa', margin: 7, marginLeft: 30}}>
+            <Comment text={props.text}/>
+        </Card>
+    );
+
+}
+
+function AnswerComment(props) {
+    return(
+        <Card style={{backgroundColor: '#ffd', margin: 7, marginRight: 30}}>
+            <Comment text={props.text}/>
+        </Card>
     );
 }
 
@@ -30,17 +49,10 @@ export default function PublicationScreen(props) {
             </List.Section>
             <Divider/>
             <View style={{padding: 9}}>
-                <Card style={{backgroundColor: '#ffa', margin: 7, marginLeft: 30}}>
-                    <View style={{flexDirection: 'row', flex: 1}}>
-                        <Text style={{padding: 8, fontSize: 14, flex: 1, fontWeight: 'bold'}}>Hola, tengo una consulta: ¿venden patys en este lugar? Porque queria ir con un amigo </Text>
-                    </View>
-                </Card>
-                <Divider/>
-                <Card style={{backgroundColor: '#ffd', margin: 7, marginRight: 30}}>
-                    <View style={{flexDirection: 'row', flex: 1}}>
-                        <Text style={{padding: 8, fontSize: 14, flex: 1, fontWeight: 'bold'}}>Hola sí!, vendemos toda clase de almohadas </Text>
-                    </View>
-                </Card>
+                <QuestionComment text="Hola, tiene pileta?"/>
+                <AnswerComment text="Hola, no, no tiene"/>
+                <QuestionComment text="Hola, tiene cocina?"/>
+                <AnswerComment text="Hola, no, no tiene"/>
             </View>
             <TextInput/>
         </ScrollView>
