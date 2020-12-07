@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Paragraph, Title, Image, ScrollView, StyleSheet, View, Text } from 'react-native';
-import { Chip, Card, Divider, TextInput, List } from 'react-native-paper';
+import { Button, Chip, Card, Divider, TextInput, List } from 'react-native-paper';
+
+//@refresh reset
+
 
 function Comment(props) {
     return (
@@ -10,26 +13,108 @@ function Comment(props) {
     );
 }
 
-function QuestionComment(props) {
-    return (
-        <Card style={{backgroundColor: '#ffa', margin: 7, marginLeft: 30}}>
-            <Comment text={props.text}/>
-        </Card>
-    );
+class QuestionComment extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            answer: null,
+            selected: false,
+            backgroundColor: '#ffa'
+        }
+    }
 
+    toggleSelect = () => {
+        if(this.state.selected){
+            this.setState({
+                answer: this.state.answer,
+                selected: false,
+                backgroundColor: '#ffa'
+            })
+        } else {
+            this.setState({
+                answer: this.state.answer,
+                backgroundColor: '#aaf',
+                selected: true,
+            })
+        }
+    }
+
+    setAnswer = (answer) => {
+        if (this.state.answer) {
+            return
+        }
+        this.setState({
+            answer: answer,
+            backgroundColor: this.state.backgroundColor
+        })
+        this.props.onPress(null)
+    }
+
+    handleOnPress = () => {
+        if (this.props.onPress){
+            // pasamos la ref al padre
+            if(this.state.selected){
+                this.props.onPress(null)
+            } else {
+                this.props.onPress(this)
+            }
+            this.toggleSelect()
+        }
+    }
+
+    render() {
+        return (
+            <>
+                <Card style={{backgroundColor: this.state.backgroundColor, margin: 7, marginLeft: 30}} onPress={this.handleOnPress}>
+                    <Comment text={this.props.text}/>
+                </Card>
+                {this.state.answer &&
+                    <>
+                        <AnswerComment text={this.state.answer}/>
+                    </>
+                }
+            </>
+        );
+    }
 }
 
 function AnswerComment(props) {
     return(
-        <Card style={{backgroundColor: '#ffd', margin: 7, marginRight: 30}}>
+        <Card style={{backgroundColor: '#ffd', margin: 7, marginRight: 30}} {...props}>
             <Comment text={props.text}/>
         </Card>
     );
 }
 
 
+function CommentsSection(props){
+    const [selectedComment, setSelectedComment] = React.useState(null)
+    const [currentComment, setCurrentComment] = React.useState(null)
+    const ref = React.useRef(null);
+
+    console.log(selectedComment)
+
+    return (
+        <View style={{padding: 9}}>
+            <QuestionComment text="Hola, tiene pileta?" onPress={id => setSelectedComment(id)}/>
+            <QuestionComment text="Hola, tiene pileta?" onPress={id => setSelectedComment(id)}/>
+            <QuestionComment text="Hola, tiene pileta?" onPress={id => setSelectedComment(id)}/>
+            { selectedComment?
+                <>
+                    <TextInput mode="outlined" onChangeText={value => setCurrentComment(value)} />
+                    <Button onPress={() => selectedComment.setAnswer(currentComment)}> Enviar </Button>
+                </>
+                : null
+            }
+        </View>
+    );
+}
+
+
+
 export default function PublicationScreen(props) {
     var publication = props.route.params.publication
+
     return (
         <ScrollView>
             <View style={{flex: 1, flexDirection: 'row', padding: 10}}>
@@ -48,13 +133,7 @@ export default function PublicationScreen(props) {
                 <List.Item title="Precio por noche" right={() => <Text>ARG $ {publication.price_per_night}</Text>}/>
             </List.Section>
             <Divider/>
-            <View style={{padding: 9}}>
-                <QuestionComment text="Hola, tiene pileta?"/>
-                <AnswerComment text="Hola, no, no tiene"/>
-                <QuestionComment text="Hola, tiene cocina?"/>
-                <AnswerComment text="Hola, no, no tiene"/>
-            </View>
-            <TextInput/>
+            <CommentsSection/>
         </ScrollView>
     );
 }
