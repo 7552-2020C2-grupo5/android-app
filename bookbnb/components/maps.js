@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { View, ScrollView, StatusBar, Text, Title, StyleSheet, TextInput } from 'react-native';
-import { Button } from 'react-native-paper';
+import { View, ScrollView, StatusBar, Text, Title, StyleSheet } from 'react-native';
+import { Button, TextInput } from 'react-native-paper';
 import MapView, { Marker } from 'react-native-maps';
 import { geoDecode, geoEncode } from '../utils';
 
@@ -27,9 +27,8 @@ export default function Map(props) {
     return (
         <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
             <View>
-                <TextInput value={text} onChangeText={text => { setText(text) }} />
+                <TextInput dense={true} onChangeText={text => { setText(text) }} label='' {...props} mode='outlined' style={styles.input}/>
             </View>
-            <Button dark={true} onPress={() => handleFind(text)}> Buscar </Button>
             <MapView
                 style={{height: 300, width: 300}}
                 region={{latitude: coordinates[0], longitude: coordinates[1], latitudeDelta: 0.0922, longitudeDelta: 0.0421,}}
@@ -43,6 +42,23 @@ export default function Map(props) {
                     )}
                 />
             </MapView>
+            <Button mode="contained" dark={true} onPress={() => handleFind(text)}> Buscar </Button>
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    input: {
+        width: 330,
+        height: 40,
+        paddingBottom: 20,
+    },
+    multiline: {
+        flex: 1,
+        width: 330,
+        height: 150,
+        paddingBottom: 20,
+    }
+})
+
+

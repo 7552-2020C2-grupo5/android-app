@@ -7,6 +7,7 @@ import {
     Title,
     Paragraph,
     DataTable,
+    TextInput,
 } from 'react-native-paper';
 
 import { Icon } from 'react-native-elements';
@@ -96,6 +97,29 @@ function AddNewButton(props) {
     );
 }
 
+function SimpleTextInput(props) {
+    const styles = StyleSheet.create({
+        input: {
+            width: 330,
+            height: 40,
+            paddingBottom: 20,
+        },
+        multiline: {
+            flex: 1,
+            width: 330,
+            height: 150,
+            paddingBottom: 20,
+        }
+    })
+    if(!props.multiline){
+        return (
+            <TextInput dense={true} label='' {...props} mode='outlined' style={styles.input}/>
+        );
+    }
+    return (
+        <TextInput textAlignVertical={"top"} numberOfLines={8} multiline={true} label='' {...props} mode='outlined' style={styles.multiline}/>
+    );
+}
 
 function AppLogo(props) {
     return (
@@ -134,4 +158,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export { PublicationCardMinimal, SnackBar, AppLogo, AddNewButton, ReservationCard, ProfileRowData }
+export { SimpleTextInput, PublicationCardMinimal, SnackBar, AppLogo, AddNewButton, ReservationCard, ProfileRowData }

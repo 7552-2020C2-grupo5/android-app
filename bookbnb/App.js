@@ -8,8 +8,9 @@ import { PublicationScreen } from './screens/Publication'
 import { ReservationsScreen } from './screens/Reservations'
 import { RecomendationsScreen } from './screens/Recomendations'
 import { NewPublicationScreen } from './screens/NewPublication'
+import { RegistrationScreen } from './screens/Register'
 import { SearchScreen } from './screens/Search'
-import { View, StatusBar, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StatusBar, Text, StyleSheet, SafeAreaView, AsyncStorage } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -48,21 +49,17 @@ function Publications() {
 }
 
 function Screens() {
-  const [logged, setLogged] = React.useState(true);
-
-  React.useEffect(() => {
-    console.log(`Logged = ${logged}`)
-  }, [logged])
-
+  const [logged, setLogged] = React.useState(false);
 
   return (
     <NavigationContainer>
       { logged == false? (
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator>
           <Stack.Screen name="Login" component={LoginScreen} initialParams={{func: setLogged}} options={{headerShown: false}}/>
+          <Stack.Screen name="Register" component={RegistrationScreen} options={{headerShown: false}}/>
         </Stack.Navigator>
       ) : (
-        <Drawer.Navigator initialRouteName="Recomendaciones">
+        <Drawer.Navigator>
           <Drawer.Screen name="Mis Recomendaciones" options={{headerShown: false}} component={RecomendationsScreen} />
           <Drawer.Screen name="Buscar" options={{headerShown: false}} component={SearchScreen} />
           <Drawer.Screen name="Perfil" options={{headerShown: false}} component={ProfileScreen} />
