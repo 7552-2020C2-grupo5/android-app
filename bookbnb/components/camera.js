@@ -22,10 +22,8 @@ function CameraPreview(props) {
                 base64: true,
                 skipProcessing: true
             })
-            console.log('foto tomada')
             props.onPhoto(photo);
         } catch(e) {
-            console.log(`Ocurrio un error! ${e}`)
         }
     }
 
@@ -34,7 +32,6 @@ function CameraPreview(props) {
             <Camera
                 radio="1:1"
                 ref={ref => { setCamera(ref) }}
-                onCameraReady={() => console.log('Camera ready!')}
                 type={Camera.Constants.Type.back}
                 style={{flex: 1}}
             />
@@ -55,9 +52,6 @@ function CameraInput(props) {
     const [showPreview, setShowPreview] = React.useState(false);
 
     let DEFAULT_IMG = "https://i.stack.imgur.com/y9DpT.jpg"
-
-    console.log(`Showpreview = ${showPreview}`)
-    console.log(photo)
 
     if (photo) {
         DEFAULT_IMG = `data:image/gif;base64,${photo.base64}`

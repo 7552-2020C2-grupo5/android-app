@@ -7,9 +7,10 @@ import * as firebase from 'firebase';
 import Map from '../components/maps';
 import { CameraInput, CameraPreview } from '../components/camera';
 import { SimpleTextInput } from '../components/components';
+import { Requester } from '../requester/requester';
 
 function NewPublicationScreen(props) {
-    const [publication, setPublication] = React.useState({
+    var emptyPublication = {
         title: '',
         description: '',
         rooms: '',
@@ -17,28 +18,43 @@ function NewPublicationScreen(props) {
         bathrooms: '',
         price_per_night: '',
         image_blob: [],
-    });
+        coordinates: [0, 0],
+    }
 
-    function handlePublish() {
-        console.log(publication)
-        postPublication(publication)
+    const [publication, setPublication] = React.useState(emptyPublication);
+
+    var requester = new Requester();
+
+    async function handlePublish() {
+        var photoURL = null
+        if (publication.image_blob.length){
+            blob = publication.image_blob.pop();
+            photoURL = await uploadPhotoToFirebase(blob);
+        }
+        publication.photoURL = [ photoURL ]
+        requester.publish(publication)
     }
 
     // TODO: mover a requester
     async function handlePhotoTaken(photo) {
+        while (publication.image_blob.length) {
+            publication.image_blob.pop()
+        }
         publication.image_blob.push(photo)
-        setPublication(publication)
+    }
 
-        try {
+    async function uploadPhotoToFirebase(photo) {
+        try{
             const response = await fetch(photo.uri);
             const blob = await response.blob();
 
-            // acá deberíamos usar algo como uuid() para generar identificadores únicos
+           // acá deberíamos usar algo como uuid() para generar identificadores únicos
             const ref = firebase.storage().ref().child('testing');
             await ref.put(blob)
-            const url = ref.getDownloadURL().then(url => console.log(`URL es : ${url}`))
+            const url = await ref.getDownloadURL();
+            return url
         } catch(e) {
-            console.log(e.message)
+            alert(e)
         }
     }
 
@@ -52,40 +68,37 @@ function NewPublicationScreen(props) {
                     </View>
                     <Text style={{fontWeight: 'bold'}}> Título de la publicación </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.title = text;
-                        setPublication(_publication);
+                        publication.title = text;
+                        setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de cuartos </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.rooms = Number(text);
-                        setPublication(_publication);
+                        publication.rooms = Number(text);
+                        setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de camas </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.beds = Number(text);
-                        setPublication(_publication);
+                        publication.beds = Number(text);
+                        setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de baños </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.bathrooms = Number(text);
-                        setPublication(_publication);
+                        publication.bathrooms = Number(text);
+                        setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Precio por noche </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.price_per_night = Number(text);
-                        setPublication(_publication);
+                        publication.price_per_night = Number(text);
+                        setPublication(publication);
                         }} />
-                    <Map/>
+                    <Map onChangeCoordinates={coordinates => {
+                        publication.coordinates = coordinates;
+                        setPublication(publication);
+                    }}/>
                     <Text style={{fontWeight: 'bold'}}> Descripción </Text>
                     <SimpleTextInput multiline={true} onChangeText={text => {
-                        var _publication = publication;
-                        _publication.description = text;
-                        setPublication(_publication);
+                        publication.description = text;
+                        setPublication(publication);
                         }} />
                     <Button dark={true} onPress={handlePublish} mode="contained"> Publicar </Button>
                 </View>
