@@ -12,31 +12,33 @@ export default function PublicationsScreen(props) {
 
     let requester = new Requester()
 
-    React.useEffect(() => {
-        requester.publications().then(values => {
-            setPublications(values)
+    const fillPublications = () => {
+        requester.publications().then(publications => {
+            console.log(`Founded ${publications.length} publications`)
+            setPublications(publications)
         })
-    }, [])
-
-    let actualPublications = []
-    for(let i = 0; i < publications.length; i++) {
-        console.log(publications[i].title)
-        actualPublications.push(
-            <PublicationCardMinimal
-                onPress={() => {
-                    props.navigation.navigate('Publicacion', {publication: publications[i]})
-                }}
-                publication={publications[i]}
-                key={i}
-            />
-        )
     }
+
+    React.useEffect(() => {
+        return props.navigation.addListener('focus', () => {
+            fillPublications()
+        });
+    }, [])
 
     return (
         <View style={{flex: 1}}>
             <ScrollView>
                 <View style={styles.publication}>
-                    {actualPublications}
+                    {publications.map((publication) => {
+                        return (
+                            <PublicationCardMinimal
+                                onPress={() => {
+                                    props.navigation.navigate('Publicacion', {publication: publication})
+                                }}
+                                publication={publication}
+                            />
+                        );
+                    })}
                 </View>
             </ScrollView>
             <AddNewButton onPress={() => props.navigation.navigate('new_publication')} />

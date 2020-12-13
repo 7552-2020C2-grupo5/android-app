@@ -33,6 +33,7 @@ function NewPublicationScreen(props) {
         }
         publication.photoURL = [ photoURL ]
         requester.publish(publication)
+        props.navigation.navigate('Publicaciones');
     }
 
     // TODO: mover a requester
