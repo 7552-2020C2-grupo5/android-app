@@ -9,6 +9,7 @@ import { ReservationsScreen } from './screens/Reservations'
 import { RecomendationsScreen } from './screens/Recomendations'
 import { NewPublicationScreen } from './screens/NewPublication'
 import { RegistrationScreen } from './screens/Register'
+import { EditProfileScreen } from './screens/EditProfile'
 import { SearchScreen } from './screens/Search'
 import { View, StatusBar, Text, StyleSheet, SafeAreaView, AsyncStorage } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -48,6 +49,15 @@ function Publications() {
   );
 }
 
+function Profile() {
+  return (
+    <Stack.Navigator initialRouteName="Profile">
+      <Stack.Screen name="Profile" component={ProfileScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{headerShown: false}}/>
+    </Stack.Navigator>
+  );
+}
+
 function Screens() {
   const [logged, setLogged] = React.useState(false);
 
@@ -62,7 +72,7 @@ function Screens() {
         <Drawer.Navigator>
           <Drawer.Screen name="Mis Recomendaciones" options={{headerShown: false}} component={RecomendationsScreen} />
           <Drawer.Screen name="Buscar" options={{headerShown: false}} component={SearchScreen} />
-          <Drawer.Screen name="Perfil" options={{headerShown: false}} component={ProfileScreen} />
+          <Drawer.Screen name="Perfil" options={{headerShown: false}} component={Profile} />
           <Drawer.Screen name="Mis Reservas" options={{headerShown: false}} component={ReservationsScreen} />
           <Drawer.Screen name="Mis Publicaciones" options={{headerShown: false}} component={Publications} />
         </Drawer.Navigator>

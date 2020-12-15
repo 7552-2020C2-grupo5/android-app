@@ -29,9 +29,10 @@ export default function PublicationsScreen(props) {
         <View style={{flex: 1}}>
             <ScrollView>
                 <View style={styles.publication}>
-                    {publications.map((publication) => {
+                    {publications.map((publication, index) => {
                         return (
                             <PublicationCardMinimal
+                                key={index}
                                 onPress={() => {
                                     props.navigation.navigate('Publicacion', {publication: publication})
                                 }}
