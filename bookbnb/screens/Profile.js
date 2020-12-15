@@ -46,7 +46,11 @@ export default function ProfileScreen(props) {
     return (
         <View style={{flex: 1}}>
             <View style={styles.container}>
-                <Avatar.Image size={110} source={{uri: userData.avatar}} style={{margin: 50}}/>
+                {userData.avatar? (
+                    <Avatar.Image size={140} source={{uri: userData.avatar}} style={{margin: 50}}/>
+                ) : (
+                    <Avatar.Text size={140} label={userData.firstName[0] + userData.lastName[0]} style={{margin: 50}}/>
+                )}
                 { /* Ver como alinearlo a la derecha */ }
                 <View>
                     <Icon onPress={() => props.navigation.navigate('EditProfile', {userData: userData})} name='pencil' type='evilicon' color='black' size={40}/>

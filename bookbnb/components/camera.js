@@ -20,7 +20,6 @@ function CameraPreview(props) {
             let photo = await camera.takePictureAsync({
                 quality: 0.5,
                 base64: true,
-                skipProcessing: true
             })
             props.onPhoto(photo);
         } catch(e) {
@@ -59,8 +58,8 @@ function CameraInput(props) {
 
     async function _handleTakePhoto(value) {
         setPhoto(value);
-        setShowPreview(true);
-        props.onPhoto(photo)
+        setShowPreview(false);
+        props.onPhoto(value)
     }
 
     return(showPreview == false ? (

@@ -8,6 +8,7 @@ import Map from '../components/maps';
 import { CameraInput, CameraPreview } from '../components/camera';
 import { SimpleTextInput } from '../components/components';
 import { Requester } from '../requester/requester';
+import { uploadImageToFirebase } from '../utils';
 
 function NewPublicationScreen(props) {
     var emptyPublication = {
@@ -27,36 +28,22 @@ function NewPublicationScreen(props) {
 
     async function handlePublish() {
         var photoURL = null
+        var blob = null
         if (publication.image_blob.length){
             blob = publication.image_blob.pop();
-            photoURL = await uploadPhotoToFirebase(blob);
+            photoURL = await uploadImageToFirebase(blob);
         }
         publication.photoURL = [ photoURL ]
-        requester.publish(publication)
-        props.navigation.navigate('Publicaciones');
+        await requester.publish(publication)
+//        props.navigation.navigate('Publicaciones');
     }
 
-    // TODO: mover a requester
     async function handlePhotoTaken(photo) {
         while (publication.image_blob.length) {
             publication.image_blob.pop()
         }
         publication.image_blob.push(photo)
-    }
-
-    async function uploadPhotoToFirebase(photo) {
-        try{
-            const response = await fetch(photo.uri);
-            const blob = await response.blob();
-
-           // acá deberíamos usar algo como uuid() para generar identificadores únicos
-            const ref = firebase.storage().ref().child('testing');
-            await ref.put(blob)
-            const url = await ref.getDownloadURL();
-            return url
-        } catch(e) {
-            alert(e)
-        }
+        setPublication(publication)
     }
 
     return (
