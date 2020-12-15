@@ -13,7 +13,8 @@ export default function PublicationsScreen(props) {
     let requester = new Requester()
 
     const fillPublications = () => {
-        requester.publications().then(publications => {
+        var searchParams = props.route.params.searchParams || {}
+        requester.searchPublications(searchParams).then(publications => {
             console.log(`Founded ${publications.length} publications`)
             setPublications(publications)
         })
@@ -42,7 +43,9 @@ export default function PublicationsScreen(props) {
                     })}
                 </View>
             </ScrollView>
-            <AddNewButton onPress={() => props.navigation.navigate('new_publication')} />
+            { props.route.params.editable &&
+                <AddNewButton onPress={() => props.navigation.navigate('new_publication')}/>
+            }
         </View>
     );
 }

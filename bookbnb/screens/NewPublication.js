@@ -35,7 +35,7 @@ function NewPublicationScreen(props) {
         }
         publication.photoURL = [ photoURL ]
         await requester.publish(publication)
-//        props.navigation.navigate('Publicaciones');
+        props.navigation.navigate('Publicaciones');
     }
 
     async function handlePhotoTaken(photo) {
@@ -60,7 +60,7 @@ function NewPublicationScreen(props) {
                         setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de cuartos </Text>
-                    <SimpleTextInput onChangeText={text => {
+                    <SimpleTextInput keyboardType='numeric' onChangeText={text => {
                         publication.rooms = Number(text);
                         setPublication(publication);
                         }} />
