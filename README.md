@@ -2,7 +2,7 @@
 
 
 Entorno de desarrollo
-=======================
+----------------------
 
 Instalar expo y dependencias:
 
@@ -18,7 +18,7 @@ expo start
 
 
 Deploy
-========
+--------
 
 Está configurado un deploy automático a http://bookbnb-app.herokuapp.com/ cuando se realiza un commit a `heroku-deploy`
 
