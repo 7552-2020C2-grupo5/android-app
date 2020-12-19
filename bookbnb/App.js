@@ -26,6 +26,7 @@ var firebaseConfig = {
   apiKey: "AIzaSyCEZML3QG8KaNvYS2LgTzp_ElHXGICHYGU",
   authDomain: "bookbnb-3c67c.firebaseapp.com",
   storageBucket: 'bookbnb-3c67c.appspot.com',
+  databaseURL: 'https://bookbnb-3c67c.firebaseio.com/',
 };
 
 Geocoder.init(firebaseConfig.apiKey)
@@ -45,6 +46,7 @@ function Publications() {
       <Stack.Screen name="Publicaciones" component={PublicationsScreen} initialParams={{editable: true}} options={{headerShown: false}}/>
       <Stack.Screen name="new_publication" component={NewPublicationScreen} options={{headerShown: false}}/>
       <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }
@@ -52,7 +54,7 @@ function Publications() {
 function Profile() {
   return (
     <Stack.Navigator initialRouteName="Profile">
-      <Stack.Screen name="Profile" component={ProfileScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="Profile" component={ProfileScreen} initialParams={{allowEditing: true}}  options={{headerShown: false}}/>
       <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
@@ -63,6 +65,8 @@ function Search() {
     <Stack.Navigator initialRouteName="SearchQuery">
       <Stack.Screen name="SearchQuery" component={SearchScreen} options={{headerShown: false}}/>
       <Stack.Screen name="SearchResults" component={PublicationsScreen} initialParams={{editable: false}} options={{headerShown: false}}/>
+      <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }

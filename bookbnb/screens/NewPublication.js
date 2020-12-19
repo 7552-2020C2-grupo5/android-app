@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { AsyncStorage, Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Divider, TextInput, Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
 import { postPublication } from '../utils';
@@ -27,6 +27,7 @@ function NewPublicationScreen(props) {
     var requester = new Requester();
 
     async function handlePublish() {
+        var userID = await AsyncStorage.getItem('userID')
         var photoURL = null
         var blob = null
         if (publication.image_blob.length){
@@ -34,8 +35,10 @@ function NewPublicationScreen(props) {
             photoURL = await uploadImageToFirebase(blob);
         }
         publication.photoURL = [ photoURL ]
+        publication.user_id = Number(userID)
         await requester.publish(publication)
         props.navigation.navigate('Publicaciones');
+        setPublication(publication)
     }
 
     async function handlePhotoTaken(photo) {

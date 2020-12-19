@@ -15,9 +15,9 @@ export default function SearchScreen(props) {
 
     const handleSearch = async () => {
         var searchParams = {
-            bathrooms: minBathCount,
-            rooms: minRoomCount,
-            beds: minBedCount
+            bathrooms: minBathCount || 0,
+            rooms: minRoomCount || 0,
+            beds: minBedCount || 0
         }
         props.navigation.navigate('SearchResults', {searchParams: searchParams})
     }
