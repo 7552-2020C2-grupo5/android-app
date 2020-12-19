@@ -20,12 +20,9 @@ function CameraPreview(props) {
             let photo = await camera.takePictureAsync({
                 quality: 0.5,
                 base64: true,
-                skipProcessing: true
             })
-            console.log('foto tomada')
             props.onPhoto(photo);
         } catch(e) {
-            console.log(`Ocurrio un error! ${e}`)
         }
     }
 
@@ -34,7 +31,6 @@ function CameraPreview(props) {
             <Camera
                 radio="1:1"
                 ref={ref => { setCamera(ref) }}
-                onCameraReady={() => console.log('Camera ready!')}
                 type={Camera.Constants.Type.back}
                 style={{flex: 1}}
             />
@@ -56,17 +52,14 @@ function CameraInput(props) {
 
     let DEFAULT_IMG = "https://i.stack.imgur.com/y9DpT.jpg"
 
-    console.log(`Showpreview = ${showPreview}`)
-    console.log(photo)
-
     if (photo) {
         DEFAULT_IMG = `data:image/gif;base64,${photo.base64}`
     }
 
     async function _handleTakePhoto(value) {
         setPhoto(value);
-        setShowPreview(true);
-        props.onPhoto(photo)
+        setShowPreview(false);
+        props.onPhoto(value)
     }
 
     return(showPreview == false ? (

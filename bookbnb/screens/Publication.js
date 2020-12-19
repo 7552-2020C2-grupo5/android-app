@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Paragraph, Title, Image, ScrollView, StyleSheet, View, Text } from 'react-native';
-import { Button, Chip, Card, Divider, TextInput, List } from 'react-native-paper';
+import { AsyncStorage, Paragraph, Title, Image, ScrollView, StyleSheet, View, Text } from 'react-native';
+import { Avatar, Button, Chip, Card, Divider, TextInput, List } from 'react-native-paper';
+import { Icon } from 'react-native-elements';
+import { Requester } from '../requester/requester';
 
 
 function Comment(props) {
@@ -14,8 +16,11 @@ function Comment(props) {
 class QuestionComment extends React.Component {
     constructor(props) {
         super(props)
+        this.requester = new Requester()
         this.state = {
-            answer: null,
+            answer: props.question.reply,
+            publicationID: props.publicationID,
+            question: props.question,
             selected: false,
             backgroundColor: '#ffa'
         }
@@ -39,6 +44,11 @@ class QuestionComment extends React.Component {
 
     setAnswer = (answer) => {
         console.log(`seteando answer en ${answer}, valor actual ${this.state.answer}`)
+        this.requester.addAnswer({
+            publicationID: this.state.publicationID,
+            questionID: this.state.question.id,
+            answer: answer,
+        })
         if (this.state.answer) {
             return
         }
@@ -87,6 +97,9 @@ function AnswerComment(props) {
 
 
 function OwnerCommentsSection(props){
+    /* Vista de comentarios como dueño de la publicación:
+     * todas las publicaciones que se hacen responden a alguna pregunta ya hecha
+     */
     const [selectedComment, setSelectedComment] = React.useState(null)
     const [currentComment, setCurrentComment] = React.useState(null)
 
@@ -104,9 +117,9 @@ function OwnerCommentsSection(props){
 
     return (
         <View style={{padding: 9}}>
-            <QuestionComment text="Hola, tiene pileta?" onPress={ref => handleSelectComment(ref)}/>
-            <QuestionComment text="Hola, tiene pileta?" onPress={ref => handleSelectComment(ref)}/>
-            <QuestionComment text="Hola, tiene pileta?" onPress={ref => handleSelectComment(ref)}/>
+            {props.questions.map(value => {
+                    return <QuestionComment key={value} publicationID={props.publicationID} question={value} onPress={ref => handleSelectComment(ref)} text={value.question}/>
+            })}
             { selectedComment?
                 <>
                     <TextInput mode="outlined" onChangeText={value => setCurrentComment(value)} />
@@ -119,59 +132,89 @@ function OwnerCommentsSection(props){
 }
 
 function GuestCommentsSection(props) {
-    const [questions, setQuestions] = React.useState([])
+    /* Vista de comentarios desde el lado del NO dueño de la publicacion:
+     * todas las publicaciones que se hacen se cargan como preguntas
+     */
+    const [questions, setQuestions] = React.useState(props.questions)
     const [currentComment, setCurrentComment] = React.useState(null)
 
-    function handleNewQuestion() {
-        setQuestions(questions.concat([currentComment]))
+    let requester = new Requester();
+
+    async function handleNewQuestion() {
+        let currentUserID = await AsyncStorage.getItem('userID');
+        let response = await requester.addQuestion({
+            publicationID: props.publicationID,
+            question: currentComment,
+            userID: Number(currentUserID)
+        })
+        setQuestions(questions.concat([response]))
         setCurrentComment('')
     }
 
     return (
         <View style={{padding: 9}}>
             {
-                questions.map(value => {
-                    return <QuestionComment key={value} text={value}/>
+                questions.map((value, i) => {
+                    return <QuestionComment key={i} publicationID={props.publicationID} question={value} text={value.question}/>
                 })
             }
-            <TextInput mode="outlined" onChangeText={value => setCurrentComment(value)} />
+            <TextInput mode="outlined" value={currentComment} onChangeText={value => setCurrentComment(value)} />
             <Button onPress={handleNewQuestion}> Enviar </Button>
         </View>
     );
 }
 
 export default function PublicationScreen(props) {
-    var ownPublication = false
+    const [userID, setUserID] = React.useState(null);
 
-    var publication = props.route.params.publication
+    let publication = props.route.params.publication
+
+    function handleGoToProfile() {
+        props.navigation.navigate('UserProfile', {userID: publication.user_id, allowEditing: false})
+    }
+
+    React.useEffect(() => {
+        let userID = AsyncStorage.getItem('userID').then(userID =>
+            setUserID(userID)
+        )
+    }, [])
 
     return (
-        <ScrollView>
-            <View style={{flex: 1, flexDirection: 'row', padding: 10}}>
-                <Image source={{ uri: 'https://picsum.photos/700' }} style={styles.image} />
-            </View>
-            <Divider/>
-            <View>
-                <Text style={{fontSize: 20, padding: 20, textAlign: 'center', fontWeight: 'bold'}}> {publication.title} </Text>
-                <Text style={{fontSize: 15, padding: 20}}> {publication.description} </Text>
-            </View>
-            <Divider style={{backgroundColor: 'black'}}/>
-            <List.Section>
-                <List.Subheader>Información</List.Subheader>
-                <List.Item title="Cantidad de cuartos" right={() => <Text>{publication.rooms}</Text>}/>
-                <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>}/>
-                <List.Item title="Precio por noche" right={() => <Text>ARG $ {publication.price_per_night}</Text>}/>
-            </List.Section>
-            <Divider/>
-            <GuestCommentsSection/>
-        </ScrollView>
+        <View>
+            <ScrollView>
+                <View style={{flex: 1, flexDirection: 'row', padding: 10}}>
+                    <Image source={{ uri: 'https://picsum.photos/700' }} style={styles.image} />
+                    <View style={{position: 'absolute', bottom: 20, right: 30}}>
+                        <Icon onPress={handleGoToProfile} raised reversed={true} size={30} name='person' type='octicon' color='#f03'/>
+                    </View>
+                </View>
+                <Divider/>
+                <View>
+                    <Text style={{fontSize: 20, padding: 20, textAlign: 'center', fontWeight: 'bold'}}> {publication.title} </Text>
+                    <Text style={{fontSize: 15, padding: 20}}> {publication.description} </Text>
+                </View>
+                <Divider style={{backgroundColor: 'black'}}/>
+                <List.Section>
+                    <List.Subheader>Información</List.Subheader>
+                    <List.Item title="Cantidad de cuartos" right={() => <Text>{publication.rooms}</Text>}/>
+                    <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>}/>
+                    <List.Item title="Precio por noche" right={() => <Text>ARG $ {publication.price_per_night}</Text>}/>
+                </List.Section>
+                <Divider/>
+                {userID == publication.user_id? (
+                    <OwnerCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
+                ):(
+                    <GuestCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
+                )}
+            </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     image: {
         flex: 1,
-        width: 900,
+        width: null,
         resizeMode: 'contain',
         height: 300,
     },

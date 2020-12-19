@@ -9,6 +9,7 @@ import { ReservationsScreen } from './screens/Reservations'
 import { RecomendationsScreen } from './screens/Recomendations'
 import { NewPublicationScreen } from './screens/NewPublication'
 import { RegistrationScreen } from './screens/Register'
+import { EditProfileScreen } from './screens/EditProfile'
 import { SearchScreen } from './screens/Search'
 import { View, StatusBar, Text, StyleSheet, SafeAreaView, AsyncStorage } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -25,6 +26,7 @@ var firebaseConfig = {
   apiKey: "AIzaSyCEZML3QG8KaNvYS2LgTzp_ElHXGICHYGU",
   authDomain: "bookbnb-3c67c.firebaseapp.com",
   storageBucket: 'bookbnb-3c67c.appspot.com',
+  databaseURL: 'https://bookbnb-3c67c.firebaseio.com/',
 };
 
 Geocoder.init(firebaseConfig.apiKey)
@@ -41,8 +43,29 @@ const Stack = createStackNavigator();
 function Publications() {
   return (
     <Stack.Navigator initialRouteName="Publicaciones">
-      <Stack.Screen name="Publicaciones" component={PublicationsScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="Publicaciones" component={PublicationsScreen} initialParams={{editable: true}} options={{headerShown: false}}/>
       <Stack.Screen name="new_publication" component={NewPublicationScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
+    </Stack.Navigator>
+  );
+}
+
+function Profile() {
+  return (
+    <Stack.Navigator initialRouteName="Profile">
+      <Stack.Screen name="Profile" component={ProfileScreen} initialParams={{allowEditing: true}}  options={{headerShown: false}}/>
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{headerShown: false}}/>
+    </Stack.Navigator>
+  );
+}
+
+function Search() {
+  return (
+    <Stack.Navigator initialRouteName="SearchQuery">
+      <Stack.Screen name="SearchQuery" component={SearchScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="SearchResults" component={PublicationsScreen} initialParams={{editable: false}} options={{headerShown: false}}/>
+      <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
       <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
@@ -61,8 +84,8 @@ function Screens() {
       ) : (
         <Drawer.Navigator>
           <Drawer.Screen name="Mis Recomendaciones" options={{headerShown: false}} component={RecomendationsScreen} />
-          <Drawer.Screen name="Buscar" options={{headerShown: false}} component={SearchScreen} />
-          <Drawer.Screen name="Perfil" options={{headerShown: false}} component={ProfileScreen} />
+          <Drawer.Screen name="Buscar" options={{headerShown: false}} component={Search} />
+          <Drawer.Screen name="Perfil" options={{headerShown: false}} component={Profile} />
           <Drawer.Screen name="Mis Reservas" options={{headerShown: false}} component={ReservationsScreen} />
           <Drawer.Screen name="Mis Publicaciones" options={{headerShown: false}} component={Publications} />
         </Drawer.Navigator>

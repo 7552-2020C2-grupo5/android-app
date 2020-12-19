@@ -2,8 +2,26 @@
 
 import * as firebase from 'firebase';
 import * as Google from 'expo-google-app-auth';
+import { v4 as uuidv4 } from 'uuid';
 
 const PUBLICATIONS_ENDPOINT = "https://bookbnb5-publications.herokuapp.com/v1/publication"
+
+
+async function uploadImageToFirebase(photo) {
+    try{
+        const response = await fetch(photo.uri);
+        const blob = await response.blob();
+
+       // acá deberíamos usar algo como uuid() para generar identificadores únicos
+        const ref = firebase.storage().ref().child(uuidv4());
+        await ref.put(blob)
+        const url = ref.getDownloadURL();
+        return url
+    } catch(e) {
+        alert(e)
+    }
+}
+
 
 function login(username='eve.holt@reqres.in', password='cityslicka', token_callback) {
     var user = username;
@@ -108,4 +126,4 @@ async function geoEncode(str) {
     })
 }
 
-export { doGoogleLogin, login, postPublication, geoEncode, geoDecode }
+export { doGoogleLogin, login, postPublication, geoEncode, geoDecode, uploadImageToFirebase }

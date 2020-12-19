@@ -8,6 +8,11 @@ export default function Map(props) {
     const [text, setText] = React.useState('')
     const [coordinates, setCoordinates] = React.useState([0, 0])
 
+    React.useEffect(() => {
+        props.onChangeCoordinates(coordinates)
+    }, [coordinates])
+
+
     async function handleFind(text) {
         try {
             var coordinates = await geoEncode(text)

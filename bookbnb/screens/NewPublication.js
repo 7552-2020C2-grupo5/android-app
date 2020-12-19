@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { AsyncStorage, Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Divider, TextInput, Button } from 'react-native-paper';
 import { Input } from 'react-native-elements';
 import { postPublication } from '../utils';
@@ -7,9 +7,11 @@ import * as firebase from 'firebase';
 import Map from '../components/maps';
 import { CameraInput, CameraPreview } from '../components/camera';
 import { SimpleTextInput } from '../components/components';
+import { Requester } from '../requester/requester';
+import { uploadImageToFirebase } from '../utils';
 
 function NewPublicationScreen(props) {
-    const [publication, setPublication] = React.useState({
+    var emptyPublication = {
         title: '',
         description: '',
         rooms: '',
@@ -17,29 +19,34 @@ function NewPublicationScreen(props) {
         bathrooms: '',
         price_per_night: '',
         image_blob: [],
-    });
-
-    function handlePublish() {
-        console.log(publication)
-        postPublication(publication)
+        coordinates: [0, 0],
     }
 
-    // TODO: mover a requester
+    const [publication, setPublication] = React.useState(emptyPublication);
+
+    var requester = new Requester();
+
+    async function handlePublish() {
+        var userID = await AsyncStorage.getItem('userID')
+        var photoURL = null
+        var blob = null
+        if (publication.image_blob.length){
+            blob = publication.image_blob.pop();
+            photoURL = await uploadImageToFirebase(blob);
+        }
+        publication.photoURL = [ photoURL ]
+        publication.user_id = Number(userID)
+        await requester.publish(publication)
+        props.navigation.navigate('Publicaciones');
+        setPublication(publication)
+    }
+
     async function handlePhotoTaken(photo) {
+        while (publication.image_blob.length) {
+            publication.image_blob.pop()
+        }
         publication.image_blob.push(photo)
         setPublication(publication)
-
-        try {
-            const response = await fetch(photo.uri);
-            const blob = await response.blob();
-
-            // acá deberíamos usar algo como uuid() para generar identificadores únicos
-            const ref = firebase.storage().ref().child('testing');
-            await ref.put(blob)
-            const url = ref.getDownloadURL().then(url => console.log(`URL es : ${url}`))
-        } catch(e) {
-            console.log(e.message)
-        }
     }
 
     return (
@@ -52,40 +59,37 @@ function NewPublicationScreen(props) {
                     </View>
                     <Text style={{fontWeight: 'bold'}}> Título de la publicación </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.title = text;
-                        setPublication(_publication);
+                        publication.title = text;
+                        setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de cuartos </Text>
-                    <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.rooms = Number(text);
-                        setPublication(_publication);
+                    <SimpleTextInput keyboardType='numeric' onChangeText={text => {
+                        publication.rooms = Number(text);
+                        setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de camas </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.beds = Number(text);
-                        setPublication(_publication);
+                        publication.beds = Number(text);
+                        setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Cantidad de baños </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.bathrooms = Number(text);
-                        setPublication(_publication);
+                        publication.bathrooms = Number(text);
+                        setPublication(publication);
                         }} />
                     <Text style={{fontWeight: 'bold'}}> Precio por noche </Text>
                     <SimpleTextInput onChangeText={text => {
-                        var _publication = publication;
-                        _publication.price_per_night = Number(text);
-                        setPublication(_publication);
+                        publication.price_per_night = Number(text);
+                        setPublication(publication);
                         }} />
-                    <Map/>
+                    <Map onChangeCoordinates={coordinates => {
+                        publication.coordinates = coordinates;
+                        setPublication(publication);
+                    }}/>
                     <Text style={{fontWeight: 'bold'}}> Descripción </Text>
                     <SimpleTextInput multiline={true} onChangeText={text => {
-                        var _publication = publication;
-                        _publication.description = text;
-                        setPublication(_publication);
+                        publication.description = text;
+                        setPublication(publication);
                         }} />
                     <Button dark={true} onPress={handlePublish} mode="contained"> Publicar </Button>
                 </View>
