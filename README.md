@@ -1,23 +1,26 @@
-# Bookbnb
----
+# Componente mobile de [BookBnB](https://taller-de-programacion-2.github.io/2020-10-04-trabajo-practico/)
 
-# Levantar expo
 
-## Construir imagen
 
+
+Entorno de desarrollo
+----------------------
+
+Instalar expo y dependencias:
+
+```bash
+npm install --global expo-cli && npm install
 ```
-docker build . --tag bookbnb-app
+
+Levantar expo y entorno de desarrollo
+
+```bash
+expo start
 ```
 
-## Levantar contenedor
 
-```
-docker run -it \
-           --rm \
-           -v $PWD:/app \
-           -p 19006:19006 \
-           -p 19001:19001 \
-           -p 19000:19000 \
-           bookbnb-app
-```
+Deploy
+--------
+
+Está configurado un deploy automático a http://bookbnb-app.herokuapp.com/ cuando se realiza un commit a `heroku-deploy`
 

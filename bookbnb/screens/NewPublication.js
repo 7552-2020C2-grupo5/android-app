@@ -9,8 +9,11 @@ import { CameraInput, CameraPreview } from '../components/camera';
 import { SimpleTextInput } from '../components/components';
 import { Requester } from '../requester/requester';
 import { uploadImageToFirebase } from '../utils';
+import { UserContext } from '../context/userContext';
 
 function NewPublicationScreen(props) {
+    const { uid, token, setToken } = React.useContext(UserContext);
+
     var emptyPublication = {
         title: '',
         description: '',
@@ -27,7 +30,6 @@ function NewPublicationScreen(props) {
     var requester = new Requester();
 
     async function handlePublish() {
-        var userID = await AsyncStorage.getItem('userID')
         var photoURL = null
         var blob = null
         if (publication.image_blob.length){
@@ -35,7 +37,7 @@ function NewPublicationScreen(props) {
             photoURL = await uploadImageToFirebase(blob);
         }
         publication.photoURL = [ photoURL ]
-        publication.user_id = Number(userID)
+        publication.user_id = Number(uid)
         await requester.publish(publication)
         props.navigation.navigate('Publicaciones');
         setPublication(publication)

@@ -4,9 +4,13 @@ import { StyleSheet, View, Text, AsyncStorage } from 'react-native';
 import { ProfileRowData } from '../components/components';
 import { Requester } from '../requester/requester';
 import { Icon } from 'react-native-elements';
+import { UserContext } from '../context/userContext';
 
+
+//@refresh reset
 
 export default function ProfileScreen(props) {
+    const { uid, token, setToken } = React.useContext(UserContext);
     const [userData, setUserData] = React.useState({
         id: null,
         firstName: 'nothing',
@@ -19,15 +23,12 @@ export default function ProfileScreen(props) {
     var requester = new Requester()
 
     async function fetchData() {
-        //AsyncStorage.removeItem('userID')
-        //AsyncStorage.removeItem('userToken')
-
-
         var userID = props.route.params.userID
-        if (!userID) {
-            userID = await AsyncStorage.getItem('userID')
+        if (typeof userID === 'undefined') {
+            userID = uid
         }
         requester.profileData({id: userID}).then(userData => {
+            console.log(`fetching data for user ${userID}`)
             setUserData({
                 id: userID,
                 firstName: userData.first_name,
@@ -58,6 +59,11 @@ export default function ProfileScreen(props) {
                 {props.route.params.allowEditing &&
                 <View>
                     <Icon onPress={() => props.navigation.navigate('EditProfile', {userData: userData})} name='pencil' type='evilicon' color='black' size={40}/>
+                </View>
+                }
+               {props.route.params.allowMessaging &&
+                <View>
+                    <Icon onPress={() => props.navigation.navigate('chatConversation', {dstUserID: props.route.params.userID})} name='sc-telegram' type='evilicon' color='black' size={40}/>
                 </View>
                 }
                 <DataTable>

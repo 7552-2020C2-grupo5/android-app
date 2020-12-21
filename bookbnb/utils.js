@@ -2,6 +2,7 @@
 
 import * as firebase from 'firebase';
 import * as Google from 'expo-google-app-auth';
+import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
 
 const PUBLICATIONS_ENDPOINT = "https://bookbnb5-publications.herokuapp.com/v1/publication"
@@ -23,29 +24,9 @@ async function uploadImageToFirebase(photo) {
 }
 
 
-function login(username='eve.holt@reqres.in', password='cityslicka', token_callback) {
-    var user = username;
-    var pass = 'none';
-    // si nos pasan test nos logeamos con los defaults
-    if (username == 'test') {
-        username = "eve.holt@reqres.in";
-        password = "cityslicka";
-    }
-    console.log(`Making post with ${username}, ${password}`)
-    fetch('https://reqres.in/api/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            email: username,
-            password: password,
-        })
-    }).then(response => {
-        response.json().then(value => token_callback(value.token) )
-    }).catch(error => {
-        console.log(error)
-    })
+function decodeJWTPayload(jwt) {
+    var payload = jwt.split('.')[1]
+    return JSON.parse(Buffer.from(payload, "base64").toString());
 }
 
 // Abre una view para realizar logeo con google, devuelve las credenciales
@@ -126,4 +107,4 @@ async function geoEncode(str) {
     })
 }
 
-export { doGoogleLogin, login, postPublication, geoEncode, geoDecode, uploadImageToFirebase }
+export { doGoogleLogin, decodeJWTPayload, postPublication, geoEncode, geoDecode, uploadImageToFirebase }
