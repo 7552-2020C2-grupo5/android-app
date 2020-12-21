@@ -5,17 +5,18 @@ import { SnackBar, AppLogo } from '../components/components';
 import { SocialIcon } from 'react-native-elements';
 import { doGoogleLogin, login } from '../utils';
 import { Requester } from '../requester/requester';
+import { UserContext } from '../context/userContext';
 
 
 export default function LoginScreen(props) {
+    const { UID, token, setToken } = React.useContext(UserContext);
     const [username, setUsername] = React.useState('');
     const [pass, setPass] = React.useState('');
 
     var requester = new Requester();
 
     async function userTokenIsSaved() {
-        var userToken = await AsyncStorage.getItem('userToken');
-        return !(userToken == null)
+        return !(token == null)
     }
 
     React.useEffect(() => {
@@ -33,8 +34,7 @@ export default function LoginScreen(props) {
         }
         try {
             var loginResult = await requester.login(userCredentials);
-            await AsyncStorage.setItem('userID', String(loginResult.id));
-            await AsyncStorage.setItem('userToken', loginResult.token);
+            setToken(loginResult.token)
             props.route.params['func'](true)
             console.log(loginResult)
         } catch(e) {
@@ -42,8 +42,7 @@ export default function LoginScreen(props) {
         }
     }
 
-    //AsyncStorage.removeItem('userToken')
-    //AsyncStorage.removeItem('userID')
+    //AsyncStorage.removeItem('userContext')
 
     return (
         <View style={styles.container}>

@@ -3,6 +3,7 @@ import { AsyncStorage, Paragraph, Title, Image, ScrollView, StyleSheet, View, Te
 import { Avatar, Button, Chip, Card, Divider, TextInput, List } from 'react-native-paper';
 import { Icon } from 'react-native-elements';
 import { Requester } from '../requester/requester';
+import { UserContext } from '../context/userContext';
 
 
 function Comment(props) {
@@ -165,19 +166,17 @@ function GuestCommentsSection(props) {
 }
 
 export default function PublicationScreen(props) {
-    const [userID, setUserID] = React.useState(null);
+    const { uid, token, setToken } = React.useContext(UserContext);
 
     let publication = props.route.params.publication
 
     function handleGoToProfile() {
-        props.navigation.navigate('UserProfile', {userID: publication.user_id, allowEditing: false})
+        props.navigation.navigate('UserProfile', {
+            userID: publication.user_id,
+            allowEditing: false,
+            allowMessaging: true
+        })
     }
-
-    React.useEffect(() => {
-        let userID = AsyncStorage.getItem('userID').then(userID =>
-            setUserID(userID)
-        )
-    }, [])
 
     return (
         <View>
@@ -201,7 +200,7 @@ export default function PublicationScreen(props) {
                     <List.Item title="Precio por noche" right={() => <Text>ARG $ {publication.price_per_night}</Text>}/>
                 </List.Section>
                 <Divider/>
-                {userID == publication.user_id? (
+                {uid == publication.user_id? (
                     <OwnerCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
                 ):(
                     <GuestCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>

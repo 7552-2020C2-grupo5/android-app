@@ -6,16 +6,18 @@ import { Icon } from 'react-native-elements';
 import { Requester } from '../requester/requester';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
-import { uploadImageToFirebase } from '../utils';
+import { uploadImageToFirebase, decodeJWTPayload } from '../utils';
+import { UserContext } from '../context/userContext';
 
 
 function EditProfileScreen(props) {
+    const { uid, token, setToken } = React.useContext(UserContext);
     const [userImage, setUserImage] = React.useState(null);
     const [userData, setUserData] = React.useState(props.route.params.userData);
 
     var requester = new Requester();
 
-    const pickImage = async () => {
+   const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,

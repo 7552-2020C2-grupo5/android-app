@@ -10,6 +10,8 @@ import { RecomendationsScreen } from './screens/Recomendations'
 import { NewPublicationScreen } from './screens/NewPublication'
 import { RegistrationScreen } from './screens/Register'
 import { EditProfileScreen } from './screens/EditProfile'
+import { MyChatsScreen } from './screens/MyChats'
+import { ChatScreen } from './screens/Chat'
 import { SearchScreen } from './screens/Search'
 import { View, StatusBar, Text, StyleSheet, SafeAreaView, AsyncStorage } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -18,6 +20,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SnackBar } from './components/components';
 import { SafeAreaStyle } from './styles/GlobalStyles';
 import Geocoder from 'react-native-geocoding';
+import { UserContextProvider } from './context/userContext';
 
 
 //@refresh reset
@@ -47,6 +50,7 @@ function Publications() {
       <Stack.Screen name="new_publication" component={NewPublicationScreen} options={{headerShown: false}}/>
       <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
       <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="chatConversation" component={ChatScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }
@@ -71,6 +75,15 @@ function Search() {
   );
 }
 
+function Chat() {
+  return (
+    <Stack.Navigator initialRouteName="chats">
+      <Stack.Screen name="chats" component={MyChatsScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="chatConversation" component={ChatScreen} options={{headerShown: false}}/>
+    </Stack.Navigator>
+  );
+}
+
 function Screens() {
   const [logged, setLogged] = React.useState(false);
 
@@ -88,6 +101,7 @@ function Screens() {
           <Drawer.Screen name="Perfil" options={{headerShown: false}} component={Profile} />
           <Drawer.Screen name="Mis Reservas" options={{headerShown: false}} component={ReservationsScreen} />
           <Drawer.Screen name="Mis Publicaciones" options={{headerShown: false}} component={Publications} />
+          <Drawer.Screen name="Mis consultas" options={{headerShown: false}} component={Chat} />
         </Drawer.Navigator>
       )}
     </NavigationContainer>
@@ -97,7 +111,9 @@ function Screens() {
 export default function App() {
   return (
     <SafeAreaView style={SafeAreaStyle.droidSafeArea}>
-      <Screens/>
+      <UserContextProvider>
+        <Screens/>
+      </UserContextProvider>
     </SafeAreaView>
   );
 }
