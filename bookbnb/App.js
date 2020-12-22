@@ -79,7 +79,7 @@ function Chat() {
   return (
     <Stack.Navigator initialRouteName="chats">
       <Stack.Screen name="chats" component={MyChatsScreen} options={{headerShown: false}}/>
-      <Stack.Screen name="chatConversation" component={ChatScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="_chatConversation" component={ChatScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }

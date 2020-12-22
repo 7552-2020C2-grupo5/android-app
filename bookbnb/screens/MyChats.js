@@ -1,34 +1,33 @@
 import * as React from 'react';
 import { Button, AsyncStorage, View, ScrollView, StatusBar, Text, Title, StyleSheet } from 'react-native';
-import { Card } from 'react-native-paper';
-import { ListItem } from 'react-native-elements';
+import { Card, Avatar } from 'react-native-paper';
+import { ListItem, Icon } from 'react-native-elements';
 import * as firebase from 'firebase';
+import { UserContext } from '../context/userContext';
 
 //@reset refresh
 
 
 export default function MyChatsScreen(props) {
+    const { uid, token, setToken } = React.useContext(UserContext);
     const [conversations, setConversations] = React.useState([]);
-    const [myUID, setMyUID] = React.useState('');
+
+    function _getOppositeUserID(usersIDs) {
+        var oppositeUser = usersIDs[0] == uid? usersIDs[1] : usersIDs[0]
+        return oppositeUser
+    }
 
     async function setupMessageListener() {
-        myUID = await AsyncStorage.getItem('userID');
-        setMyUID(myUID);
-        firebase.database().ref('members').on('value', (snapshot) => {
+        firebase.database().ref('metadata').on('value', (snapshot) => {
             const conversations_ = snapshot.val();
-            var myChatsKeys = Object.keys(conversations_).filter(k => {
-                return (conversations_[k].includes(myUID))
+            let myChatsKeys = Object.keys(conversations_).filter(k => {
+                return (k.split('-').includes(String(uid)))
             })
-
-            console.log(`myChatKeys = ${myChatsKeys}`)
-
-            var newConversations = {}
-            myChatsKeys.forEach((chatKey) => {
-                firebase.database().ref(`messages/${chatKey}`).on('value', (snapshot) => {
-                    newConversations[chatKey] = snapshot;
-                })
+            var __conversations = {}
+            myChatsKeys.forEach(chatKey => {
+                __conversations[chatKey] = conversations_[chatKey]
             })
-            setConversations(newConversations);
+            setConversations(__conversations)
         });
     }
 
@@ -40,12 +39,23 @@ export default function MyChatsScreen(props) {
         <View>
             {
                 Object.keys(conversations).map((chat, i) => {
+                    let dstUserID = _getOppositeUserID(chat.split('-'));
+                    let userData = conversations[chat]['members'][dstUserID];
                     return (
-                        <ListItem onPress={() => {
-                            props.navigation.navigate('chatConversation', {
-                                usersIDs: chat.split('-')
-                            })
-                        }} key={i}><Text>{chat}</Text></ListItem>
+                        <>
+                            <ListItem onPress={() => {
+                                props.navigation.navigate('_chatConversation', {
+                                    dstUserID: dstUserID
+                                })
+                            }} key={i}>
+                                {userData.profilePic? (
+                                    <Avatar.Image source={{ uri: userData.profilePic }} size={40}/>
+                                ):(
+                                    <Icon name='pencil' type='evilicon' onPress={pickImage} reverse={true} raised color='black' size={30}/>
+                                )}
+                                <Text>{userData['name']}</Text>
+                            </ListItem>
+                        </>
                     );
                 })
             }

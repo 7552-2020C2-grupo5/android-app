@@ -20,7 +20,6 @@ export default function LoginScreen(props) {
     }
 
     React.useEffect(() => {
-        console.log('checking for token...')
         userTokenIsSaved().then(value => {
             props.route.params['func'](value)
         })
@@ -36,7 +35,6 @@ export default function LoginScreen(props) {
             var loginResult = await requester.login(userCredentials);
             setToken(loginResult.token)
             props.route.params['func'](true)
-            console.log(loginResult)
         } catch(e) {
             alert(e)
         }

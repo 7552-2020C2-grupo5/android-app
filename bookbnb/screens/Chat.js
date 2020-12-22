@@ -3,6 +3,8 @@ import { AsyncStorage, View, ScrollView, StatusBar, Text, Title, StyleSheet } fr
 import { Card, Button, Divider } from 'react-native-paper';
 import * as firebase from 'firebase';
 import { SimpleTextInput } from '../components/components';
+import { UserContext } from '../context/userContext';
+import { v4 as uuidv4 } from 'uuid';
 
 //@reset refresh
 
@@ -19,7 +21,7 @@ function AnswerComment(props) {
         backgroundColor: props.own? '#ffd': '#fda',
         margin: 10,
         marginLeft: props.own? 50:0,
-        marginRight: props.own? 0: 50,
+       marginRight: props.own? 0: 50,
     }
 
     return(
@@ -31,13 +33,21 @@ function AnswerComment(props) {
 
 
 export default function ChatScreen(props) {
+    const { uid, token, requester, setToken } = React.useContext(UserContext);
     const [currentMsg, setCurrentMsg] = React.useState('');
     const [messages, setMessages] = React.useState([]);
-    const [myUID, setMyUID] = React.useState('');
     const [dstUserID, setDstUserID] = React.useState(props.route.params.dstUserID);
 
     React.useEffect(() => {
-        setupMessageListener()
+        var refs = setupMessageListener()
+        var msgKey = buildMessagesKey([uid, dstUserID])
+        return () => {
+            console.log('unmounting...')
+            firebase.database().ref('metadata/' + msgKey).off('value', refs[0])
+            firebase.database().ref('messages/' + msgKey).off('value', refs[1])
+        }
+
+//        return () => firebase.database().ref().off('value')
     }, [])
 
     function buildMessagesKey(userIDs) {
@@ -45,31 +55,46 @@ export default function ChatScreen(props) {
     }
 
     function handleOnSend() {
-        var msgRoute = `messages/${buildMessagesKey([myUID, dstUserID])}/${Date.now()}`
+        var msgRoute = `messages/${buildMessagesKey([uid, dstUserID])}/${Date.now()}`
         var msg = {
-            from: myUID,
+            from: uid,
             msg: currentMsg,
         }
         firebase.database().ref(msgRoute).set(msg)
     }
 
-    async function setupMessageListener() {
-        var uid = await AsyncStorage.getItem('userID');
-        setMyUID(uid)
+    async function _buildChatMetadata(usersIDs) {
+        var metadata = {
+            members: {}
+        }
+        for (const userID of usersIDs) {
+            var userData = await requester.profileData({id: userID})
+            metadata['members'][String(userID)] = {
+                name: `${userData.first_name} ${userData.last_name}`,
+                profilePic: userData.profile_picture
+            }
+        }
+        metadata.lastMsg = '';
+        return metadata
+    }
+
+    function setupMessageListener() {
         var msgKey = buildMessagesKey([uid, dstUserID])
-        await firebase.database().ref('members/' + msgKey).on('value', (snapshot) => {
+        var ref1 = firebase.database().ref('metadata/' + msgKey).on('value', (snapshot) => {
             if (!snapshot.val()) {
-                console.log(`creando conversacion para ${msgKey}`)
-                firebase.database().ref('members/' + msgKey).set(msgKey.split('-'))
+                _buildChatMetadata([uid, dstUserID]).then(value =>
+                    firebase.database().ref('metadata/' + msgKey).set(value)
+                )
             }
         });
-        await firebase.database().ref('messages/' + msgKey).on('value', (snapshot) => {
+        var ref2 = firebase.database().ref('messages/' + msgKey).on('value', (snapshot) => {
             const messages_ = snapshot.val();
-            console.log(messages_)
             if (messages_) {
                 setMessages(Object.values(messages_));
             }
         });
+        /* Para el cleanup de los hooks de firebase */
+        return [ref1, ref2]
     }
 
     return (
@@ -78,7 +103,7 @@ export default function ChatScreen(props) {
                 {
                     messages.map((message) => {
                         return (
-                            <AnswerComment own={message.from == myUID} text={message.msg}/>
+                            <AnswerComment key={uuidv4()} own={message.from == uid} text={message.msg}/>
                         );
                     })
                 }

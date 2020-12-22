@@ -15,7 +15,6 @@ export default function PublicationsScreen(props) {
     const fillPublications = () => {
         var searchParams = props.route.params.searchParams || {}
         requester.searchPublications(searchParams).then(publications => {
-            console.log(`Founded ${publications.length} publications`)
             setPublications(publications)
         })
     }

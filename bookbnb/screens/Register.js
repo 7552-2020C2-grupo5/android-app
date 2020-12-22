@@ -31,12 +31,8 @@ export default function RegistrationScreen(props) {
             password: password,
         }
 
-        console.log('Registrando usuario: ')
-        console.log(newUser)
-
         try {
             var registerResult = await requester.register(newUser);
-            console.log(registerResult)
             await AsyncStorage.setItem('userToken', registerResult.token);
             await AsyncStorage.setItem('userID', String(registerResult.id));
             props.navigation.goBack(null);

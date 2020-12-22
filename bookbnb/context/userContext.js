@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { AsyncStorage } from 'react-native';
 import { decodeJWTPayload } from '../utils';
+import { Requester } from '../requester/requester';
 
 const UserContext = React.createContext();
 
 const UserContextProvider = (props) => {
     const [UID, setUID] = React.useState(null);
     const [token, _setToken] = React.useState(null);
+    const [requester, _setRequester] = React.useState(null);
 
     React.useEffect(() => {
         AsyncStorage.getItem('userContext').then(ctx => {
@@ -18,6 +20,7 @@ const UserContextProvider = (props) => {
                 _setToken(jsonCtx.token);
             }
         })
+        _setRequester(new Requester())
     }, [])
 
     function setToken(token) {
@@ -36,7 +39,7 @@ const UserContextProvider = (props) => {
 
     return (
         <>
-            <UserContext.Provider value={{uid: UID, token: token, setToken: setToken}}>
+            <UserContext.Provider value={{uid: UID, token: token, requester: requester, setToken: setToken}}>
                 {props.children}
             </UserContext.Provider>
         </>
