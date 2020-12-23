@@ -48,10 +48,10 @@ export default function MyChatsScreen(props) {
                                     dstUserID: dstUserID
                                 })
                             }} key={i}>
-                                {userData.profilePic? (
+                                {userData.profilePic != null? (
                                     <Avatar.Image source={{ uri: userData.profilePic }} size={40}/>
                                 ):(
-                                    <Icon name='pencil' type='evilicon' onPress={pickImage} reverse={true} raised color='black' size={30}/>
+                                    <Icon name='pencil' type='evilicon' reverse={true} raised color='black' size={30}/>
                                 )}
                                 <Text>{userData['name']}</Text>
                             </ListItem>

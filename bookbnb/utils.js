@@ -34,6 +34,7 @@ async function doGoogleLogin() {
     let loginResult = await Google.logInAsync({
         scopes: ['openid', 'profile'],
         clientId: '323498260525-irodasbifo350ic2lftmj226ltink5mp.apps.googleusercontent.com',
+        androidStandaloneAppClientId: "AIzaSyDQV_tOPoqC9V8_muOya5qOgTLyRyqRAPc"
     });
     const credential = firebase.auth.GoogleAuthProvider.credential(loginResult.idToken);
     loginResult = await firebase.auth().signInWithCredential(credential);

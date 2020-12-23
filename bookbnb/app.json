@@ -23,6 +23,15 @@
       "favicon": "./assets/favicon.png"
     },
     "android": {
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyDQV_tOPoqC9V8_muOya5qOgTLyRyqRAPc",
+          "certificateHash": "F0564AD487C726988B965AC52B6AFECDA280EA0F"
+        },
+        "googleMaps": {
+          "apiKey": "AIzaSyDQV_tOPoqC9V8_muOya5qOgTLyRyqRAPc"
+        }
+      },
       "package": "com.taller2.bookbnb",
       "googleServicesFile": "./google-services.json"
     }
