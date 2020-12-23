@@ -11,6 +11,8 @@ import { Requester } from '../requester/requester';
 import { uploadImageToFirebase } from '../utils';
 import { UserContext } from '../context/userContext';
 
+//@refresh reset
+
 function NewPublicationScreen(props) {
     const { uid, token, setToken } = React.useContext(UserContext);
 
@@ -89,7 +91,7 @@ function NewPublicationScreen(props) {
                         setPublication(publication);
                     }}/>
                     <Text style={{fontWeight: 'bold'}}> Descripción </Text>
-                    <SimpleTextInput multiline={true} onChangeText={text => {
+                    <SimpleTextInput multiline onChangeText={text => {
                         publication.description = text;
                         setPublication(publication);
                         }} />

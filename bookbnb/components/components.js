@@ -41,7 +41,6 @@ function ProfileRowData(props) {
 }
 
 function ReservationCard(props) {
-    console.log(props)
     return (
         <Card {...props} style={styles.reservationCard}>
             <Card.Title
@@ -61,7 +60,6 @@ function ReservationCard(props) {
 
 
 function PublicationCardMinimal(props) {
-    console.log(props.publication.images)
     var image_url = Image.resolveAssetSource(defaultPublicationImg).uri
     if (props.publication.images.length) {
         image_url = props.publication.images[0].url
@@ -113,8 +111,6 @@ function SimpleTextInput(props) {
         },
         multiline: {
             flex: 1,
-            width: 330,
-            height: 150,
             paddingBottom: 20,
         }
     })
@@ -124,7 +120,7 @@ function SimpleTextInput(props) {
         );
     }
     return (
-        <TextInput textAlignVertical={"top"} numberOfLines={8} multiline={true} label='' {...props} mode='outlined' style={styles.multiline}/>
+        <TextInput multiline label='' {...props} mode='outlined' style={styles.multiline}/>
     );
 }
 

@@ -29,7 +29,7 @@ function CameraPreview(props) {
     return (
         <>
             <Camera
-                radio="1:1"
+                ratio="1:1"
                 ref={ref => { setCamera(ref) }}
                 type={Camera.Constants.Type.back}
                 style={{flex: 1}}

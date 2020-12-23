@@ -78,6 +78,7 @@ async function geoDecode(latitude, longitude) {
         method: 'GET',
     }).then(response => {
         return response.json().then(value => {
+            console.log(`returning ${value.display_name}`)
             return {
                 address: value.display_name
             }

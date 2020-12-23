@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { AsyncStorage, Paragraph, Title, Image, ScrollView, StyleSheet, View, Text } from 'react-native';
-import { Avatar, Button, Chip, Card, Divider, TextInput, List } from 'react-native-paper';
+import { Dimensions, AsyncStorage, Paragraph, Title, Image, ScrollView, StyleSheet, View, Text } from 'react-native';
+import { Avatar, Button, Chip, Card, Divider, TextInput, List, Surface } from 'react-native-paper';
 import { Icon } from 'react-native-elements';
 import { Requester } from '../requester/requester';
 import { UserContext } from '../context/userContext';
+import defaultPublicationImg from '../assets/default_publication_img.jpeg'
+import { geoDecode } from '../utils';
 
 
 function Comment(props) {
@@ -44,7 +46,6 @@ class QuestionComment extends React.Component {
     }
 
     setAnswer = (answer) => {
-        console.log(`seteando answer en ${answer}, valor actual ${this.state.answer}`)
         this.requester.addAnswer({
             publicationID: this.state.publicationID,
             questionID: this.state.question.id,
@@ -123,7 +124,7 @@ function OwnerCommentsSection(props){
             })}
             { selectedComment?
                 <>
-                    <TextInput mode="outlined" onChangeText={value => setCurrentComment(value)} />
+                    <TextInput mode="outlined"  onChangeText={value => setCurrentComment(value)} />
                     <Button onPress={() => selectedComment.setAnswer(currentComment)}> Enviar </Button>
                 </>
                 : null
@@ -159,8 +160,8 @@ function GuestCommentsSection(props) {
                     return <QuestionComment key={i} publicationID={props.publicationID} question={value} text={value.question}/>
                 })
             }
-            <TextInput mode="outlined" value={currentComment} onChangeText={value => setCurrentComment(value)} />
-            <Button onPress={handleNewQuestion}> Enviar </Button>
+            <TextInput style={{padding: 5}} multiline placeholder="Escribí una consulta..." mode="outlined" value={currentComment} onChangeText={value => setCurrentComment(value)} />
+            <Button mode="contained" onPress={handleNewQuestion}> Consultar </Button>
         </View>
     );
 }
@@ -178,33 +179,51 @@ export default function PublicationScreen(props) {
         })
     }
 
+    var image_url = Image.resolveAssetSource(defaultPublicationImg).uri
+    if (props.route.params.publication.images.length) {
+        image_url = props.route.params.publication.images[0].url
+    }
+
     return (
         <View>
             <ScrollView>
+                <Text style={{fontSize: 40, padding: 20, textAlign: 'center', fontWeight: 'bold'}}> {publication.title} </Text>
                 <View style={{flex: 1, flexDirection: 'row', padding: 10}}>
-                    <Image source={{ uri: 'https://picsum.photos/700' }} style={styles.image} />
+                    <Image source={{ uri: image_url }} style={styles.image} />
                     <View style={{position: 'absolute', bottom: 20, right: 30}}>
                         <Icon onPress={handleGoToProfile} raised reversed={true} size={30} name='person' type='octicon' color='#f03'/>
                     </View>
                 </View>
                 <Divider/>
-                <View>
-                    <Text style={{fontSize: 20, padding: 20, textAlign: 'center', fontWeight: 'bold'}}> {publication.title} </Text>
-                    <Text style={{fontSize: 15, padding: 20}}> {publication.description} </Text>
-                </View>
-                <Divider style={{backgroundColor: 'black'}}/>
-                <List.Section>
-                    <List.Subheader>Información</List.Subheader>
-                    <List.Item title="Cantidad de cuartos" right={() => <Text>{publication.rooms}</Text>}/>
-                    <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>}/>
-                    <List.Item title="Precio por noche" right={() => <Text>ARG $ {publication.price_per_night}</Text>}/>
-                </List.Section>
-                <Divider/>
-                {uid == publication.user_id? (
-                    <OwnerCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
-                ):(
-                    <GuestCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
-                )}
+                <Surface style={{elevation: 2, padding: 14}}>
+                    <List.Section>
+                        <List.Subheader>Decripción</List.Subheader>
+                        <Divider style={{backgroundColor: 'black'}}/>
+                        <Text style={{justifyContent: 'flex-end', fontSize: 15, padding: 10}}> {publication.description} </Text>
+                    </List.Section>
+                    <List.Section>
+                        <List.Subheader>Información</List.Subheader>
+                        <Divider style={{backgroundColor: 'black'}}/>
+                        <List.Item title="Cantidad de cuartos" right={() => <Text>{publication.rooms}</Text>}/>
+                        <List.Item title="Cantidad de baños" right={() => <Text>{publication.bathrooms}</Text>}/>
+                        <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>}/>
+                        <List.Item title="Precio por noche" right={() => <Text>ARG $ {publication.price_per_night}</Text>}/>
+                        <List.Item title="Ubicación" right={() => <Text>{
+                            // TODO. falta
+                            geoDecode(publication.loc.latitude, publication.loc.longitude).address
+                        }</Text>}/>
+                    </List.Section>
+                </Surface>
+                <Surface style={{elevation: 2, marginTop: 10 }}>
+                    <Divider/>
+                        <List.Subheader>Consultas realizadas al dueño</List.Subheader>
+                    <Divider style={{backgroundColor: 'black'}}/>
+                    {uid == publication.user_id? (
+                        <OwnerCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
+                    ):(
+                        <GuestCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
+                    )}
+                </Surface>
             </ScrollView>
         </View>
     );
@@ -213,9 +232,8 @@ export default function PublicationScreen(props) {
 const styles = StyleSheet.create({
     image: {
         flex: 1,
-        width: null,
         resizeMode: 'contain',
-        height: 300,
+        aspectRatio: 1
     },
 });
 
