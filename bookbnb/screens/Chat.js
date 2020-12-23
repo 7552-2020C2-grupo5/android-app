@@ -37,6 +37,7 @@ export default function ChatScreen(props) {
     const [currentMsg, setCurrentMsg] = React.useState('');
     const [messages, setMessages] = React.useState([]);
     const [dstUserID, setDstUserID] = React.useState(props.route.params.dstUserID);
+    const scrollView = React.useRef();
 
     React.useEffect(() => {
         var refs = setupMessageListener()
@@ -61,6 +62,7 @@ export default function ChatScreen(props) {
             msg: currentMsg,
         }
         firebase.database().ref(msgRoute).set(msg)
+        setCurrentMsg('');
     }
 
     async function _buildChatMetadata(usersIDs) {
@@ -99,7 +101,11 @@ export default function ChatScreen(props) {
 
     return (
         <View style={{margin: 10, flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'stretch'}}>
-            <ScrollView style={{flex: 1, margin: 10}}>
+            <ScrollView
+                ref={scrollView}
+                onContentSizeChange={() => { scrollView.current.scrollToEnd({animated: true})}}
+                style={{flex: 1, margin: 10}}
+            >
                 {
                     messages.map((message) => {
                         return (
@@ -110,7 +116,7 @@ export default function ChatScreen(props) {
             </ScrollView>
             <Divider/>
             <View style={{alignItems: 'center'}}>
-                <SimpleTextInput onChangeText={value => { setCurrentMsg(value) }}/>
+                <SimpleTextInput placeholder="Escribe una consulta..." value={currentMsg} onChangeText={value => { setCurrentMsg(value) }}/>
                 <Button mode="contained" onPress={handleOnSend}>Enviar</Button>
             </View>
         </View>

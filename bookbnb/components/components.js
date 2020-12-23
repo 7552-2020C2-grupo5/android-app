@@ -19,8 +19,10 @@ import {
     View,
     TouchableHighlight,
     Dimensions,
+    Image,
 } from 'react-native';
 
+import defaultPublicationImg from '../assets/default_publication_img.jpeg'
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -59,9 +61,14 @@ function ReservationCard(props) {
 
 
 function PublicationCardMinimal(props) {
+    console.log(props.publication.images)
+    var image_url = Image.resolveAssetSource(defaultPublicationImg).uri
+    if (props.publication.images.length) {
+        image_url = props.publication.images[0].url
+    }
     return (
         <Card {...props} style={styles.publicationCard}>
-            <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+            <Card.Cover source={{ uri: image_url }} />
             <Card.Content>
                 <Title> {props.publication.title} </Title>
                 <Paragraph>{props.publication.description}</Paragraph>
