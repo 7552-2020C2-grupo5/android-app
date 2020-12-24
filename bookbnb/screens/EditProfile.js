@@ -71,11 +71,11 @@ function EditProfileScreen(props) {
         <ScrollView>
             <View style={{padding: 10}}>
                 <View style={{flex: 1, alignItems: 'center', padding: 30}}>
-                {userImage? (
-                    <Avatar.Image source={{ uri: userImage.uri }} size={140}/>
-                ):(
-                    <Icon name='pencil' type='evilicon' onPress={pickImage} reverse={true} raised color='black' size={70}/>
-                )}
+                  {userImage? (
+                      <Avatar.Image source={{ uri: userImage.uri }} size={140}/>
+                  ):(
+                      <Icon name='pencil' type='evilicon' onPress={pickImage} reverse={true} raised color='black' size={70}/>
+                  )}
                 </View>
                 <Text style={{fontWeight: 'bold'}}>Nombre</Text>
                 <SimpleTextInput value={userData.firstName} onChangeText={value => {

@@ -3,6 +3,7 @@ import { View, ScrollView, StatusBar, Text, Title, StyleSheet } from 'react-nati
 import { Button, TextInput } from 'react-native-paper';
 import MapView, { Marker } from 'react-native-maps';
 import { geoDecode, geoEncode } from '../utils';
+import { Icon } from 'react-native-elements';
 
 export default function Map(props) {
     const [text, setText] = React.useState('')
@@ -25,39 +26,40 @@ export default function Map(props) {
 
     async function handleDragEnd(latitude, longitude) {
         var address = await geoDecode(latitude, longitude)
-        console.log(address)
         setText(address)
     }
 
     return (
-        <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-            <View>
-                <TextInput dense={true} onChangeText={text => { setText(text) }} label='' {...props} mode='outlined' style={styles.input}/>
-            </View>
-            <MapView
-                style={{height: 300, width: 300}}
-                region={{latitude: coordinates[0], longitude: coordinates[1], latitudeDelta: 0.0922, longitudeDelta: 0.0421,}}
-            >
-                <Marker
-                    draggable
-                    coordinate={{latitude: coordinates[0], longitude: coordinates[1]}}
-                    onDragEnd={e => handleDragEnd(
-                        e.nativeEvent.coordinate.latitude,
-                        e.nativeEvent.coordinate.longitude
-                    )}
+        <View style={{margin: 5, justifyContent: 'center', alignItems: 'stretch'}}>
+            <Text style={{fontWeight: 'bold'}}> Dirección </Text>
+            <View style={{alignItems: 'center', flexDirection: 'row' }}>
+                <TextInput
+                    style={{flex: 1}}
+                    onChangeText={text => { setText(text) }}
+                    mode='outlined'
                 />
-            </MapView>
-            <Button mode="contained" dark={true} onPress={() => handleFind(text)}> Buscar </Button>
+                <Icon onPress={() => handleFind(text)} name='location' type='evilicon' color='black' size={50}/>
+            </View>
+            <View>
+                <MapView
+                    style={{height: 200, width: 310, margin: 10}}
+                    region={{latitude: coordinates[0], longitude: coordinates[1], latitudeDelta: 0.0922, longitudeDelta: 0.0421,}}
+                >
+                    <Marker
+                        draggable
+                        coordinate={{latitude: coordinates[0], longitude: coordinates[1]}}
+                        onDragEnd={e => handleDragEnd(
+                            e.nativeEvent.coordinate.latitude,
+                            e.nativeEvent.coordinate.longitude
+                        )}
+                    />
+                </MapView>
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    input: {
-        width: 330,
-        height: 40,
-        paddingBottom: 20,
-    },
     multiline: {
         flex: 1,
         width: 330,

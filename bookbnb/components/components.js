@@ -103,16 +103,13 @@ function AddNewButton(props) {
 }
 
 function SimpleTextInput(props) {
-    const styles = StyleSheet.create({
+   const styles = StyleSheet.create({
         input: {
-            width: 330,
-            height: 40,
-            paddingBottom: 20,
-        },
-        multiline: {
+            minHeight: 70,
+            margin: 5,
             flex: 1,
             paddingBottom: 20,
-        }
+        },
     })
     if(!props.multiline){
         return (
@@ -120,7 +117,7 @@ function SimpleTextInput(props) {
         );
     }
     return (
-        <TextInput multiline label='' {...props} mode='outlined' style={styles.multiline}/>
+        <TextInput multiline label='' {...props} mode='outlined' style={styles.input}/>
     );
 }
 

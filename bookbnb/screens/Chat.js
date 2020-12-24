@@ -115,7 +115,7 @@ export default function ChatScreen(props) {
                 }
             </ScrollView>
             <Divider/>
-            <View style={{alignItems: 'center'}}>
+            <View style={{flex: 0.3, alignItems: 'stretch'}}>
                 <SimpleTextInput placeholder="Escribe una consulta..." value={currentMsg} onChangeText={value => { setCurrentMsg(value) }}/>
                 <Button mode="contained" onPress={handleOnSend}>Enviar</Button>
             </View>
