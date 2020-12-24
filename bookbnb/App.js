@@ -10,6 +10,7 @@ import { RecomendationsScreen } from './screens/Recomendations'
 import { NewPublicationScreen } from './screens/NewPublication'
 import { RegistrationScreen } from './screens/Register'
 import { EditProfileScreen } from './screens/EditProfile'
+import { LogoutScreen } from './screens/Logout'
 import { MyChatsScreen } from './screens/MyChats'
 import { ChatScreen } from './screens/Chat'
 import { SearchScreen } from './screens/Search'
@@ -20,7 +21,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SnackBar } from './components/components';
 import { SafeAreaStyle } from './styles/GlobalStyles';
 import Geocoder from 'react-native-geocoding';
-import { UserContextProvider } from './context/userContext';
+import { UserContextProvider, UserContext } from './context/userContext';
 
 
 //@refresh reset
@@ -85,27 +86,28 @@ function Chat() {
 }
 
 function Screens() {
-  const [logged, setLogged] = React.useState(false);
+    const { UID, token } = React.useContext(UserContext);
 
-  return (
-    <NavigationContainer>
-      { logged == false? (
-        <Stack.Navigator>
-          <Stack.Screen name="Login" component={LoginScreen} initialParams={{func: setLogged}} options={{headerShown: false}}/>
-          <Stack.Screen name="Register" component={RegistrationScreen} options={{headerShown: false}}/>
-        </Stack.Navigator>
-      ) : (
-        <Drawer.Navigator>
-          <Drawer.Screen name="Mis Recomendaciones" options={{headerShown: false}} component={RecomendationsScreen} />
-          <Drawer.Screen name="Buscar" options={{headerShown: false}} component={Search} />
-          <Drawer.Screen name="Perfil" options={{headerShown: false}} component={Profile} />
-          <Drawer.Screen name="Mis Reservas" options={{headerShown: false}} component={ReservationsScreen} />
-          <Drawer.Screen name="Mis Publicaciones" options={{headerShown: false}} component={Publications} />
-          <Drawer.Screen name="Mis consultas" options={{headerShown: false}} component={Chat} />
-        </Drawer.Navigator>
-      )}
-    </NavigationContainer>
-  );
+    return (
+        <NavigationContainer>
+          { token == null? (
+            <Stack.Navigator>
+              <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
+              <Stack.Screen name="Register" component={RegistrationScreen} options={{headerShown: false}}/>
+            </Stack.Navigator>
+          ) : (
+            <Drawer.Navigator>
+              <Drawer.Screen name="Mis Recomendaciones" options={{headerShown: false}} component={RecomendationsScreen} />
+              <Drawer.Screen name="Buscar" options={{headerShown: false}} component={Search} />
+              <Drawer.Screen name="Perfil" options={{headerShown: false}} component={Profile} />
+              <Drawer.Screen name="Mis Reservas" options={{headerShown: false}} component={ReservationsScreen} />
+              <Drawer.Screen name="Mis Publicaciones" options={{headerShown: false}} component={Publications} />
+              <Drawer.Screen name="Mis consultas" options={{headerShown: false}} component={Chat} />
+              <Drawer.Screen name="Salir" options={{headerShown: false}} component={LogoutScreen} />
+            </Drawer.Navigator>
+          )}
+        </NavigationContainer>
+    );
 }
 
 export default function App() {

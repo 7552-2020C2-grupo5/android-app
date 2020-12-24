@@ -24,7 +24,7 @@ export default function SearchScreen(props) {
 
     return (
         <ScrollView>
-            <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'stretch'}}>
                 <View>
                     <Text style={{fontSize: 50, fontWeight: 'bold', textAlign: 'left', paddingBottom: 10}}> Encontrá </Text>
                     <Text style={{fontWeight: 'bold'}}> Mínima cantidad de baños </Text>

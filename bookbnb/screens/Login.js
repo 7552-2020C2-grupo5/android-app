@@ -4,27 +4,17 @@ import { Button, TextInput } from 'react-native-paper';
 import { SnackBar, AppLogo } from '../components/components';
 import { SocialIcon } from 'react-native-elements';
 import { doGoogleLogin, login } from '../utils';
-import { Requester } from '../requester/requester';
 import { UserContext } from '../context/userContext';
 
 
 export default function LoginScreen(props) {
-    const { UID, token, setToken } = React.useContext(UserContext);
+    const { UID, token, setToken, requester } = React.useContext(UserContext);
     const [username, setUsername] = React.useState('');
     const [pass, setPass] = React.useState('');
-
-    var requester = new Requester();
 
     async function userTokenIsSaved() {
         return !(token == null)
     }
-
-    React.useEffect(() => {
-        userTokenIsSaved().then(value => {
-            props.route.params['func'](value)
-        })
-    })
-
 
     async function handleLogin() {
         var userCredentials = {
@@ -34,7 +24,6 @@ export default function LoginScreen(props) {
         try {
             var loginResult = await requester.login(userCredentials);
             setToken(loginResult.token)
-            props.route.params['func'](true)
         } catch(e) {
             alert(e)
         }

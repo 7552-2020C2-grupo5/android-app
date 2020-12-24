@@ -37,9 +37,15 @@ const UserContextProvider = (props) => {
         console.log('Updated token!')
     }
 
+    function cleanCtx() {
+        _setToken(null);
+        setUID(null);
+        AsyncStorage.removeItem('userContext');
+    }
+
     return (
         <>
-            <UserContext.Provider value={{uid: UID, token: token, requester: requester, setToken: setToken}}>
+            <UserContext.Provider value={{uid: UID, token: token, requester: requester, setToken: setToken, cleanCtx: cleanCtx}}>
                 {props.children}
             </UserContext.Provider>
         </>

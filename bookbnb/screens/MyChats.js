@@ -35,12 +35,15 @@ export default function MyChatsScreen(props) {
         setupMessageListener()
     }, [])
 
+    let DEFAULT_USER_IMG = "https://i0.wp.com/www.repol.copl.ulaval.ca/wp-content/uploads/2019/01/default-user-icon.jpg"
+
     return (
         <View>
             {
                 Object.keys(conversations).map((chat, i) => {
                     let dstUserID = _getOppositeUserID(chat.split('-'));
                     let userData = conversations[chat]['members'][dstUserID];
+                    console.log(userData.profilePic)
                     return (
                         <>
                             <ListItem onPress={() => {
@@ -48,11 +51,7 @@ export default function MyChatsScreen(props) {
                                     dstUserID: dstUserID
                                 })
                             }} key={i}>
-                                {userData.profilePic != null? (
-                                    <Avatar.Image source={{ uri: userData.profilePic }} size={40}/>
-                                ):(
-                                    <Icon name='pencil' type='evilicon' reverse={true} raised color='black' size={30}/>
-                                )}
+                                <Avatar.Image source={{ uri: userData.profilePic || DEFAULT_USER_IMG }} size={40}/>
                                 <Text>{userData['name']}</Text>
                             </ListItem>
                         </>
