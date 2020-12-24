@@ -13,6 +13,7 @@ import { uploadImageToFirebase } from '../utils';
 import { UserContext } from '../context/userContext';
 
 
+
 function NewPublicationScreen(props) {
     const { uid, token, setToken, requester } = React.useContext(UserContext);
 
@@ -25,6 +26,26 @@ function NewPublicationScreen(props) {
 
     const [coordinates, setCoordinates] = React.useState({longitude: 0, latitude: 0})
     const [images, setImages] = React.useState([]);
+
+    React.useEffect(() => {
+        if (props.route.params.editing){
+            /* Si ya me viene una publicación es porque estoy editando */
+            let publication = props.route.params.publication
+            setTitle(publication.title)
+            setDescription(publication.description)
+            setRooms(String(publication.rooms))
+            setBeds(String(publication.beds))
+            setPrice(String(publication.price_per_night))
+            setBathrooms(String(publication.bathrooms))
+            setImages([{
+                uri: publication.images[0].url
+            }])
+            setCoordinates({
+                latitude: publication.loc.latitude,
+                longitude: publication.loc.longitude,
+            })
+        }
+    }, [])
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -42,22 +63,43 @@ function NewPublicationScreen(props) {
     async function handlePublish() {
         var photoURL = null
         for (const image of images) {
-            photoURL = await uploadImageToFirebase(image);
+            if (image.type) {
+                /* si tiene type es porque la acabo de sacar */
+                photoURL = await uploadImageToFirebase(image);
+            }
         }
-        var publication = {
-            user_id: Number(uid),
-            title: title,
-            description: description,
-            rooms: Number(rooms),
-            beds: Number(beds),
-            bathrooms: Number(bathrooms),
-            price_per_night: Number(price),
-            photoURL: [ photoURL ],
-            coordinates: [coordinates.longitude, coordinates.latitude],
+        if (!props.route.params.editing){
+            var publication = {
+                user_id: Number(uid),
+                title: title,
+                description: description,
+                rooms: Number(rooms),
+                beds: Number(beds),
+                bathrooms: Number(bathrooms),
+                price_per_night: Number(price),
+                photoURL: [photoURL],
+                coordinates: [coordinates.latitude, coordinates.longitude],
+            }
+            requester.publish(publication).then(() => {
+                props.navigation.navigate('Publicaciones');
+            })
+        } else {
+            let publication = {}
+            publication.id = props.route.params.publication.id
+            title && (publication.title = title)
+            description && (publication.description = description)
+            rooms && (publication.rooms = Number(rooms))
+            beds && (publication.beds = Number(beds))
+            bathrooms && (publication.bathrooms = Number(bathrooms))
+            price && (publication.price_per_night = Number(price))
+            photoURL && (publication.photoURL = [photoURL])
+            coordinates.latitude && (publication.coordinates = [coordinates.latitude, coordinates.longitude])
+
+            console.log(publication)
+            requester.updatePublication(publication).then(() => {
+                props.navigation.navigate('Publicaciones');
+            })
         }
-        requester.publish(publication).then(() => {
-            props.navigation.navigate('Publicaciones');
-        })
     }
 
     let DEFAULT_IMG = "https://i.stack.imgur.com/y9DpT.jpg"
@@ -74,27 +116,30 @@ function NewPublicationScreen(props) {
                         />
                         <AddNewButton onPress={pickImage}/>
                     </View>
-                    <Text style={{margin: 15}}> Completá los datos de tu publicación! </Text>
 
                     <Text style={{fontWeight: 'bold'}}> Título de la publicación </Text>
-                    <SimpleTextInput onChangeText={title => {setTitle(title)}} />
+                    <SimpleTextInput value={title} onChangeText={title => {setTitle(title)}} />
 
                     <Text style={{fontWeight: 'bold'}}> Cantidad de cuartos </Text>
-                    <SimpleTextInput keyboardType='numeric' onChangeText={rooms => {setRooms(rooms)}} />
+                    <SimpleTextInput value={rooms} onChangeText={rooms => {setRooms(rooms)}} />
 
                     <Text style={{fontWeight: 'bold'}}> Cantidad de camas </Text>
-                    <SimpleTextInput onChangeText={beds => { setBeds(beds)}} />
+                    <SimpleTextInput value={beds} onChangeText={beds => { setBeds(beds)}} />
 
                     <Text style={{fontWeight: 'bold'}}> Cantidad de baños </Text>
-                    <SimpleTextInput onChangeText={bathrooms => {setBathrooms(bathrooms)}} />
+                    <SimpleTextInput value={bathrooms} onChangeText={bathrooms => {setBathrooms(bathrooms)}} />
 
                     <Text style={{fontWeight: 'bold'}}> Precio por noche </Text>
-                    <SimpleTextInput onChangeText={price => {setPrice(price)}} />
+                    <SimpleTextInput value={price} onChangeText={price => {setPrice(price)}} />
 
-                    <Map onChangeCoordinates={coordinates => { setCoordinates({latitude: coordinates[0], longitude:coordinates[1]}) }}/>
+                    <Map
+                        coordinates={[coordinates.latitude, coordinates.longitude]}
+                        onChangeCoordinates={coordinates => {
+                            setCoordinates({latitude: coordinates[0], longitude: coordinates[1]}) }}
+                    />
 
                     <Text style={{fontWeight: 'bold'}}> Descripción </Text>
-                    <SimpleTextInput multiline onChangeText={description => {setDescription(description)}}/>
+                    <SimpleTextInput value={description} multiline onChangeText={description => {setDescription(description)}}/>
 
                     <Button dark={true} onPress={handlePublish} mode="contained"> Publicar </Button>
                 </View>

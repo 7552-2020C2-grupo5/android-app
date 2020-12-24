@@ -4,6 +4,7 @@ import { Card, Avatar } from 'react-native-paper';
 import { ListItem, Icon } from 'react-native-elements';
 import * as firebase from 'firebase';
 import { UserContext } from '../context/userContext';
+import { v4 as uuidv4 } from 'uuid';
 
 //@reset refresh
 
@@ -43,16 +44,15 @@ export default function MyChatsScreen(props) {
                 Object.keys(conversations).map((chat, i) => {
                     let dstUserID = _getOppositeUserID(chat.split('-'));
                     let userData = conversations[chat]['members'][dstUserID];
-                    console.log(userData.profilePic)
                     return (
                         <>
                             <ListItem onPress={() => {
                                 props.navigation.navigate('_chatConversation', {
                                     dstUserID: dstUserID
                                 })
-                            }} key={i}>
-                                <Avatar.Image source={{ uri: userData.profilePic || DEFAULT_USER_IMG }} size={40}/>
-                                <Text>{userData['name']}</Text>
+                            }} key={uuidv4()}>
+                                <Avatar.Image key={uuidv4()} source={{ uri: userData.profilePic || DEFAULT_USER_IMG }} size={40}/>
+                                <Text key={uuidv4()}>{userData['name']}</Text>
                             </ListItem>
                         </>
                     );

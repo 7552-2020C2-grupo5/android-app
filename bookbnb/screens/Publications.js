@@ -37,6 +37,8 @@ export default function PublicationsScreen(props) {
                     {publications.map((publication, index) => {
                         return (
                             <PublicationCardMinimal
+                                allowEditing={props.route.params.editable}
+                                onEdit={() => { props.navigation.navigate('new_publication', {publication: publication, editing: true}) }}
                                 key={index}
                                 onPress={() => {
                                     props.navigation.navigate('Publicacion', {publication: publication})
@@ -48,7 +50,7 @@ export default function PublicationsScreen(props) {
                 </View>
             </ScrollView>
             { props.route.params.editable &&
-                <AddNewButton onPress={() => props.navigation.navigate('new_publication')}/>
+                <AddNewButton onPress={() => props.navigation.navigate('new_publication', {editing: false})}/>
             }
         </View>
     );

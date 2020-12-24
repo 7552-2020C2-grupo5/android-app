@@ -66,13 +66,16 @@ function PublicationCardMinimal(props) {
     }
     return (
         <Card {...props} style={styles.publicationCard}>
+            {props.allowEditing &&
+            <Card.Actions style={styles.actions} >
+                <Button onPress={() => {props.onEdit()}}>Editar</Button>
+            </Card.Actions>
+            }
             <Card.Cover source={{ uri: image_url }} />
             <Card.Content>
                 <Title> {props.publication.title} </Title>
                 <Paragraph>{props.publication.description}</Paragraph>
             </Card.Content>
-            <Card.Actions style={styles.actions} >
-            </Card.Actions>
         </Card>
     );
 }

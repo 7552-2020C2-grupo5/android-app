@@ -9,16 +9,13 @@ export default function Map(props) {
     const [text, setText] = React.useState('')
     const [coordinates, setCoordinates] = React.useState([0, 0])
 
-    React.useEffect(() => {
-        props.onChangeCoordinates(coordinates)
-    }, [coordinates])
-
-
     async function handleFind(text) {
         try {
             var coordinates = await geoEncode(text)
+            console.log('geoencoding return')
             console.log(coordinates)
             setCoordinates([coordinates.latitude, coordinates.longitude])
+            props.onChangeCoordinates([coordinates.latitude, coordinates.longitude])
         } catch(e) {
             alert(e)
         }
@@ -26,16 +23,25 @@ export default function Map(props) {
 
     async function handleDragEnd(latitude, longitude) {
         var address = await geoDecode(latitude, longitude)
-        setText(address)
+        setText(address.address)
+        props.onChangeCoordinates([latitude, longitude])
     }
 
-    return (
+    React.useEffect(() => {
+        setCoordinates(props.coordinates)
+        geoDecode(props.coordinates[0], props.coordinates[1]).then(address => {
+            setText(address.address)
+        })
+    }, [props.coordinates])
+
+   return (
         <View style={{margin: 5, justifyContent: 'center', alignItems: 'stretch'}}>
             <Text style={{fontWeight: 'bold'}}> Dirección </Text>
             <View style={{alignItems: 'center', flexDirection: 'row' }}>
                 <TextInput
                     style={{flex: 1}}
                     onChangeText={text => { setText(text) }}
+                    value={text}
                     mode='outlined'
                 />
                 <Icon onPress={() => handleFind(text)} name='location' type='evilicon' color='black' size={50}/>
