@@ -8,24 +8,24 @@ import { UserContext } from '../context/userContext';
 
 //@refresh reset
 
-export default function PublicationsScreen(props) {
+export default function PublicationsScreen({route, navigation}) {
     const { uid, token, setToken, requester } = React.useContext(UserContext);
     const [publications, setPublications] = React.useState([])
 
     const fillPublications = () => {
-        var searchParams = props.route.params.searchParams || {}
-        if (props.route.params.editable) {
+        var searchParams = route.params.searchParams || {}
+        if (route.params.own) {
             searchParams = {
                 user_id: uid
             }
         }
         requester.searchPublications(searchParams).then(publications => {
-            setPublications(publications)
+           setPublications(publications)
         })
     }
 
     React.useEffect(() => {
-        return props.navigation.addListener('focus', () => {
+        return navigation.addListener('focus', () => {
             fillPublications()
         });
     }, [])
@@ -35,13 +35,31 @@ export default function PublicationsScreen(props) {
             <ScrollView>
                 <View style={styles.publication}>
                     {publications.map((publication, index) => {
+                        let actions = []
+                        if (route.params.own && String(publication.user_id) == uid) {
+                            actions.push({
+                                title: 'Editar',
+                                onAction: () => {
+                                    navigation.navigate('new_publication', {
+                                        publication: publication, editing: true
+                                    })
+                                }
+                            })
+                        }
+                        if (String(publication.user_id) != uid) {
+                            actions.push({
+                                title: 'Reservar',
+                                onAction: () => {
+                                    navigation.navigate('newReservation', {publication: publication})
+                                }
+                            })
+                        }
                         return (
                             <PublicationCardMinimal
-                                allowEditing={props.route.params.editable}
-                                onEdit={() => { props.navigation.navigate('new_publication', {publication: publication, editing: true}) }}
+                                actions={actions}
                                 key={index}
                                 onPress={() => {
-                                    props.navigation.navigate('Publicacion', {publication: publication})
+                                    navigation.navigate('Publicacion', {publication: publication})
                                 }}
                                 publication={publication}
                             />
@@ -49,8 +67,8 @@ export default function PublicationsScreen(props) {
                     })}
                 </View>
             </ScrollView>
-            { props.route.params.editable &&
-                <AddNewButton onPress={() => props.navigation.navigate('new_publication', {editing: false})}/>
+            { route.params.own &&
+                <AddNewButton onPress={() => navigation.navigate('new_publication', {editing: false})}/>
             }
         </View>
     );

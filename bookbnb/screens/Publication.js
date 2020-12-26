@@ -197,7 +197,7 @@ export default function PublicationScreen(props) {
                 <Divider/>
                 <Surface style={{elevation: 2, padding: 14}}>
                     <List.Section>
-                        <List.Subheader>Decripción</List.Subheader>
+                        <List.Subheader>Descripción</List.Subheader>
                         <Divider style={{backgroundColor: 'black'}}/>
                         <Text style={{justifyContent: 'flex-end', fontSize: 15, padding: 10}}> {publication.description} </Text>
                     </List.Section>

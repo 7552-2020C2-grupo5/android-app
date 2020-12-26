@@ -66,11 +66,13 @@ function PublicationCardMinimal(props) {
     }
     return (
         <Card {...props} style={styles.publicationCard}>
-            {props.allowEditing &&
-            <Card.Actions style={styles.actions} >
-                <Button onPress={() => {props.onEdit()}}>Editar</Button>
-            </Card.Actions>
-            }
+            {props.actions.map((action, i) => {
+                return (
+                    <Card.Actions style={styles.actions}>
+                        <Button onPress={() => {action.onAction()}}>{action.title}</Button>
+                    </Card.Actions>
+                );
+            })}
             <Card.Cover source={{ uri: image_url }} />
             <Card.Content>
                 <Title> {props.publication.title} </Title>
@@ -109,6 +111,7 @@ function SimpleTextInput(props) {
    const styles = StyleSheet.create({
         input: {
             minHeight: 70,
+            minWidth: 50,
             margin: 5,
             flex: 1,
             paddingBottom: 20,

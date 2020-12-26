@@ -13,7 +13,6 @@ import { uploadImageToFirebase } from '../utils';
 import { UserContext } from '../context/userContext';
 
 
-
 function NewPublicationScreen(props) {
     const { uid, token, setToken, requester } = React.useContext(UserContext);
 
@@ -65,7 +64,7 @@ function NewPublicationScreen(props) {
         for (const image of images) {
             if (image.type) {
                 /* si tiene type es porque la acabo de sacar */
-                photoURL = await uploadImageToFirebase(image);
+               photoURL = await uploadImageToFirebase(image);
             }
         }
         if (!props.route.params.editing){
@@ -121,7 +120,7 @@ function NewPublicationScreen(props) {
                     <SimpleTextInput value={title} onChangeText={title => {setTitle(title)}} />
 
                     <Text style={{fontWeight: 'bold'}}> Cantidad de cuartos </Text>
-                    <SimpleTextInput value={rooms} onChangeText={rooms => {setRooms(rooms)}} />
+                    <SimpleTextInput numeric keyboardType={'numeric'} value={rooms} onChangeText={rooms => {setRooms(rooms)}} />
 
                     <Text style={{fontWeight: 'bold'}}> Cantidad de camas </Text>
                     <SimpleTextInput value={beds} onChangeText={beds => { setBeds(beds)}} />

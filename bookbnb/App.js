@@ -8,6 +8,7 @@ import { PublicationScreen } from './screens/Publication'
 import { ReservationsScreen } from './screens/Reservations'
 import { RecomendationsScreen } from './screens/Recomendations'
 import { NewPublicationScreen } from './screens/NewPublication'
+import { NewReservationScreen } from './screens/NewReservation';
 import { RegistrationScreen } from './screens/Register'
 import { EditProfileScreen } from './screens/EditProfile'
 import { LogoutScreen } from './screens/Logout'
@@ -47,7 +48,7 @@ const Stack = createStackNavigator();
 function Publications() {
   return (
     <Stack.Navigator initialRouteName="Publicaciones">
-      <Stack.Screen name="Publicaciones" component={PublicationsScreen} initialParams={{editable: true}} options={{headerShown: false}}/>
+      <Stack.Screen name="Publicaciones" component={PublicationsScreen} initialParams={{own: true}} options={{headerShown: false}}/>
       <Stack.Screen name="new_publication" component={NewPublicationScreen} options={{headerShown: false}}/>
       <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
       <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
@@ -69,9 +70,10 @@ function Search() {
   return (
     <Stack.Navigator initialRouteName="SearchQuery">
       <Stack.Screen name="SearchQuery" component={SearchScreen} options={{headerShown: false}}/>
-      <Stack.Screen name="SearchResults" component={PublicationsScreen} initialParams={{editable: false}} options={{headerShown: false}}/>
+      <Stack.Screen name="SearchResults" component={PublicationsScreen} initialParams={{own: false}} options={{headerShown: false}}/>
       <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
       <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="newReservation" component={NewReservationScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }
