@@ -214,9 +214,21 @@ export default function PublicationScreen(props) {
                         }</Text>}/>
                     </List.Section>
                 </Surface>
+                <Surface style={{elevation: 1, marginTop: 10}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <List.Subheader>Calificaciones del lugar</List.Subheader>
+                        <Icon
+                            onPress={() => props.navigation.navigate('reviews', {publication_id: publication.id})}
+                            containerStyle={{paddingRight: 10}}
+                            size={40}
+                            name='like'
+                            type='evilicon'
+                            color='#f03'
+                        />
+                    </View>
+                </Surface>
                 <Surface style={{elevation: 2, marginTop: 10 }}>
-                    <Divider/>
-                        <List.Subheader>Consultas realizadas al dueño</List.Subheader>
+                    <List.Subheader>Consultas realizadas al dueño</List.Subheader>
                     <Divider style={{backgroundColor: 'black'}}/>
                     {uid == publication.user_id? (
                         <OwnerCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>

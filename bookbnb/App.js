@@ -1,20 +1,22 @@
 import * as React from 'react';
 import * as firebase from 'firebase';
 import { Provider as PaperProvider } from 'react-native-paper';
-import { ProfileScreen } from './screens/Profile'
-import { LoginScreen } from './screens/Login'
-import { PublicationsScreen } from './screens/Publications'
-import { PublicationScreen } from './screens/Publication'
-import { ReservationsScreen } from './screens/Reservations'
-import { RecomendationsScreen } from './screens/Recomendations'
-import { NewPublicationScreen } from './screens/NewPublication'
+/* TODO. esto se debería pasar a módulos aparte, módulo de publication ,etc */
+import { ProfileScreen } from './screens/Profile';
+import { LoginScreen } from './screens/Login';
+import { PublicationsScreen } from './screens/Publications';
+import { PublicationScreen } from './screens/Publication';
+import { ReservationsScreen } from './screens/Reservations';
+import { RecomendationsScreen } from './screens/Recomendations';
+import { NewPublicationScreen } from './screens/NewPublication';
 import { NewReservationScreen } from './screens/NewReservation';
-import { RegistrationScreen } from './screens/Register'
-import { EditProfileScreen } from './screens/EditProfile'
-import { LogoutScreen } from './screens/Logout'
-import { MyChatsScreen } from './screens/MyChats'
-import { ChatScreen } from './screens/Chat'
-import { SearchScreen } from './screens/Search'
+import { RegistrationScreen } from './screens/Register';
+import { EditProfileScreen } from './screens/EditProfile';
+import { LogoutScreen } from './screens/Logout';
+import { MyChatsScreen } from './screens/MyChats';
+import { ChatScreen } from './screens/Chat';
+import { SearchScreen } from './screens/Search';
+import { ReviewScreen } from './screens/Review';
 import { View, StatusBar, Text, StyleSheet, SafeAreaView, AsyncStorage } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -53,6 +55,7 @@ function Publications() {
       <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
       <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
       <Stack.Screen name="chatConversation" component={ChatScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="reviews" component={ReviewScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }
@@ -62,6 +65,7 @@ function Profile() {
     <Stack.Navigator initialRouteName="Profile">
       <Stack.Screen name="Profile" component={ProfileScreen} initialParams={{allowEditing: true}}  options={{headerShown: false}}/>
       <Stack.Screen name="EditProfile" component={EditProfileScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="reviews" component={ReviewScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }
@@ -74,6 +78,7 @@ function Search() {
       <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
       <Stack.Screen name="Publicacion" component={PublicationScreen} options={{headerShown: false}}/>
       <Stack.Screen name="newReservation" component={NewReservationScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="reviews" component={ReviewScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }

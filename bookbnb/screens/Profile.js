@@ -10,7 +10,7 @@ import { UserContext } from '../context/userContext';
 //@refresh reset
 
 export default function ProfileScreen(props) {
-    const { uid, token, setToken } = React.useContext(UserContext);
+    const { uid, token, setToken, requester } = React.useContext(UserContext);
     const [userData, setUserData] = React.useState({
         id: null,
         firstName: 'nothing',
@@ -19,8 +19,6 @@ export default function ProfileScreen(props) {
         avatar: 'nothing',
         registerDate: ''
     });
-
-    var requester = new Requester()
 
     async function fetchData() {
         var userID = props.route.params.userID
@@ -56,16 +54,20 @@ export default function ProfileScreen(props) {
                 ) : (
                     <Avatar.Text size={140} label={userData.firstName[0] + userData.lastName[0]} style={{margin: 50}}/>
                 )}
+                <View style={{flexDirection: 'row'}}>
                 {props.route.params.allowEditing &&
-                <View>
                     <Icon onPress={() => props.navigation.navigate('EditProfile', {userData: userData})} name='pencil' type='evilicon' color='black' size={40}/>
-                </View>
                 }
                {props.route.params.allowMessaging &&
-                <View>
-                    <Icon onPress={() => props.navigation.navigate('chatConversation', {dstUserID: props.route.params.userID})} name='sc-telegram' type='evilicon' color='black' size={40}/>
-                </View>
+                    <Icon onPress={() => props.navigation.navigate('chatConversation', {dstUserID: props.route.params.userID})} name='envelope' type='evilicon' color='black' size={40}/>
                 }
+                    <Icon
+                        onPress={() => props.navigation.navigate('reviews', {user_id: userData.id})}
+                        size={40}
+                        name='like'
+                        type='evilicon'
+                    />
+                </View>
                 <DataTable>
                     <ProfileRowData keyValue="Nombre" value={userData.firstName}/>
                     <ProfileRowData keyValue="Apellido" value={userData.lastName}/>
