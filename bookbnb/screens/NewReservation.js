@@ -4,6 +4,13 @@ import { Icon } from 'react-native-elements';
 import { Button } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { SimpleTextInput } from '../components/components';
+import { UserContext } from '../context/userContext';
+
+
+function _dateStringyfier(date) {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+}
+
 
 function DateInput(props) {
     const [date, setDate] = React.useState(new Date());
@@ -17,6 +24,8 @@ function DateInput(props) {
 
         setDate(date);
         props.onChange && props.onChange(date)
+        console.log('setting date')
+        console.log(date)
     }
 
     if (pickingDate)
@@ -30,7 +39,7 @@ function DateInput(props) {
 
     return (
         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-            <SimpleTextInput editable={false} value={date.toLocaleDateString()}/>
+            <SimpleTextInput editable={false} value={_dateStringyfier(date)}/>
             <Icon
                 onPress={() => setPickingDate(true)}
                 underlayColor='blue'
@@ -44,9 +53,22 @@ function DateInput(props) {
 }
 
 
-export default function NewReservationScreen({route, navigation}) {
-    function handleDoReservation() {
+export function NewReservationScreen({route, navigation}) {
+    const { uid, token, requester } = React.useContext(UserContext);
+    const [initialDate, setInitialDate] = React.useState(new Date());
+    const [finalDate, setFinalDate] = React.useState(new Date());
 
+
+    function handleDoReservation() {
+        requester.addReservation({
+            tenant_id: Number(uid),
+            publication_id: route.params.publication.id,
+            total_price: 100,
+            initial_date: _dateStringyfier(initialDate),
+            final_date: _dateStringyfier(finalDate)
+        }).then(() => {
+            navigation.navigate('Mis Reservas')
+        })
     }
 
     return (
@@ -56,11 +78,11 @@ export default function NewReservationScreen({route, navigation}) {
                     <Text style={{fontSize: 50, fontWeight: 'bold', textAlign: 'left'}}>Reservá</Text>
                     <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
                         <Text style={{fontWeight: 'bold'}}> Fecha de inicio </Text>
-                        <DateInput/>
+                       <DateInput onChange={setInitialDate}/>
                     </View>
                     <View style={{justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
                         <Text style={{fontWeight: 'bold'}}> Fecha de finalización </Text>
-                        <DateInput/>
+                        <DateInput onChange={setFinalDate}/>
                     </View>
                     <Button dark={true} onPress={handleDoReservation} mode="contained"> Reservar </Button>
                 </View>
@@ -68,5 +90,3 @@ export default function NewReservationScreen({route, navigation}) {
         </ScrollView>
     );
 }
-
-export { NewReservationScreen }

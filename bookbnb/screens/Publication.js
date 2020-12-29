@@ -227,19 +227,21 @@ export default function PublicationScreen(props) {
                         />
                     </View>
                 </Surface>
-                <Surface style={{elevation: 1, marginTop: 10}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                        <List.Subheader>Reservas asociadas</List.Subheader>
-                        <Icon
-                            onPress={() => props.navigation.navigate('relatedBookings', {publication_id: publication.id})}
-                            containerStyle={{paddingRight: 10}}
-                            size={40}
-                            name='calendar'
-                            type='evilicon'
-                            color='#f03'
-                        />
-                    </View>
-                </Surface>
+                {(uid == publication.user_id) && (
+                    <Surface style={{elevation: 1, marginTop: 10}}>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <List.Subheader>Reservas asociadas</List.Subheader>
+                            <Icon
+                                onPress={() => props.navigation.navigate('relatedBookings', {publication: publication})}
+                                containerStyle={{paddingRight: 10}}
+                                size={40}
+                                name='calendar'
+                                type='evilicon'
+                                color='#f03'
+                            />
+                        </View>
+                    </Surface>
+                )}
                 <Surface style={{elevation: 2, marginTop: 10 }}>
                     <List.Subheader>Consultas realizadas al dueño</List.Subheader>
                     <Divider style={{backgroundColor: 'black'}}/>

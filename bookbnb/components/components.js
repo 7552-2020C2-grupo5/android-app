@@ -10,7 +10,7 @@ import {
     TextInput,
 } from 'react-native-paper';
 
-import { Icon } from 'react-native-elements';
+import { Icon, CheckBox } from 'react-native-elements';
 
 import {
     AsyncStorage,
@@ -44,13 +44,14 @@ function ReservationCard(props) {
     /* TODO. agregar estado de la reserva activa / vencida */
     return (
         <Card {...props} style={styles.reservationCard}>
-            <Card.Title
-                title={props.reservation.title || 'Reserva'}
-            />
             <Card.Content>
+                <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                    <Title> {props.reservation.title} </Title>
+                    <CheckBox title='Vencida' checked={props.reservation.expired} />
+                </View>
                 <ProfileRowData keyValue='Fecha de inicio' value={props.reservation.initial_date}/>
                 <ProfileRowData keyValue='Fecha de finalización' value={props.reservation.final_date}/>
-            </Card.Content>
+                <ProfileRowData keyValue='Owner' value={props.reservation.owner}/>
             {props.actions && props.actions.map((action, i) => {
                 return (
                     <Card.Actions style={styles.actions}>
@@ -58,6 +59,7 @@ function ReservationCard(props) {
                     </Card.Actions>
                 );
             })}
+            </Card.Content>
         </Card>
     );
 }
