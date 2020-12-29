@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as firebase from 'firebase';
-import { Provider as PaperProvider } from 'react-native-paper';
 /* TODO. esto se debería pasar a módulos aparte, módulo de publication ,etc */
 import { ProfileScreen } from './screens/Profile';
 import { LoginScreen } from './screens/Login';
@@ -21,11 +20,10 @@ import { View, StatusBar, Text, StyleSheet, SafeAreaView, AsyncStorage } from 'r
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { SnackBar } from './components/components';
 import { SafeAreaStyle } from './styles/GlobalStyles';
-import Geocoder from 'react-native-geocoding';
 import { UserContextProvider, UserContext } from './context/userContext';
-
+import * as RootNavigation from './screens/RootNavigation';
+import { NotificationsHandler } from './components/notifications';
 
 //@refresh reset
 
@@ -35,8 +33,6 @@ var firebaseConfig = {
   storageBucket: 'bookbnb-3c67c.appspot.com',
   databaseURL: 'https://bookbnb-3c67c.firebaseio.com/',
 };
-
-Geocoder.init(firebaseConfig.apiKey)
 
 if (!firebase.apps.length) {
   console.log('Inicializando app de firebase')
@@ -92,11 +88,11 @@ function Chat() {
   );
 }
 
-function Screens() {
-    const { UID, token } = React.useContext(UserContext);
+const Screens = () => {
+    const { token } = React.useContext(UserContext);
 
     return (
-        <NavigationContainer>
+        <NavigationContainer ref={RootNavigation.navigationRef}>
           { token == null? (
             <Stack.Navigator>
               <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
@@ -117,12 +113,15 @@ function Screens() {
     );
 }
 
+
 export default function App() {
-  return (
-    <SafeAreaView style={SafeAreaStyle.droidSafeArea}>
-      <UserContextProvider>
-        <Screens/>
-      </UserContextProvider>
-    </SafeAreaView>
-  );
+    return (
+        <SafeAreaView style={SafeAreaStyle.droidSafeArea}>
+            <UserContextProvider>
+                <NotificationsHandler>
+                    <Screens/>
+                </NotificationsHandler>
+            </UserContextProvider>
+        </SafeAreaView>
+    );
 }

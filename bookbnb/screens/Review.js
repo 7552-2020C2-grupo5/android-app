@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Image, AsyncStorage, Text, View, StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { ListItem, Rating, AirbnbRating } from 'react-native-elements';
+import { ListItem, Rating, AirbnbRating, Divider } from 'react-native-elements';
+import { Button } from 'react-native-paper';
 import { UserContext } from '../context/userContext';
+import { SimpleTextInput } from '../components/components';
 
 function Review(props) {
     return(
@@ -28,6 +30,9 @@ function ReviewScreen({route, navigation}) {
     const [reviews, setReviews] = React.useState([]);
     const [score, setScore] = React.useState(0);
     const [meanScore, setMeanScore] = React.useState(0);
+    const [editing, setEditing] = React.useState(false);
+    const [currentReview, setCurrentReview] = React.useState('');
+    const [currentScore, setCurrentScore] = React.useState(0);
 
     async function _resolveReviewersData(reviews) {
         let _reviews = []
@@ -60,11 +65,32 @@ function ReviewScreen({route, navigation}) {
         }
     }
 
+    function handleFinishReview() {
+        var base_review = {
+            score: currentScore,
+            comment: currentReview,
+            reviewer_id: uid,
+        }
+        if (route.params.publication_id) {
+            var publication_id = route.params.publication_id
+            requester.addPublicationReview({...base_review, publication_id: publication_id}).then(value => {
+                setEditing(false)
+            })
+        }
+        if (route.params.user_id) {
+            var user_id = route.params.user_id
+            requester.addUserReview({...base_review, reviewee_id: user_id}).then(value => {
+                setEditing(false)
+            })
+        }
+    }
+
     // navigation.params.publication_id
     React.useState(() => {
         const unsuscribe = navigation.addListener('focus', () => {
             fetchReviewsInfo()
         })
+        route.params.editing && setEditing(true)
         return unsuscribe;
     }, [])
 
@@ -81,6 +107,24 @@ function ReviewScreen({route, navigation}) {
                 defaultRating={meanScore}
                 size={30}
             />
+            <Divider/>
+            {editing &&
+                <View>
+                    <AirbnbRating
+                        count={4}
+                        onFinishRating={setCurrentScore}
+                        reviews={["Muy malo", "Malo", "Bueno", "Muy bueno"]}
+                        defaultRating={currentScore}
+                        size={30}
+                    />
+                    <SimpleTextInput
+                        placeholder="Escribe una review..."
+                        value={currentReview}
+                        onChangeText={setCurrentReview}
+                    />
+                    <Button mode="contained" onPress={handleFinishReview}>Enviar</Button>
+                </View>
+            }
         </View>
     );
 }

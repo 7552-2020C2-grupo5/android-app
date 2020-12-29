@@ -33,7 +33,8 @@
         }
       },
       "package": "com.taller2.bookbnb",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true
     }
   }
 }

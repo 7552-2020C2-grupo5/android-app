@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { View, ScrollView, StatusBar, Text, Title, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 
-export default function RecomendationsScreen(props) {
+
+function RecomendationsScreen(props) {
     return (
         <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-            <Text>Work in progress!</Text>
+            <Text style={{margin: 30}}>Work in progress!</Text>
         </View>
     );
 }

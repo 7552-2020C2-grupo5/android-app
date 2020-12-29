@@ -8,6 +8,9 @@ import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
 import { uploadImageToFirebase, decodeJWTPayload } from '../utils';
 import { UserContext } from '../context/userContext';
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
+
 
 
 function EditProfileScreen(props) {
@@ -29,12 +32,6 @@ function EditProfileScreen(props) {
             setUserImage(result);
         }
     };
-
-    var nameFields = {
-        'Nombre': 'firstName',
-        'Apellido': 'lastName',
-        'Email': 'email'
-    }
 
     React.useEffect(() => {
         (async () => {
