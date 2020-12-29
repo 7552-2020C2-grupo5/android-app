@@ -41,19 +41,23 @@ function ProfileRowData(props) {
 }
 
 function ReservationCard(props) {
+    /* TODO. agregar estado de la reserva activa / vencida */
     return (
         <Card {...props} style={styles.reservationCard}>
             <Card.Title
-                title={props.reservation.title}
-                subtitle={props.reservation.subtitle}
+                title={props.reservation.title || 'Reserva'}
             />
             <Card.Content>
                 <ProfileRowData keyValue='Fecha de inicio' value={props.reservation.initial_date}/>
-                <ProfileRowData keyValue='Fecha de finalización' value={props.reservation.end_date}/>
+                <ProfileRowData keyValue='Fecha de finalización' value={props.reservation.final_date}/>
             </Card.Content>
-            <Card.Actions>
-                <Button>Ver publicación</Button>
-            </Card.Actions>
+            {props.actions && props.actions.map((action, i) => {
+                return (
+                    <Card.Actions style={styles.actions}>
+                        <Button onPress={() => {action.onAction()}}>{action.title}</Button>
+                    </Card.Actions>
+                );
+            })}
         </Card>
     );
 }

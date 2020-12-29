@@ -52,6 +52,7 @@ function Publications() {
       <Stack.Screen name="UserProfile" component={ProfileScreen} options={{headerShown: false}}/>
       <Stack.Screen name="chatConversation" component={ChatScreen} options={{headerShown: false}}/>
       <Stack.Screen name="reviews" component={ReviewScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="relatedBookings" component={ReservationsScreen} options={{headerShown: false}}/>
     </Stack.Navigator>
   );
 }

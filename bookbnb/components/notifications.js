@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 import * as RootNavigation from '../screens/RootNavigation';
 
 function isNewMessageNotification(notification) {
