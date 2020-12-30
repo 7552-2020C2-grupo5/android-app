@@ -55,7 +55,7 @@ function ReviewScreen({route, navigation}) {
             var publication_id = route.params.publication_id
             requester.publicationReviews({id: publication_id}).then(
                 async reviews => _resolveReviewersData(reviews)
-            )
+           )
         }
         if (route.params.user_id) {
             var user_id = route.params.user_id
@@ -70,6 +70,7 @@ function ReviewScreen({route, navigation}) {
             score: currentScore,
             comment: currentReview,
             reviewer_id: uid,
+            booking_id: route.params.reservation_id,
         }
         if (route.params.publication_id) {
             var publication_id = route.params.publication_id
@@ -83,6 +84,7 @@ function ReviewScreen({route, navigation}) {
                 setEditing(false)
             })
         }
+        fetchReviewsInfo()
     }
 
     // navigation.params.publication_id

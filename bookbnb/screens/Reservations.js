@@ -10,7 +10,7 @@ function _reservationIsExpired(reservation) {
     return (actualDate.getTime() > finalDate.getTime())
 }
 
-function PublicationRelatedReservationList({publication}) {
+function PublicationRelatedReservationList({publication, navigationRef}) {
     /* Reservas asociadas a una publicación */
     const { uid, token, requester } = React.useContext(UserContext);
     const [reservations, setReservations] = React.useState([]);
@@ -32,19 +32,34 @@ function PublicationRelatedReservationList({publication}) {
     }
 
     React.useEffect(() => {
-        _fetchReservationsData()
+        return navigationRef.addListener('focus', () => {
+            _fetchReservationsData()
+        });
     }, [])
 
     return (
         <View style={{flex: 1, padding: 10}}>
             {reservations.map((reservation, i) => {
-                return (<ReservationCard key={i} reservation={reservation}/>)
+                let actions = []
+                if(reservation.expired){
+                    actions.push({
+                        title: 'Calificar huésped',
+                        onAction: () => {
+                            navigationRef.navigate('reviews', {
+                                user_id: reservation.tenant_id,
+                                reservation_id: reservation.id,
+                                editing: true
+                            })
+                        }
+                    })
+                }
+                return (<ReservationCard actions={actions} key={i} reservation={reservation}/>)
             })}
         </View>
     );
 }
 
-function OwnReservationsList() {
+function OwnReservationsList({navigationRef}) {
     /* Se asume que el uid es el del ctx */
     const { uid, token, requester } = React.useContext(UserContext);
     const [reservations, setReservations] = React.useState([]);
@@ -65,13 +80,28 @@ function OwnReservationsList() {
     }
 
     React.useEffect(() => {
-        _fetchReservationsData()
+        return navigationRef.addListener('focus', () => {
+            _fetchReservationsData()
+        });
     }, [])
 
     return (
         <View style={{flex: 1, padding: 10}}>
             {reservations.map((reservation, i) => {
-                return (<ReservationCard key={i} reservation={reservation}/>)
+                let actions = []
+                if(reservation.expired){
+                    actions.push({
+                        title: 'Calificar lugar',
+                        onAction: () => {
+                            navigationRef.navigate('reviews', {
+                                editing:true,
+                                reservation_id: reservation.id,
+                                publication_id: reservation.publication_id
+                            })
+                        }
+                    })
+                }
+                return (<ReservationCard actions={actions} key={i} reservation={reservation}/>)
             })}
         </View>
     );
@@ -91,9 +121,12 @@ export function ReservationsScreen({navigation, route}) {
         <View style={{flex: 1, backgroundColor: 'grey'}}>
             <ScrollView>
                 {route.params && route.params.publication? (
-                    <PublicationRelatedReservationList publication={route.params.publication}/>
+                    <PublicationRelatedReservationList
+                        navigationRef={navigation}
+                        publication={route.params.publication}
+                    />
                 ): (
-                    <OwnReservationsList/>
+                    <OwnReservationsList navigationRef={navigation}/>
                 )}
             </ScrollView>
         </View>
