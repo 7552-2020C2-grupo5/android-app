@@ -42,6 +42,7 @@ function ProfileRowData(props) {
 
 function ReservationCard(props) {
     /* TODO. agregar estado de la reserva activa / vencida */
+
     return (
         <Card {...props} style={styles.reservationCard}>
             <Card.Content>

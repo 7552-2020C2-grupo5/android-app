@@ -89,6 +89,15 @@ function Chat() {
   );
 }
 
+function Reservations() {
+  return (
+    <Stack.Navigator initialRouteName="myReservations">
+      <Stack.Screen name="myReservations" component={ReservationsScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="reviews" component={ReviewScreen} options={{headerShown: false}}/>
+    </Stack.Navigator>
+  );
+}
+
 const Screens = () => {
     const { token } = React.useContext(UserContext);
 
@@ -104,7 +113,7 @@ const Screens = () => {
               <Drawer.Screen name="Mis Recomendaciones" options={{headerShown: false}} component={RecomendationsScreen} />
               <Drawer.Screen name="Buscar" options={{headerShown: false}} component={Search} />
               <Drawer.Screen name="Perfil" options={{headerShown: false}} component={Profile} />
-              <Drawer.Screen name="Mis Reservas" options={{headerShown: false}} component={ReservationsScreen} />
+              <Drawer.Screen name="Mis Reservas" options={{headerShown: false}} component={Reservations} />
               <Drawer.Screen name="Mis Publicaciones" options={{headerShown: false}} component={Publications} />
               <Drawer.Screen name="Mis consultas" options={{headerShown: false}} component={Chat} />
               <Drawer.Screen name="Salir" options={{headerShown: false}} component={LogoutScreen} />
