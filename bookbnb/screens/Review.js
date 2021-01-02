@@ -16,6 +16,7 @@ function Review(props) {
                         defaultRating={props.review.score}
                         size={15}
                         showRating={false}
+                        isDisabled={true}
                     />
                 </View>
                 <ListItem.Subtitle>{props.review.comment}</ListItem.Subtitle>
@@ -25,51 +26,94 @@ function Review(props) {
 }
 
 
-function ReviewScreen({route, navigation}) {
+function ReviewsBox({publicationID, userID, navigation}) {
     const { uid, token, setToken, requester } = React.useContext(UserContext);
     const [reviews, setReviews] = React.useState([]);
-    const [score, setScore] = React.useState(0);
     const [meanScore, setMeanScore] = React.useState(0);
-    const [editing, setEditing] = React.useState(false);
-    const [currentReview, setCurrentReview] = React.useState('');
-    const [currentScore, setCurrentScore] = React.useState(0);
 
-    async function _resolveReviewersData(reviews) {
-        let _reviews = []
+    async function fetchReviewersDataFor(reviews) {
+        let newReviews = []
         let acumScore = 0
         for(const review of reviews) {
             let reviewerData = await requester.profileData({id: review.reviewer_id})
-            _reviews.push({
+            newReviews.push({
                 score: review.score,
                 comment: review.comment,
                 reviewerName: `${reviewerData.first_name} ${reviewerData.last_name}`
             })
             acumScore += Number(review.score)
         }
-        setMeanScore(acumScore / reviews.length)
-        setReviews(_reviews)
+        setMeanScore(Math.round(acumScore / newReviews.length))
+        setReviews(newReviews)
     }
 
-    async function fetchReviewsInfo() {
-        if (route.params.publication_id) {
-            var publication_id = route.params.publication_id
-            requester.publicationReviews({id: publication_id}).then(
-                async reviews => _resolveReviewersData(reviews)
-           )
+    async function fetchReviews() {
+        if (publicationID) {
+            requester.publicationReviews({id: publicationID}).then(fetchReviewersDataFor)
         }
-        if (route.params.user_id) {
-            var user_id = route.params.user_id
-            requester.userReviews({id: user_id}).then(
-                async reviews => _resolveReviewersData(reviews)
-            )
+        if (userID) {
+            requester.userReviews({id: Number(userID)}).then(fetchReviewersDataFor)
         }
     }
+
+    React.useEffect(() => { fetchReviews() })
+
+    return(
+        <View>
+            {reviews.map((review, i) => {
+                return (
+                    <Review key={i} review={review}/>
+                );
+            })}
+            <AirbnbRating
+                isDisabled={true}
+                count={4}
+                reviews={["Muy malo", "Malo", "Bueno", "Muy bueno"]}
+                defaultRating={meanScore}
+                size={30}
+            />
+        </View>
+    );
+}
+
+
+function NewReviewBox({onFinishReview}) {
+    const [currentReview, setCurrentReview] = React.useState('');
+    const [currentScore, setCurrentScore] = React.useState(0);
 
     function handleFinishReview() {
+        onFinishReview({score: currentScore, review: currentReview})
+    }
+
+    return (
+        <View>
+            <AirbnbRating
+                count={4}
+                onFinishRating={setCurrentScore}
+                reviews={["Muy malo", "Malo", "Bueno", "Muy bueno"]}
+                defaultRating={currentScore}
+                size={30}
+            />
+            <SimpleTextInput
+                placeholder="Escribí una review..."
+                value={currentReview}
+                onChangeText={setCurrentReview}
+            />
+            <Button mode="contained" onPress={handleFinishReview}>Enviar</Button>
+        </View>
+    );
+}
+
+
+export function ReviewScreen({route, navigation}) {
+    const [editing, setEditing] = React.useState(editing);
+    const { uid, token, setToken, requester } = React.useContext(UserContext);
+
+    function handleFinishReview({score, review}) {
         var base_review = {
-            score: currentScore,
-            comment: currentReview,
-            reviewer_id: uid,
+            score: score,
+            comment: review,
+            reviewer_id: Number(uid),
             booking_id: route.params.reservation_id,
         }
         if (route.params.publication_id) {
@@ -80,55 +124,27 @@ function ReviewScreen({route, navigation}) {
         }
         if (route.params.user_id) {
             var user_id = route.params.user_id
-            requester.addUserReview({...base_review, reviewee_id: user_id}).then(value => {
+            requester.addUserReview({...base_review, reviewee_id: Number(user_id)}).then(value => {
                 setEditing(false)
             })
         }
-        fetchReviewsInfo()
     }
 
-    // navigation.params.publication_id
-    React.useState(() => {
-        const unsuscribe = navigation.addListener('focus', () => {
-            fetchReviewsInfo()
-        })
+    React.useEffect(() => {
         route.params.editing && setEditing(true)
-        return unsuscribe;
     }, [])
 
     return (
         <View>
-            {reviews.map((review, i) => {
-                return (
-                    <Review key={i} review={review}/>
-                );
-            })}
-            <AirbnbRating
-                count={4}
-                reviews={["Muy malo", "Malo", "Bueno", "Muy bueno"]}
-                defaultRating={meanScore}
-                size={30}
-            />
-            <Divider/>
-            {editing &&
-                <View>
-                    <AirbnbRating
-                        count={4}
-                        onFinishRating={setCurrentScore}
-                        reviews={["Muy malo", "Malo", "Bueno", "Muy bueno"]}
-                        defaultRating={currentScore}
-                        size={30}
-                    />
-                    <SimpleTextInput
-                        placeholder="Escribe una review..."
-                        value={currentReview}
-                        onChangeText={setCurrentReview}
-                    />
-                    <Button mode="contained" onPress={handleFinishReview}>Enviar</Button>
-                </View>
-            }
+            <ScrollView>
+                <ReviewsBox
+                    publicationID={route.params.publication_id}
+                    userID={route.params.user_id}
+                    navigation={navigation}
+                />
+                <Divider/>
+                {editing && <NewReviewBox onFinishReview={handleFinishReview}/>}
+            </ScrollView>
         </View>
     );
 }
-
-export { ReviewScreen }
