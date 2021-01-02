@@ -41,7 +41,7 @@ function NewPublicationScreen(props) {
             }])
             setCoordinates({
                 latitude: publication.loc.latitude,
-                longitude: publication.loc.longitude,
+                        longitude: publication.loc.longitude,
             })
         }
     }, [])
@@ -65,38 +65,35 @@ function NewPublicationScreen(props) {
             if (image.type) {
                 /* si tiene type es porque la acabo de sacar */
                photoURL = await uploadImageToFirebase(image);
+            } else {
+                photoURL = image.uri
             }
         }
-        if (!props.route.params.editing){
-            var publication = {
-                user_id: Number(uid),
-                title: title,
-                description: description,
-                rooms: Number(rooms),
-                beds: Number(beds),
-                bathrooms: Number(bathrooms),
-                price_per_night: Number(price),
-                photoURL: [photoURL],
-                coordinates: [coordinates.latitude, coordinates.longitude],
-            }
-            requester.publish(publication).then(() => {
+        let publication = {
+            user_id: Number(uid),
+            title: title,
+            description: description,
+            rooms: Number(rooms),
+            beds: Number(beds),
+            bathrooms: Number(bathrooms),
+            price_per_night: Number(price),
+            photoURL: [photoURL],
+            coordinates: [coordinates.latitude, coordinates.longitude],
+        }
+        if (props.route.params.editing){
+            publication.id = props.route.params.publication.id
+            requester.updatePublication(publication).then(() => {
+                console.log('Updated publication to: %s', publication)
                 props.navigation.navigate('Publicaciones');
+            }).catch(e => {
+                console.log('Error at publication update: %s', e)
             })
         } else {
-            let publication = {}
-            publication.id = props.route.params.publication.id
-            title && (publication.title = title)
-            description && (publication.description = description)
-            rooms && (publication.rooms = Number(rooms))
-            beds && (publication.beds = Number(beds))
-            bathrooms && (publication.bathrooms = Number(bathrooms))
-            price && (publication.price_per_night = Number(price))
-            photoURL && (publication.photoURL = [photoURL])
-            coordinates.latitude && (publication.coordinates = [coordinates.latitude, coordinates.longitude])
-
-            console.log(publication)
-            requester.updatePublication(publication).then(() => {
+            requester.publish(publication).then(() => {
+                console.log('Published: %s', publication)
                 props.navigation.navigate('Publicaciones');
+            }).catch(e => {
+                console.log('Error at publication publish: %s', e)
             })
         }
     }

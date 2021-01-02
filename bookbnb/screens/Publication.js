@@ -166,17 +166,24 @@ function GuestCommentsSection(props) {
     );
 }
 
-export default function PublicationScreen(props) {
+export function PublicationScreen(props) {
     const { uid, token, setToken } = React.useContext(UserContext);
+    const [publication, setPublication] = React.useState({});
 
-    let publication = props.route.params.publication
+    React.useEffect(() => {
+        let publication = props.route.params.publication;
+        geoDecode(publication.loc.latitude, publication.loc.longitude).then(address => {
+            setPublication({...publication, address: address})
+            console.log('setted address: %s', address)
+        });
+    }, []);
 
     function handleGoToProfile() {
         props.navigation.navigate('UserProfile', {
             userID: publication.user_id,
             allowEditing: false,
             allowMessaging: true
-        })
+        });
     }
 
     var image_url = Image.resolveAssetSource(defaultPublicationImg).uri
@@ -184,6 +191,8 @@ export default function PublicationScreen(props) {
         image_url = props.route.params.publication.images[0].url
     }
 
+    if (Object.keys(publication).length == 0)
+        return (<Text> Loading </Text>)
     return (
         <View>
             <ScrollView>
@@ -208,11 +217,16 @@ export default function PublicationScreen(props) {
                         <List.Item title="Cantidad de baños" right={() => <Text>{publication.bathrooms}</Text>}/>
                         <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>}/>
                         <List.Item title="Precio por noche" right={() => <Text>ARG $ {publication.price_per_night}</Text>}/>
-                        <List.Item title="Ubicación" right={() => <Text>{
-                            // TODO. falta
-                            geoDecode(publication.loc.latitude, publication.loc.longitude).address
-                        }</Text>}/>
                     </List.Section>
+                    {publication.address &&
+                        <List.Section>
+                            <List.Subheader>Ubicación</List.Subheader>
+                            <Divider style={{backgroundColor: 'black'}}/>
+                            <List.Item title="País" right={() => <Text>{publication.address.country}</Text>}/>
+                            <List.Item title="Provincia" right={() => <Text>{publication.address.state}</Text>}/>
+                            <List.Item title="Dirección" right={() => <Text>{publication.address.address}</Text>}/>
+                        </List.Section>
+                    }
                 </Surface>
                 <Surface style={{elevation: 1, marginTop: 10}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -245,11 +259,11 @@ export default function PublicationScreen(props) {
                 <Surface style={{elevation: 2, marginTop: 10 }}>
                     <List.Subheader>Consultas realizadas al dueño</List.Subheader>
                     <Divider style={{backgroundColor: 'black'}}/>
-                    {uid == publication.user_id? (
+                    {/*uid == publication.user_id? (
                         <OwnerCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
                     ):(
                         <GuestCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
-                    )}
+                    )*/}
                 </Surface>
             </ScrollView>
         </View>
@@ -263,5 +277,3 @@ const styles = StyleSheet.create({
         aspectRatio: 1
     },
 });
-
-export { PublicationScreen }

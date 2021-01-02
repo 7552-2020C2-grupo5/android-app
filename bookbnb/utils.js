@@ -66,10 +66,10 @@ async function postPublication(publication) {
 //
 const DECODE_URL = "https://us1.locationiq.com/v1/reverse.php"
 const ENCODE_URL = "https://us1.locationiq.com/v1/search.php"
-const ACCESS_TOKEN = "pk.6504284c5b80234a71c42b240e54012e"
+const ACCESS_TOKEN = "pk.abba15d0315049d6c0443e65b53a4d54"
 
 async function geoDecode(latitude, longitude) {
-    console.log(`geodecoding for latitude=${latitude}, longitude=${longitude}`)
+    console.log(`geoDecoding for latitude=${latitude}, longitude=${longitude}`)
 
     var url = DECODE_URL + "?key=" + ACCESS_TOKEN + "&format=json&lat=" + latitude + "&lon=" + longitude
 
@@ -78,9 +78,11 @@ async function geoDecode(latitude, longitude) {
         method: 'GET',
     }).then(response => {
         return response.json().then(value => {
-            console.log(`returning ${value.display_name}`)
             return {
-                address: value.display_name
+                address: value.display_name,
+                country: value.address.country,
+                state: value.address.state,
+                city: value.address.county,
             }
         })
     }).catch(e => {
