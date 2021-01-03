@@ -4,11 +4,10 @@ import {
 } from 'react-native';
 import { PublicationCardMinimal, AddNewButton } from '../components/components';
 import { UserContext } from '../context/userContext';
+import { CheckBox } from 'react-native-elements';
 
 export default function PublicationsScreen({ route, navigation }) {
-  const {
-    uid, requester,
-  } = React.useContext(UserContext);
+  const { uid, requester } = React.useContext(UserContext);
   const [publications, setPublications] = React.useState([]);
 
   const fillPublications = () => {
@@ -47,17 +46,13 @@ export default function PublicationsScreen({ route, navigation }) {
                 },
               });
             }
-            if (String(publication.user_id) != uid) {
+            if (String(publication.user_id) !== uid) {
               actions.push({
                 title: 'Reservar',
                 onAction: () => {
                   navigation.navigate('newReservation', { publication });
                 },
               });
-              actions.push({
-                title: 'Marcar como favorita',
-                onAction: handleMarkAsFavorite
-              })
             }
             return (
               <PublicationCardMinimal

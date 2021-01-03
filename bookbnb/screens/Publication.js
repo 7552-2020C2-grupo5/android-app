@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {
-  Dimensions, AsyncStorage, Paragraph, Title, Image, ScrollView, StyleSheet, View, Text,
+  AsyncStorage, Image, ScrollView, StyleSheet, View, Text,
 } from 'react-native';
 import {
-  Avatar, Button, Chip, Card, Divider, TextInput, List, Surface,
+  Button, Card, Divider, TextInput, List, Surface,
 } from 'react-native-paper';
-import { Icon } from 'react-native-elements';
+import { Icon, CheckBox } from 'react-native-elements';
 import { Requester } from '../requester/requester';
 import { UserContext } from '../context/userContext';
 import defaultPublicationImg from '../assets/default_publication_img.jpeg';
@@ -172,16 +172,22 @@ function GuestCommentsSection(props) {
 }
 
 export function PublicationScreen(props) {
-  const { uid, token, setToken } = React.useContext(UserContext);
-  const [publication, setPublication] = React.useState({});
+  const { uid, requester } = React.useContext(UserContext);
+  const [publication, setPublication] = React.useState(props.route.params.publication);
+  const [stared, setStared] = React.useState(false);
 
   React.useEffect(() => {
-    const { publication } = props.route.params;
     geoDecode(publication.loc.latitude, publication.loc.longitude).then((address) => {
-      setPublication({ ...publication, address });
-      console.log('setted address: %s', address);
+      setPublication((currentPublication) => ({ ...currentPublication, address }));
     });
   }, []);
+
+  React.useEffect(() => {
+    requester.getStarPublication(uid, publication.id).then((starsByUserOnPublication) => {
+      const _stared = (starsByUserOnPublication.length > 0);
+      setStared(_stared)
+    });
+  }, [])
 
   function handleGoToProfile() {
     props.navigation.navigate('UserProfile', {
@@ -191,27 +197,40 @@ export function PublicationScreen(props) {
     });
   }
 
+  function handleStar() {
+    requester.starPublication(uid, publication.id).then(() => {
+      setStared(true);
+    });
+  }
+
+  function handleUnstar() {
+    requester.unstarPublication(uid, publication.id).then(() => {
+      setStared(false);
+    });
+  }
+
   let image_url = Image.resolveAssetSource(defaultPublicationImg).uri;
   if (props.route.params.publication.images.length) {
     image_url = props.route.params.publication.images[0].url;
   }
 
-  if (Object.keys(publication).length == 0) return (<Text> Loading </Text>);
+  if (Object.keys(publication).length === 0) return (<Text> Loading </Text>);
+
   return (
     <View>
       <ScrollView>
-        <Text style={{
-          fontSize: 40, padding: 20, textAlign: 'center', fontWeight: 'bold',
-        }}
-        >
-          {' '}
+        <Text style={{ fontSize: 40, padding: 20, textAlign: 'center', fontWeight: 'bold' }} >
           {publication.title}
-          {' '}
         </Text>
         <View style={{ flex: 1, flexDirection: 'row', padding: 10 }}>
           <Image source={{ uri: image_url }} style={styles.image} />
-          <View style={{ position: 'absolute', bottom: 20, right: 30 }}>
+          <View style={{ flexDirection: 'row', position: 'absolute', bottom: 20, right: 30 }}>
             <Icon onPress={handleGoToProfile} raised reversed size={30} name="person" type="octicon" color="#f03" />
+            {stared && (
+              <Icon onPress={handleUnstar} raised size={30} name="favorite" type="material" color="#f03" />
+            ) || (
+              <Icon onPress={handleStar} raised size={30} name="favorite-border" type="material" color="#f03" />
+            )}
           </View>
         </View>
         <Divider />
@@ -220,9 +239,7 @@ export function PublicationScreen(props) {
             <List.Subheader>Descripción</List.Subheader>
             <Divider style={{ backgroundColor: 'black' }} />
             <Text style={{ justifyContent: 'flex-end', fontSize: 15, padding: 10 }}>
-              {' '}
               {publication.description}
-              {' '}
             </Text>
           </List.Section>
           <List.Section>
@@ -233,11 +250,7 @@ export function PublicationScreen(props) {
             <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>} />
             <List.Item
               title="Precio por noche"
-              right={() => (
-                <Text>
-    ARG ${publication.price_per_night}
-  </Text>
-              )}
+              right={() => ( <Text> ARG ${publication.price_per_night} </Text>)}
             />
           </List.Section>
           {publication.address
@@ -264,7 +277,7 @@ export function PublicationScreen(props) {
             />
           </View>
         </Surface>
-        {(uid == publication.user_id) && (
+        {(Number(uid) === Number(publication.user_id)) && (
         <Surface style={{ elevation: 1, marginTop: 10 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <List.Subheader>Reservas asociadas</List.Subheader>
@@ -282,11 +295,17 @@ export function PublicationScreen(props) {
         <Surface style={{ elevation: 2, marginTop: 10 }}>
           <List.Subheader>Consultas realizadas al dueño</List.Subheader>
           <Divider style={{ backgroundColor: 'black' }} />
-          {/* uid == publication.user_id? (
-                        <OwnerCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
-                    ):(
-                        <GuestCommentsSection publicationID={Number(publication.id)} questions={publication.questions}/>
-                    ) */}
+          {Number(uid) === Number(publication.user_id) ? (
+            <OwnerCommentsSection
+              publicationID={Number(publication.id)}
+              questions={publication.questions}
+            />
+          ) : (
+            <GuestCommentsSection
+              publicationID={Number(publication.id)}
+              questions={publication.questions}
+            />
+          )}
         </Surface>
       </ScrollView>
     </View>
