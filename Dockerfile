@@ -10,8 +10,6 @@ RUN 	apt-get update &&\
 	cd /app/bookbnb &&\
 	npm install 
 
-RUN 	echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
-
 WORKDIR /app
 
 CMD ["/bin/bash -c ./entrypoint.sh"]
