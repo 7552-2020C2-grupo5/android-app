@@ -22,11 +22,13 @@ import {
   Image,
 } from 'react-native';
 
+import NumericInput from 'react-native-numeric-input';
+
 import defaultPublicationImg from '../assets/default_publication_img.jpeg';
 
 const windowWidth = Dimensions.get('window').width;
 
-function ProfileRowData(props) {
+export function ProfileRowData(props) {
   return (
     <DataTable.Row style={{ justifyContent: 'flex-start' }}>
       <DataTable.Cell>
@@ -43,7 +45,7 @@ function ProfileRowData(props) {
   );
 }
 
-function ReservationCard(props) {
+export function ReservationCard(props) {
   /* TODO. agregar estado de la reserva activa / vencida */
 
   return (
@@ -70,7 +72,7 @@ function ReservationCard(props) {
   );
 }
 
-function PublicationCardMinimal(props) {
+export function PublicationCardMinimal(props) {
   let image_url = Image.resolveAssetSource(defaultPublicationImg).uri;
   if (props.publication.images.length) {
     image_url = props.publication.images[0].url;
@@ -95,7 +97,7 @@ function PublicationCardMinimal(props) {
   );
 }
 
-function AddNewButton(props) {
+export function AddNewButton(props) {
   const styles = StyleSheet.create({
     addNew: {
       position: 'absolute',
@@ -120,7 +122,7 @@ function AddNewButton(props) {
   );
 }
 
-function SimpleTextInput(props) {
+export function SimpleTextInput(props) {
   const styles = StyleSheet.create({
     input: {
       minHeight: 70,
@@ -140,13 +142,43 @@ function SimpleTextInput(props) {
   );
 }
 
-function AppLogo(props) {
+export function SimpleNumericInput({label, onChange, value, onlyPositives}) {
+  const styles = StyleSheet.create({
+    numericRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      margin: 10,
+    }
+  });
+
+  let minValue = null;
+  if (onlyPositives) {
+    minValue = 0
+  }
+
+  return(
+    <View style={styles.numericRow}>
+      <Text style={{ fontWeight: 'bold' }}>{label}</Text>
+      {
+        /* Corregir el valor inicial como '' */
+      //<NumericInput minValue={minValue} value={value} onChange={(value) => {
+      //  console.log('Change= %s', value)
+      //}} />
+      }
+      <TextInput mode="outlined" style={styles.input} value={value} onChangeText={onChange} />
+    </View>
+  );
+}
+
+
+export function AppLogo(props) {
   return (
     <Text style={styles.appLogo}> BookBnB </Text>
   );
 }
 
-function SnackBar(props) {
+export function SnackBar(props) {
   const [snackbar, setSnackbar] = React.useState(true);
 
   React.useEffect(() => {
@@ -180,7 +212,3 @@ const styles = StyleSheet.create({
     margin: 7,
   },
 });
-
-export {
-  SimpleTextInput, PublicationCardMinimal, SnackBar, AppLogo, AddNewButton, ReservationCard, ProfileRowData,
-};

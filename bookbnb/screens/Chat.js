@@ -39,9 +39,7 @@ function AnswerComment(props) {
 }
 
 export default function ChatScreen(props) {
-  const {
-    uid, token, requester, setToken,
-  } = React.useContext(UserContext);
+  const { uid, token, requester, setToken } = React.useContext(UserContext);
   const [currentMsg, setCurrentMsg] = React.useState('');
   const [messages, setMessages] = React.useState([]);
   const [dstUserID, setDstUserID] = React.useState(props.route.params.dstUserID);
