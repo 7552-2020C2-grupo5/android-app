@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   View, ScrollView, StatusBar, Text, Title, StyleSheet
 } from 'react-native';
-import { Button, Surface } from 'react-native-paper';
+import { Button, Surface, List, Divider } from 'react-native-paper';
 import { SimpleTextInput, SimpleNumericInput } from '../components/components';
 import { CheckBox } from 'react-native-elements';
 import Map from '../components/maps';
@@ -16,6 +16,7 @@ export default function SearchScreen(props) {
   const [minBathCount, setMinBathCount] = React.useState('');
   const [minRoomCount, setMinRoomCount] = React.useState('');
   const [minBedCount, setMinBedCount] = React.useState('');
+  const [minPrice, setMinPrice] = React.useState('');
   const [maxPrice, setMaxPrice] = React.useState('');
   const [searchRatio, setSearchRatio] = React.useState('');
   const [usingOwnLocation, setUsingOwnLocation] = React.useState(false);
@@ -33,7 +34,10 @@ export default function SearchScreen(props) {
       searchParams.beds = Number(minBedCount);
     }
     if (maxPrice != '') {
-      searchParams.max_price = Number(maxPrice);
+      searchParams.price_per_night_max = Number(maxPrice);
+    }
+    if (minPrice != '') {
+      searchParams.price_per_night_min = Number(minPrice);
     }
     if (location.latitude !== 0 && location.longitude !== 0 && searchRatio !== '') {
       searchParams.latitude = Number(location.latitude);
@@ -82,6 +86,7 @@ export default function SearchScreen(props) {
           <SimpleNumericInput onlyPositives label="Minima cantidad de baños" value={minBathCount} onChange={setMinBathCount} />
           <SimpleNumericInput onlyPositives label="Mínima cantidad de cuartos" value={minRoomCount} onChange={setMinRoomCount} />
           <SimpleNumericInput onlyPositives label="Mínima cantidad de camas" value={minBedCount} onChange={setMinBedCount} />
+          <SimpleNumericInput onlyPositives label="Precio mínimo" value={minPrice} onChange={setMinPrice} />
           <SimpleNumericInput onlyPositives label="Precio máximo" value={maxPrice} onChange={setMaxPrice} />
           <SimpleNumericInput onlyPositives label="Máximo radio de búsqueda (km)" value={searchRatio} onChange={setSearchRatio} />
           <CheckBox
