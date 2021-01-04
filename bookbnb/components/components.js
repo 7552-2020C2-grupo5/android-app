@@ -1,25 +1,12 @@
 import * as React from 'react';
 import {
-  Snackbar,
-  Avatar,
-  Button,
-  Card,
-  Title,
-  Paragraph,
-  DataTable,
-  TextInput,
+  Snackbar, Avatar, Button, Card, Title, Paragraph, DataTable, TextInput, Surface, List, Divider
 } from 'react-native-paper';
 
 import { Icon, CheckBox } from 'react-native-elements';
 
 import {
-  AsyncStorage,
-  StyleSheet,
-  Text,
-  View,
-  TouchableHighlight,
-  Dimensions,
-  Image,
+  AsyncStorage, StyleSheet, Text, View, TouchableHighlight, Dimensions, Image,
 } from 'react-native';
 
 import NumericInput from 'react-native-numeric-input';
@@ -35,33 +22,23 @@ export function ProfileRowData(props) {
         <Text style={{ fontWeight: 'bold' }}>{props.keyValue}</Text>
       </DataTable.Cell>
       <DataTable.Cell style={{ justifyContent: 'flex-end' }}>
-        <Text>
-          {' '}
-          {props.value}
-          {' '}
-        </Text>
+        <Text> {props.value} </Text>
       </DataTable.Cell>
     </DataTable.Row>
   );
 }
 
 export function ReservationCard(props) {
-  /* TODO. agregar estado de la reserva activa / vencida */
-
   return (
     <Card {...props} style={styles.reservationCard}>
       <Card.Content>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-          <Title>
-            {' '}
-            {props.reservation.title}
-            {' '}
-          </Title>
-          <CheckBox title="Vencida" checked={props.reservation.expired} />
+          <Title> {props.reservation.title} </Title>
         </View>
         <ProfileRowData keyValue="Fecha de inicio" value={props.reservation.initial_date} />
         <ProfileRowData keyValue="Fecha de finalización" value={props.reservation.final_date} />
         <ProfileRowData keyValue="Owner" value={props.reservation.owner} />
+        <CheckBox title="Vencida" checked={props.reservation.expired} />
         {props.actions && props.actions.map((action, i) => (
           <Card.Actions style={styles.actions}>
             <Button onPress={() => { action.onAction(); }}>{action.title}</Button>
@@ -86,11 +63,7 @@ export function PublicationCardMinimal(props) {
       ))}
       <Card.Cover source={{ uri: image_url }} />
       <Card.Content>
-        <Title>
-          {' '}
-          {props.publication.title}
-          {' '}
-        </Title>
+        <Title> {props.publication.title} </Title>
         <Paragraph>{props.publication.description}</Paragraph>
       </Card.Content>
     </Card>
@@ -134,11 +107,11 @@ export function SimpleTextInput(props) {
   });
   if (!props.multiline) {
     return (
-      <TextInput dense label="" {...props} mode="outlined" style={styles.input} />
+      <TextInput dense {...props} mode="outlined" style={styles.input} />
     );
   }
   return (
-    <TextInput multiline label="" {...props} mode="outlined" style={styles.input} />
+    <TextInput multiline {...props} mode="outlined" style={styles.input} />
   );
 }
 
@@ -186,15 +159,45 @@ export function SnackBar(props) {
   }, [props.navigation]);
 
   return (
-    <Snackbar visible={snackbar}>
-      {' '}
-      {props.text}
-      {' '}
-    </Snackbar>
+    <Snackbar visible={snackbar}> {props.text} </Snackbar>
   );
 }
 
+export function FloatingSection(props) {
+  return (
+    <Surface style={styles.floatingSection}>
+      <List.Subheader>{props.titleLabel}</List.Subheader>
+      <Divider style={{ backgroundColor: 'black' }} />
+      {props.children}
+    </Surface>
+  );
+}
+
+export function FloatingButton(props) {
+  return (
+    <Surface style={styles.floatingSection}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <List.Subheader>{props.buttonLabel}</List.Subheader>
+        <Icon
+          onPress={props.onPress}
+          containerStyle={{ paddingRight: 10 }}
+          size={40}
+          name={props.iconName}
+          type={props.iconType}
+          color="#f03"
+          {...props}
+        />
+      </View>
+    </Surface>
+  );
+}
+
+
 const styles = StyleSheet.create({
+  floatingSection: {
+    elevation: 2,
+    marginTop: 10
+  },
   appLogo: {
     fontSize: 50,
     margin: 30,

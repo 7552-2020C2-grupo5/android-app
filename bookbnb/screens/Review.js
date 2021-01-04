@@ -30,9 +30,7 @@ function Review(props) {
 }
 
 function ReviewsBox({ publicationID, userID, navigation }) {
-  const {
-    uid, token, setToken, requester,
-  } = React.useContext(UserContext);
+  const { uid, token, setToken, requester } = React.useContext(UserContext);
   const [reviews, setReviews] = React.useState([]);
   const [meanScore, setMeanScore] = React.useState(0);
 
@@ -45,7 +43,7 @@ function ReviewsBox({ publicationID, userID, navigation }) {
         score: review.score,
         comment: review.comment,
         reviewerName: `${reviewerData.first_name} ${reviewerData.last_name}`,
-      });
+     });
       acumScore += Number(review.score);
     }
     setMeanScore(Math.round(acumScore / newReviews.length));
@@ -53,6 +51,7 @@ function ReviewsBox({ publicationID, userID, navigation }) {
   }
 
   async function fetchReviews() {
+    console.log('fetching reviewss....')
     if (publicationID) {
       requester.publicationReviews({ id: publicationID }).then(fetchReviewersDataFor);
     }
@@ -61,7 +60,7 @@ function ReviewsBox({ publicationID, userID, navigation }) {
     }
   }
 
-  React.useEffect(() => { fetchReviews(); });
+  React.useEffect(() => { fetchReviews(); }, []);
 
   return (
     <View>
@@ -108,9 +107,8 @@ function NewReviewBox({ onFinishReview }) {
 
 export function ReviewScreen({ route, navigation }) {
   const [editing, setEditing] = React.useState(editing);
-  const {
-    uid, token, setToken, requester,
-  } = React.useContext(UserContext);
+  const { uid, token, setToken, requester } = React.useContext(UserContext);
+  const [tick, setTick] = React.useState(0);
 
   function handleFinishReview({ score, review }) {
     const base_review = {
@@ -131,6 +129,7 @@ export function ReviewScreen({ route, navigation }) {
         setEditing(false);
       });
     }
+    setTick(tick => tick + 1)
   }
 
   React.useEffect(() => {
@@ -141,6 +140,7 @@ export function ReviewScreen({ route, navigation }) {
     <View>
       <ScrollView>
         <ReviewsBox
+          key={tick}
           publicationID={route.params.publication_id}
           userID={route.params.user_id}
           navigation={navigation}

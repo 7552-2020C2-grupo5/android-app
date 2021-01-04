@@ -46,7 +46,7 @@ export default function PublicationsScreen({ route, navigation }) {
                 },
               });
             }
-            if (String(publication.user_id) !== uid) {
+            if (String(publication.user_id) !== String(uid)) {
               actions.push({
                 title: 'Reservar',
                 onAction: () => {

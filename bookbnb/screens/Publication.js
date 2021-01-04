@@ -7,6 +7,7 @@ import {
 } from 'react-native-paper';
 import { Icon, CheckBox } from 'react-native-elements';
 import { Requester } from '../requester/requester';
+import { FloatingSection, FloatingButton } from '../components/components';
 import { UserContext } from '../context/userContext';
 import defaultPublicationImg from '../assets/default_publication_img.jpeg';
 import { geoDecode } from '../utils';
@@ -87,12 +88,11 @@ class QuestionComment extends React.Component {
         <Card style={{ backgroundColor: this.state.backgroundColor, margin: 7, marginLeft: 30 }} onPress={this.handleOnPress}>
           <Comment text={this.props.text} />
         </Card>
-        {this.state.answer
-                    && (
-                    <>
-                      <AnswerComment text={this.state.answer} />
-                    </>
-                    )}
+        {this.state.answer && (
+          <>
+            <AnswerComment text={this.state.answer} />
+          </>
+        )}
       </>
     );
   }
@@ -107,9 +107,6 @@ function AnswerComment(props) {
 }
 
 function OwnerCommentsSection(props) {
-  /* Vista de comentarios como dueño de la publicación:
-     * todas las publicaciones que se hacen responden a alguna pregunta ya hecha
-     */
   const [selectedComment, setSelectedComment] = React.useState(null);
   const [currentComment, setCurrentComment] = React.useState(null);
 
@@ -163,8 +160,8 @@ function GuestCommentsSection(props) {
   return (
     <View style={{ padding: 9 }}>
       {
-                questions.map((value, i) => <QuestionComment key={i} publicationID={props.publicationID} question={value} text={value.question} />)
-            }
+        questions.map((value, i) => <QuestionComment key={i} publicationID={props.publicationID} question={value} text={value.question} />)
+      }
       <TextInput style={{ padding: 5 }} multiline placeholder="Escribí una consulta..." mode="outlined" value={currentComment} onChangeText={(value) => setCurrentComment(value)} />
       <Button mode="contained" onPress={handleNewQuestion}> Consultar </Button>
     </View>
@@ -233,68 +230,39 @@ export function PublicationScreen(props) {
             )}
           </View>
         </View>
-        <Divider />
-        <Surface style={{ elevation: 2, padding: 14 }}>
-          <List.Section>
-            <List.Subheader>Descripción</List.Subheader>
-            <Divider style={{ backgroundColor: 'black' }} />
-            <Text style={{ justifyContent: 'flex-end', fontSize: 15, padding: 10 }}>
-              {publication.description}
-            </Text>
-          </List.Section>
-          <List.Section>
-            <List.Subheader>Información</List.Subheader>
-            <Divider style={{ backgroundColor: 'black' }} />
-            <List.Item title="Cantidad de cuartos" right={() => <Text>{publication.rooms}</Text>} />
-            <List.Item title="Cantidad de baños" right={() => <Text>{publication.bathrooms}</Text>} />
-            <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>} />
-            <List.Item
-              title="Precio por noche"
-              right={() => ( <Text> ARG ${publication.price_per_night} </Text>)}
-            />
-          </List.Section>
-          {publication.address
-                        && (
-                        <List.Section>
-                          <List.Subheader>Ubicación</List.Subheader>
-                          <Divider style={{ backgroundColor: 'black' }} />
-                          <List.Item title="País" right={() => <Text>{publication.address.country}</Text>} />
-                          <List.Item title="Provincia" right={() => <Text>{publication.address.state}</Text>} />
-                          <List.Item title="Dirección" right={() => <Text>{publication.address.address}</Text>} />
-                        </List.Section>
-                        )}
-        </Surface>
-        <Surface style={{ elevation: 1, marginTop: 10 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <List.Subheader>Calificaciones del lugar</List.Subheader>
-            <Icon
-              onPress={() => props.navigation.navigate('reviews', { publication_id: publication.id })}
-              containerStyle={{ paddingRight: 10 }}
-              size={40}
-              name="like"
-              type="evilicon"
-              color="#f03"
-            />
-          </View>
-        </Surface>
+        <FloatingSection titleLabel="Descripción">
+          <Text style={{ justifyContent: 'flex-end', fontSize: 15, padding: 10 }}>
+            {publication.description}
+          </Text>
+        </FloatingSection>
+        <FloatingSection titleLabel="Información">
+          <List.Item title="Cantidad de cuartos" right={() => <Text>{publication.rooms}</Text>} />
+          <List.Item title="Cantidad de baños" right={() => <Text>{publication.bathrooms}</Text>} />
+          <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>} />
+          <List.Item title="Precio por noche" right={() => ( <Text> ARG ${publication.price_per_night} </Text>)} />
+        </FloatingSection>
+          {publication.address && (
+            <FloatingSection titleLabel="Ubicación">
+              <List.Item title="País" right={() => <Text>{publication.address.country}</Text>} />
+              <List.Item title="Provincia" right={() => <Text>{publication.address.state}</Text>} />
+              <List.Item title="Dirección" right={() => <Text>{publication.address.address}</Text>} />
+            </FloatingSection>
+          )}
+        <FloatingButton
+          buttonLabel="Calificaciones del lugar"
+          onPress={() => props.navigation.navigate('reviews', { publication_id: publication.id })}
+          iconName="like"
+          iconType="evilicon"
+        />
         {(Number(uid) === Number(publication.user_id)) && (
-        <Surface style={{ elevation: 1, marginTop: 10 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <List.Subheader>Reservas asociadas</List.Subheader>
-            <Icon
-              onPress={() => props.navigation.navigate('relatedBookings', { publication })}
-              containerStyle={{ paddingRight: 10 }}
-              size={40}
-              name="calendar"
-              type="evilicon"
-              color="#f03"
-            />
-          </View>
-        </Surface>
-        )}
-        <Surface style={{ elevation: 2, marginTop: 10 }}>
-          <List.Subheader>Consultas realizadas al dueño</List.Subheader>
-          <Divider style={{ backgroundColor: 'black' }} />
+        <FloatingButton
+          buttonLabel="Reservas asociadas"
+          onPress={() => props.navigation.navigate('relatedBookings', { publication })}
+          iconName="calendar"
+          iconType="evilicon"
+        />
+       )}
+        <FloatingSection titleLabel="Consultas realizadas al dueño">
           {Number(uid) === Number(publication.user_id) ? (
             <OwnerCommentsSection
               publicationID={Number(publication.id)}
@@ -306,7 +274,7 @@ export function PublicationScreen(props) {
               questions={publication.questions}
             />
           )}
-        </Surface>
+        </FloatingSection>
       </ScrollView>
     </View>
   );
