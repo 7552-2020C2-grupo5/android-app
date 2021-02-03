@@ -2,6 +2,8 @@ import * as React from 'react';
 import { AsyncStorage } from 'react-native';
 import { decodeJWTPayload } from '../utils';
 import { Requester } from '../requester/requester';
+import ApiClient from '../requester/client/ApiClient';
+import RemoteRequester from '../requester/requester/RemoteRequester';
 
 const UserContext = React.createContext();
 
@@ -9,6 +11,7 @@ const UserContextProvider = (props) => {
     const [UID, setUID] = React.useState(null);
     const [token, _setToken] = React.useState(null);
     const [requester, _setRequester] = React.useState(null);
+    const [newRequester, _setNewRequester] = React.useState(null);
 
     React.useEffect(() => {
         AsyncStorage.getItem('userContext').then(ctx => {
@@ -21,6 +24,7 @@ const UserContextProvider = (props) => {
             }
         })
         _setRequester(new Requester())
+        _setNewRequester(new ApiClient(new RemoteRequester()))
     }, [])
 
     function setToken(token) {
@@ -44,11 +48,11 @@ const UserContextProvider = (props) => {
     }
 
     return (
-        <>
-            <UserContext.Provider value={{uid: UID, token: token, requester: requester, setToken: setToken, cleanCtx: cleanCtx}}>
-                {props.children}
-            </UserContext.Provider>
-        </>
+      <>
+        <UserContext.Provider value={{uid: UID, token: token, requester: requester, setToken: setToken, cleanCtx: cleanCtx, newRequester: newRequester}}>
+          {props.children}
+        </UserContext.Provider>
+      </>
     );
 };
 

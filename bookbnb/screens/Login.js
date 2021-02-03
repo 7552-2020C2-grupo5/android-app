@@ -1,38 +1,28 @@
 import * as React from 'react';
-import {
-  StyleSheet, View, Text, AsyncStorage, TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, View, Text, AsyncStorage, TouchableOpacity } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
 import { SocialIcon } from 'react-native-elements';
 import { SnackBar, AppLogo } from '../components/components';
 import { doGoogleLogin, login } from '../utils';
 import { UserContext } from '../context/userContext';
 
-export default function LoginScreen(props) {
-  const {
-    UID, token, setToken, requester,
-  } = React.useContext(UserContext);
+export function LoginScreen(props) {
+  const { token, setToken, newRequester } = React.useContext(UserContext);
   const [username, setUsername] = React.useState('');
   const [pass, setPass] = React.useState('');
 
-  async function userTokenIsSaved() {
-    return !(token == null);
-  }
-
-  async function handleLogin() {
-    const userCredentials = {
-      username,
-      password: pass,
-    };
+  function _handleResponse(response) {
     try {
-      const loginResult = await requester.login(userCredentials);
-      setToken(loginResult.token);
-    } catch (e) {
-      alert(e);
+      let token = response.content().token;
+      setToken(token);
+    } catch(e) {
+      alert(response.description());
     }
   }
 
-  // AsyncStorage.removeItem('userContext')
+  function handleLogin() {
+    newRequester.userLogin({email: username, password: pass}, _handleResponse);
+  }
 
   return (
     <View style={styles.container}>
@@ -70,5 +60,3 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 });
-
-export { LoginScreen };

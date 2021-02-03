@@ -10,15 +10,12 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from 'expo-permissions';
 import { uploadImageToFirebase, decodeJWTPayload } from '../utils';
 import { UserContext } from '../context/userContext';
-import { Requester } from '../requester/requester';
 import { SimpleTextInput } from '../components/components';
 
 function EditProfileScreen(props) {
-  const { uid, token, setToken } = React.useContext(UserContext);
+  const { uid, token, setToken, newRequester } = React.useContext(UserContext);
   const [userImage, setUserImage] = React.useState(null);
   const [userData, setUserData] = React.useState(props.route.params.userData);
-
-  const requester = new Requester();
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -49,18 +46,17 @@ function EditProfileScreen(props) {
       setUserData({ ...userData, avatar: url });
     }
     if (url) {
-      await requester.updateProfileData(userData.id, {
+      newRequester.updateProfileData(userData.id, {
         first_name: userData.firstName,
         last_name: userData.lastName,
         profile_picture: url,
-      });
+      }, () => props.navigation.goBack());
     } else {
-      await requester.updateProfileData(userData.id, {
+      newRequester.updateProfileData(userData.id, {
         first_name: userData.firstName,
         last_name: userData.lastName,
-      });
+      }, () => props.navigation.goBack());
     }
-    props.navigation.goBack();
   }
 
   return (

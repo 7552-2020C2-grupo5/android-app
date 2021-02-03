@@ -7,7 +7,7 @@ import { UserContext } from '../context/userContext';
 import { CheckBox } from 'react-native-elements';
 
 export default function PublicationsScreen({ route, navigation }) {
-  const { uid, requester } = React.useContext(UserContext);
+  const { uid, requester, newRequester } = React.useContext(UserContext);
   const [publications, setPublications] = React.useState([]);
 
   const fillPublications = () => {
@@ -17,13 +17,14 @@ export default function PublicationsScreen({ route, navigation }) {
         user_id: uid,
       };
     }
-    requester.searchPublications(searchParams).then((foundedPublications) => {
-      setPublications(foundedPublications);
-    });
-  };
 
-  const handleMarkAsFavorite = () => {
+    newRequester.publications(publications => {
+      setPublications(publications.content());
+    }, searchParams)
 
+    //requester.searchPublications(searchParams).then((foundedPublications) => {
+    //  setPublications(foundedPublications);
+    //});
   };
 
   React.useEffect(() => navigation.addListener('focus', () => {

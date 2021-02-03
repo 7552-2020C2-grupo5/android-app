@@ -5,16 +5,10 @@ import { AppLogo } from '../components/components';
 import { UserContext } from '../context/userContext';
 
 export default function LogoutScreen(props) {
-  const { token, requester, cleanCtx } = React.useContext(UserContext);
+  const { token, requester, cleanCtx, newRequester } = React.useContext(UserContext);
 
-  const logout = async () => {
-    try {
-      await requester.logout(token);
-    } catch (e) {
-    }
-    cleanCtx();
-  };
-  logout();
+  newRequester.userLogout(token, response => cleanCtx());
+
   return (
     <View>
       <ActivityIndicator size="large" animating color={Colors.red800} />
