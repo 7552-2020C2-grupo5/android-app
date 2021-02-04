@@ -52,7 +52,7 @@ function DateInput(props) {
 }
 
 export function NewReservationScreen({ route, navigation }) {
-  const { uid, token, requester, newRequester } = React.useContext(UserContext);
+  const { uid, token, newRequester } = React.useContext(UserContext);
   const [initialDate, setInitialDate] = React.useState(new Date());
   const [finalDate, setFinalDate] = React.useState(new Date());
 

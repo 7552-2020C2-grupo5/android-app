@@ -6,13 +6,10 @@ import { Button, Surface, List, Divider } from 'react-native-paper';
 import { SimpleTextInput, SimpleNumericInput } from '../components/components';
 import { CheckBox } from 'react-native-elements';
 import Map from '../components/maps';
-import { Requester } from '../requester/requester';
-import { UserContext } from '../context/userContext';
 import * as Location from 'expo-location';
 
 
 export default function SearchScreen(props) {
-  const { requester } = React.useContext(UserContext);
   const [minBathCount, setMinBathCount] = React.useState('');
   const [minRoomCount, setMinRoomCount] = React.useState('');
   const [minBedCount, setMinBedCount] = React.useState('');

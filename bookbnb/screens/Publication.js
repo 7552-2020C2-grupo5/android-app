@@ -182,7 +182,7 @@ function GuestCommentsSection(props) {
 }
 
 export function PublicationScreen(props) {
-  const { uid, requester, newRequester } = React.useContext(UserContext);
+  const { uid, newRequester } = React.useContext(UserContext);
   const [publication, setPublication] = React.useState(props.route.params.publication);
   const [stared, setStared] = React.useState(false);
 
@@ -193,9 +193,9 @@ export function PublicationScreen(props) {
   }, []);
 
   React.useEffect(() => {
-    requester.getStarPublication(uid, publication.id).then((starsByUserOnPublication) => {
-      const _stared = (starsByUserOnPublication.length > 0);
-      setStared(_stared)
+    newRequester.getPublicationStars(publication.id, uid, (response) => {
+      let starsByUserOnPublication = response.content();
+      setStared(starsByUserOnPublication.length > 0);
     });
   }, [])
 
@@ -208,15 +208,11 @@ export function PublicationScreen(props) {
   }
 
   function handleStar() {
-    requester.starPublication(uid, publication.id).then(() => {
-      setStared(true);
-    });
+    newRequester.starPublication(publication.id, uid, (response) => setStared(true));
   }
 
   function handleUnstar() {
-    requester.unstarPublication(uid, publication.id).then(() => {
-      setStared(false);
-    });
+    newRequester.unstarPublication(publication.id, uid, (response) => setStared(false));
   }
 
   let image_url = Image.resolveAssetSource(defaultPublicationImg).uri;
