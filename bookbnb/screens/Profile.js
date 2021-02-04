@@ -5,15 +5,12 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { ProfileRowData } from '../components/components';
-import { Requester } from '../requester/requester';
 import { UserContext } from '../context/userContext';
 
 // @refresh reset
 
-export default function ProfileScreen(props) {
-  const {
-    uid, token, setToken, requester,
-  } = React.useContext(UserContext);
+export function ProfileScreen(props) {
+  const { uid, newRequester } = React.useContext(UserContext);
   const [userData, setUserData] = React.useState({
     id: null,
     firstName: 'nothing',
@@ -28,7 +25,8 @@ export default function ProfileScreen(props) {
     if (typeof userID === 'undefined') {
       userID = uid;
     }
-    requester.profileData({ id: userID }).then((userData) => {
+    newRequester.profileData(userID, response => {
+      let userData = response.content();
       console.log(`fetching data for user ${userID}`);
       setUserData({
         id: userID,
@@ -89,5 +87,3 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
-
-export { ProfileScreen };

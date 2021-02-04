@@ -1,12 +1,7 @@
 import * as React from 'react';
-import {
-  AsyncStorage, Image, ScrollView, StyleSheet, View, Text,
-} from 'react-native';
-import {
-  Button, Card, Divider, TextInput, List, Surface,
-} from 'react-native-paper';
+import { AsyncStorage, Image, ScrollView, StyleSheet, View, Text } from 'react-native';
+import { Button, Card, Divider, TextInput, List, Surface } from 'react-native-paper';
 import { Icon, CheckBox } from 'react-native-elements';
-import { Requester } from '../requester/requester';
 import { FloatingSection, FloatingButton } from '../components/components';
 import { UserContext } from '../context/userContext';
 import defaultPublicationImg from '../assets/default_publication_img.jpeg';
@@ -26,9 +21,10 @@ function Comment(props) {
 }
 
 class QuestionComment extends React.Component {
+  static contextType = UserContext;
+
   constructor(props) {
     super(props);
-    this.requester = new Requester();
     this.state = {
       answer: props.question.reply,
       publicationID: props.publicationID,
@@ -38,7 +34,7 @@ class QuestionComment extends React.Component {
     };
   }
 
-  toggleSelect() {
+  toggleSelect = () => {
     if (this.state.selected) {
       this.setState({
         answer: this.state.answer,
@@ -54,12 +50,13 @@ class QuestionComment extends React.Component {
     }
   }
 
-  setAnswer(answer) {
-    this.requester.addAnswer({
-      publicationID: this.state.publicationID,
-      questionID: this.state.question.id,
-      answer,
-    });
+  setAnswer = (answer) => {
+    this.context.newRequester.addAnswer(
+      this.state.publicationID,
+      this.state.question.id,
+      { answer: answer },
+      () => {}
+    );
     if (this.state.answer) {
       return;
     }
@@ -71,7 +68,7 @@ class QuestionComment extends React.Component {
     this.props.onPress(null);
   }
 
-  handleOnPress() {
+  handleOnPress = () => {
     if (this.props.onPress) {
       // pasamos la ref al padre
       if (this.state.selected) {
@@ -85,7 +82,10 @@ class QuestionComment extends React.Component {
   render() {
     return (
       <>
-        <Card style={{ backgroundColor: this.state.backgroundColor, margin: 7, marginLeft: 30 }} onPress={this.handleOnPress}>
+        <Card
+          style={{ backgroundColor: this.state.backgroundColor, margin: 7, marginLeft: 30 }}
+          onPress={this.handleOnPress}
+        >
           <Comment text={this.props.text} />
         </Card>
         {this.state.answer && (
@@ -112,8 +112,7 @@ function OwnerCommentsSection(props) {
 
   function handleSelectComment(ref) {
     if (!ref) {
-      setSelectedComment(null);
-      return;
+      return setSelectedComment(null);
     }
     if (selectedComment) {
       selectedComment.toggleSelect();
@@ -124,9 +123,16 @@ function OwnerCommentsSection(props) {
 
   return (
     <View style={{ padding: 9 }}>
-      {props.questions.map((value) => <QuestionComment key={value} publicationID={props.publicationID} question={value} onPress={(ref) => handleSelectComment(ref)} text={value.question} />)}
-      { selectedComment
-        ? (
+      {props.questions.map((value) =>
+        <QuestionComment
+          key={value}
+          publicationID={props.publicationID}
+          question={value}
+          onPress={handleSelectComment}
+          text={value.question}
+        />
+      )}
+      { selectedComment? (
           <>
             <TextInput mode="outlined" onChangeText={(value) => setCurrentComment(value)} />
             <Button onPress={() => selectedComment.setAnswer(currentComment)}> Enviar </Button>
@@ -139,29 +145,36 @@ function OwnerCommentsSection(props) {
 
 function GuestCommentsSection(props) {
   /* Vista de comentarios desde el lado del NO dueño de la publicacion:
-     * todas las publicaciones que se hacen se cargan como preguntas
-     */
+   * todas las publicaciones que se hacen se cargan como preguntas
+   */
+
+  const { uid, newRequester } = React.useContext(UserContext);
+
   const [questions, setQuestions] = React.useState(props.questions);
   const [currentComment, setCurrentComment] = React.useState(null);
 
-  const requester = new Requester();
-
-  async function handleNewQuestion() {
-    const currentUserID = await AsyncStorage.getItem('userID');
-    const response = await requester.addQuestion({
-      publicationID: props.publicationID,
-      question: currentComment,
-      userID: Number(currentUserID),
-    });
-    setQuestions(questions.concat([response]));
-    setCurrentComment('');
+  function handleNewQuestion() {
+    let questionDetails = { question: currentComment, user_id: Number(uid) };
+    newRequester.addQuestion(
+      props.publicationID,
+      questionDetails,
+      response => {
+        setQuestions(currentQuestions => currentQuestions.push(response.content()));
+        setCurrentComment('');
+      }
+    );
   }
 
   return (
     <View style={{ padding: 9 }}>
-      {
-        questions.map((value, i) => <QuestionComment key={i} publicationID={props.publicationID} question={value} text={value.question} />)
-      }
+      {questions.map((value, i) =>
+          <QuestionComment
+            key={i}
+            publicationID={props.publicationID}
+            question={value}
+            text={value.question}
+          />
+      )}
       <TextInput style={{ padding: 5 }} multiline placeholder="Escribí una consulta..." mode="outlined" value={currentComment} onChangeText={(value) => setCurrentComment(value)} />
       <Button mode="contained" onPress={handleNewQuestion}> Consultar </Button>
     </View>
@@ -169,7 +182,7 @@ function GuestCommentsSection(props) {
 }
 
 export function PublicationScreen(props) {
-  const { uid, requester } = React.useContext(UserContext);
+  const { uid, requester, newRequester } = React.useContext(UserContext);
   const [publication, setPublication] = React.useState(props.route.params.publication);
   const [stared, setStared] = React.useState(false);
 
