@@ -52,20 +52,18 @@ function DateInput(props) {
 }
 
 export function NewReservationScreen({ route, navigation }) {
-  const { uid, token, requester } = React.useContext(UserContext);
+  const { uid, token, requester, newRequester } = React.useContext(UserContext);
   const [initialDate, setInitialDate] = React.useState(new Date());
   const [finalDate, setFinalDate] = React.useState(new Date());
 
   function handleDoReservation() {
-    requester.addReservation({
+    newRequester.makeReservation({
       tenant_id: Number(uid),
       publication_id: route.params.publication.id,
       total_price: 100,
       initial_date: _dateStringyfier(initialDate),
       final_date: _dateStringyfier(finalDate),
-    }).then(() => {
-      navigation.navigate('Mis Reservas');
-    });
+    }, () => { navigation.navigate('Mis Reservas'); });
   }
 
   return (

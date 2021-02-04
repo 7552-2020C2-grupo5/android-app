@@ -10,23 +10,27 @@ function _reservationIsExpired(reservation) {
 }
 
 function PublicationRelatedReservationList({ publication, navigationRef }) {
-  /* Reservas asociadas a una publicación */
-  const { uid, token, requester } = React.useContext(UserContext);
+  /* Reservas asociadas a una publicación, filtramos aquellas
+   * reservas que hayan sido efectuadas con ese publication_id
+   */
+  const { uid, token, requester, newRequester } = React.useContext(UserContext);
   const [reservations, setReservations] = React.useState([]);
 
   function _fetchReservationsData() {
-    const publication_id = publication.id;
-    requester.reservations({ publication_id }).then(async (reservations) => {
-      const ownerData = await requester.profileData({ id: uid });
+    newRequester.bookings({ publication_id: publication.id }, async response => {
+      const reservations = response.content();
       for (const reservation of reservations) {
-        try {
-          const ownerData = await requester.profileData({ id: reservation.tenant_id });
+        newRequester.profileData(reservation.tenant_id, response => {
+          let ownerData = response.content();
           reservation.title = publication.title;
           reservation.owner = `${ownerData.first_name} ${ownerData.last_name}`;
           reservation.expired = _reservationIsExpired(reservation);
-        } catch (e) { }
+          setReservations(reservations => {
+            reservations.push(reservation);
+            return reservations;
+          });
+        });
       }
-      setReservations(reservations);
     });
   }
 
@@ -57,22 +61,32 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
 }
 
 function OwnReservationsList({ navigationRef }) {
+  /* Vista de 'Mis reservaciones', buscamos las reservaciones
+   * que hayan sido efectúadas con nuestro uid */
   /* Se asume que el uid es el del ctx */
-  const { uid, token, requester } = React.useContext(UserContext);
+  const { uid, token, requester, newRequester } = React.useContext(UserContext);
   const [reservations, setReservations] = React.useState([]);
 
+  //TODO: corregir caso en que se fetchean las reservas pero no aparecen en la
+  //      pantalla hasta que se monta nuevamente
   function _fetchReservationsData() {
-    requester.reservations({ tenant_id: uid }).then(async (reservations) => {
-      for (const reservation of reservations) {
-        try {
-          const relatedPublication = await requester.getPublication(Number(reservation.publication_id));
-          const ownerData = await requester.profileData({ id: uid });
-          reservation.title = relatedPublication.title;
-          reservation.owner = `${ownerData.first_name} ${ownerData.last_name}`;
-          reservation.expired = _reservationIsExpired(reservation);
-        } catch (e) { }
-      }
-      setReservations(reservations);
+    newRequester.bookings({ tenant_id: uid }, async response => {
+      let reservations = response.content();
+      newRequester.profileData(uid, profileResponse => {
+        for (const reservation of reservations) {
+          newRequester.getPublication(Number(reservation.publication_id), publicationResponse => {
+            const relatedPublication = publicationResponse.content();
+            const ownerData = profileResponse.content();
+            reservation.title = relatedPublication.title;
+            reservation.owner = `${ownerData.first_name} ${ownerData.last_name}`;
+            reservation.expired = _reservationIsExpired(reservation);
+            setReservations(reservations => {
+              reservations.push(reservation);
+              return reservations;
+            });
+          });
+        }
+      });
     });
   }
 
@@ -103,6 +117,9 @@ function OwnReservationsList({ navigationRef }) {
 }
 
 export function ReservationsScreen({ navigation, route }) {
+  /* Vista pricipal de reservaciones, muestra cada reservación
+   * con una tarjetita y sus datos */
+
   const [, setTick] = React.useState(0);
 
   React.useEffect(() => navigation.addListener('focus', () => {

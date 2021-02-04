@@ -10,14 +10,10 @@ import { postPublication, uploadImageToFirebase } from '../utils';
 import Map from '../components/maps';
 import { CameraInput, CameraPreview } from '../components/camera';
 import { SimpleTextInput, AddNewButton } from '../components/components';
-import { Requester } from '../requester/requester';
-
 import { UserContext } from '../context/userContext';
 
 function NewPublicationScreen(props) {
-  const {
-    uid, token, setToken, requester,
-  } = React.useContext(UserContext);
+  const { uid, newRequester } = React.useContext(UserContext);
 
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -62,10 +58,14 @@ function NewPublicationScreen(props) {
     }
   };
 
+  function isUploadedToFirebase(image) {
+    return !(image.type)
+  }
+
   async function handlePublish() {
     let photoURL = null;
     for (const image of images) {
-      if (image.type) {
+      if (isUploadedToFirebase(image)) {
         /* si tiene type es porque la acabo de sacar */
         photoURL = await uploadImageToFirebase(image);
       } else {
@@ -85,19 +85,13 @@ function NewPublicationScreen(props) {
     };
     if (props.route.params.editing) {
       publication.id = props.route.params.publication.id;
-      requester.updatePublication(publication).then(() => {
-        console.log('Updated publication to: %s', publication);
+      newRequester.updatePublication(publication.id, publication, () => {
         props.navigation.navigate('Publicaciones');
-      }).catch((e) => {
-        console.log('Error at publication update: %s', e);
-      });
+      })
     } else {
-      requester.publish(publication).then(() => {
-        console.log('Published: %s', publication);
+      newRequester.postPublication(publication, () => {
         props.navigation.navigate('Publicaciones');
-      }).catch((e) => {
-        console.log('Error at publication publish: %s', e);
-      });
+      })
     }
   }
 
