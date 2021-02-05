@@ -7,7 +7,7 @@ import { doGoogleLogin, login } from '../utils';
 import { UserContext } from '../context/userContext';
 
 export function LoginScreen(props) {
-  const { token, setToken, newRequester } = React.useContext(UserContext);
+  const { token, setToken, requester } = React.useContext(UserContext);
   const [username, setUsername] = React.useState('');
   const [pass, setPass] = React.useState('');
 
@@ -21,7 +21,11 @@ export function LoginScreen(props) {
   }
 
   function handleLogin() {
-    newRequester.userLogin({email: username, password: pass}, _handleResponse);
+    let loginDetails = {
+      email: username.trim(),
+      password: pass.trim()
+    }
+    requester.userLogin(loginDetails, _handleResponse);
   }
 
   return (
@@ -29,8 +33,8 @@ export function LoginScreen(props) {
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
         <AppLogo />
         <View style={{ marginBottom: 30 }}>
-          <TextInput mode="outlined" onChangeText={(value) => setUsername(value)} style={styles.input} label="Nombre de usuario" />
-          <TextInput mode="outlined" onChangeText={(value) => setPass(value)} style={styles.input} label="Contraseña" />
+          <TextInput mode="outlined" onChangeText={setUsername} style={styles.input} label="Nombre de usuario" />
+          <TextInput mode="outlined" secureTextEntry onChangeText={setPass} style={styles.input} label="Contraseña" />
         </View>
         <Button dark compact mode="contained" onPress={handleLogin}> Iniciar sesión </Button>
         <View style={{ flexDirection: 'row', paddingTop: 20 }}>

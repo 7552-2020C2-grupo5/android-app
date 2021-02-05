@@ -30,7 +30,7 @@ function Review(props) {
 }
 
 function ReviewsBox({ publicationID, userID, navigation }) {
-  const { uid, token, setToken, requester, newRequester } = React.useContext(UserContext);
+  const { uid, token, setToken, requester } = React.useContext(UserContext);
   const [reviews, setReviews] = React.useState([]);
   const [meanScore, setMeanScore] = React.useState(0);
 
@@ -39,7 +39,7 @@ function ReviewsBox({ publicationID, userID, navigation }) {
     let acumScore = 0;
     for (const review of reviews) {
       let reviewerData = null;
-      await newRequester.profileData(review.reviewer_id, response => {
+      await requester.profileData(review.reviewer_id, response => {
         console.log('setting reviewer data')
         reviewerData = response.content();
       });
@@ -58,10 +58,10 @@ function ReviewsBox({ publicationID, userID, navigation }) {
   function fetchReviews() {
     console.log('fetching reviewss....')
     if (publicationID) {
-      newRequester.publicationReviews({ publication_id: publicationID }, response => fetchReviewersDataFor(response.content()) );
+      requester.publicationReviews({ publication_id: publicationID }, response => fetchReviewersDataFor(response.content()) );
     }
     if (userID) {
-      newRequester.userReviews({ reviewee_id: Number(userID) }, response => fetchReviewersDataFor(response.content()) );
+      requester.userReviews({ reviewee_id: Number(userID) }, response => fetchReviewersDataFor(response.content()) );
     }
   }
 
@@ -112,7 +112,7 @@ function NewReviewBox({ onFinishReview }) {
 
 export function ReviewScreen({ route, navigation }) {
   const [editing, setEditing] = React.useState(editing);
-  const { uid, token, setToken, requester, newRequester } = React.useContext(UserContext);
+  const { uid, token, setToken, requester } = React.useContext(UserContext);
   const [tick, setTick] = React.useState(0);
 
   function handleFinishReview({ score, review }) {
@@ -124,14 +124,14 @@ export function ReviewScreen({ route, navigation }) {
     };
     if (route.params.publication_id) {
       const { publication_id } = route.params;
-      newRequester.addPublicationReview({ ...base_review, publication_id: publication_id }, () => {
+      requester.addPublicationReview({ ...base_review, publication_id: publication_id }, () => {
         setEditing(false);
         setTick(tick => tick + 1)
       });
     }
     if (route.params.user_id) {
       const { user_id } = route.params;
-      newRequester.addUserReview({ ...base_review, reviewee_id: Number(user_id) }, () => {
+      requester.addUserReview({ ...base_review, reviewee_id: Number(user_id) }, () => {
         setEditing(false);
         setTick(tick => tick + 1)
       });

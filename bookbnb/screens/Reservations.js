@@ -13,22 +13,20 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
   /* Reservas asociadas a una publicación, filtramos aquellas
    * reservas que hayan sido efectuadas con ese publication_id
    */
-  const { uid, token, requester, newRequester } = React.useContext(UserContext);
+  const { uid, token, requester } = React.useContext(UserContext);
   const [reservations, setReservations] = React.useState([]);
 
   function _fetchReservationsData() {
-    newRequester.bookings({ publication_id: publication.id }, async response => {
-      const reservations = response.content();
-      for (const reservation of reservations) {
-        newRequester.profileData(reservation.tenant_id, response => {
+    requester.bookings({ publication_id: publication.id }, response => {
+      const _reservations = response.content();
+      setReservations([]);
+      for (const reservation of _reservations) {
+        requester.profileData(reservation.tenant_id, response => {
           let ownerData = response.content();
           reservation.title = publication.title;
           reservation.owner = `${ownerData.first_name} ${ownerData.last_name}`;
           reservation.expired = _reservationIsExpired(reservation);
-          setReservations(reservations => {
-            reservations.push(reservation);
-            return reservations;
-          });
+          setReservations(reservations.concat([reservation]));
         });
       }
     });
@@ -64,26 +62,24 @@ function OwnReservationsList({ navigationRef }) {
   /* Vista de 'Mis reservaciones', buscamos las reservaciones
    * que hayan sido efectúadas con nuestro uid */
   /* Se asume que el uid es el del ctx */
-  const { uid, token, requester, newRequester } = React.useContext(UserContext);
+  const { uid, token, requester } = React.useContext(UserContext);
   const [reservations, setReservations] = React.useState([]);
 
   //TODO: corregir caso en que se fetchean las reservas pero no aparecen en la
   //      pantalla hasta que se monta nuevamente
   function _fetchReservationsData() {
-    newRequester.bookings({ tenant_id: uid }, async response => {
-      let reservations = response.content();
-      newRequester.profileData(uid, profileResponse => {
-        for (const reservation of reservations) {
-          newRequester.getPublication(Number(reservation.publication_id), publicationResponse => {
+    requester.bookings({ tenant_id: uid }, response => {
+      requester.profileData(uid, profileResponse => {
+        const _reservations = response.content();
+        const ownerData = profileResponse.content();
+        setReservations([]);
+        for (const reservation of _reservations) {
+          requester.getPublication(Number(reservation.publication_id), publicationResponse => {
             const relatedPublication = publicationResponse.content();
-            const ownerData = profileResponse.content();
             reservation.title = relatedPublication.title;
             reservation.owner = `${ownerData.first_name} ${ownerData.last_name}`;
             reservation.expired = _reservationIsExpired(reservation);
-            setReservations(reservations => {
-              reservations.push(reservation);
-              return reservations;
-            });
+            setReservations(reservations.concat([reservation]));
           });
         }
       });

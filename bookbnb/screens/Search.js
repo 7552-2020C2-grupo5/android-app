@@ -80,12 +80,48 @@ export default function SearchScreen(props) {
           <Text style={styles.sectionBanner}>
             Encontrá
           </Text>
-          <SimpleNumericInput onlyPositives label="Minima cantidad de baños" value={minBathCount} onChange={setMinBathCount} />
-          <SimpleNumericInput onlyPositives label="Mínima cantidad de cuartos" value={minRoomCount} onChange={setMinRoomCount} />
-          <SimpleNumericInput onlyPositives label="Mínima cantidad de camas" value={minBedCount} onChange={setMinBedCount} />
-          <SimpleNumericInput onlyPositives label="Precio mínimo" value={minPrice} onChange={setMinPrice} />
-          <SimpleNumericInput onlyPositives label="Precio máximo" value={maxPrice} onChange={setMaxPrice} />
-          <SimpleNumericInput onlyPositives label="Máximo radio de búsqueda (km)" value={searchRatio} onChange={setSearchRatio} />
+          <SimpleNumericInput
+            onlyPositives
+            label="Cantidad de baños"
+            value={minBathCount}
+            onChange={setMinBathCount}
+            description="Cantidad de baños mínima que tiene el lugar"
+           />
+          <SimpleNumericInput
+            onlyPositives
+            label="Cantidad de cuartos"
+            value={minRoomCount}
+            onChange={setMinRoomCount}
+            description="Cantidad de cuatros mínima que tiene el lugar"
+          />
+          <SimpleNumericInput
+            onlyPositives
+            label="Cantidad de camas"
+            value={minBedCount}
+            onChange={setMinBedCount}
+            description="Cantidad de camas mínimas que tiene el lugar"
+          />
+          <SimpleNumericInput
+            onlyPositives
+            label="Precio mínimo"
+            value={minPrice}
+            onChange={setMinPrice}
+            description="Precio mínimo en pesos argentinos del lugar"
+          />
+          <SimpleNumericInput
+            onlyPositives
+            label="Precio máximo"
+            value={maxPrice}
+            onChange={setMaxPrice}
+            description="Precio máximo en pesos argentinos del lugar"
+          />
+          <SimpleNumericInput
+            onlyPositives
+            label="Radio de búsqueda (km)"
+            value={searchRatio}
+            onChange={setSearchRatio}
+            description="Radio de búsqueda sobre la ubicación elegida. Si no se completa un radio de búsqueda no se tomará en cuenta la ubicación"
+          />
           <CheckBox
             title="Utilizar mi ubicación actual"
             onPress={handleToggleUseOwnLocation}

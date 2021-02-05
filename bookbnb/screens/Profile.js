@@ -10,7 +10,7 @@ import { UserContext } from '../context/userContext';
 // @refresh reset
 
 export function ProfileScreen(props) {
-  const { uid, newRequester } = React.useContext(UserContext);
+  const { uid, requester } = React.useContext(UserContext);
   const [userData, setUserData] = React.useState({
     id: null,
     firstName: 'nothing',
@@ -25,7 +25,7 @@ export function ProfileScreen(props) {
     if (typeof userID === 'undefined') {
       userID = uid;
     }
-    newRequester.profileData(userID, response => {
+    requester.profileData(userID, response => {
       let userData = response.content();
       console.log(`fetching data for user ${userID}`);
       setUserData({

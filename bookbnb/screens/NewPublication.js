@@ -13,7 +13,7 @@ import { SimpleTextInput, AddNewButton } from '../components/components';
 import { UserContext } from '../context/userContext';
 
 function NewPublicationScreen(props) {
-  const { uid, newRequester } = React.useContext(UserContext);
+  const { uid, requester } = React.useContext(UserContext);
 
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -85,11 +85,11 @@ function NewPublicationScreen(props) {
     };
     if (props.route.params.editing) {
       publication.id = props.route.params.publication.id;
-      newRequester.updatePublication(publication.id, publication, () => {
+      requester.updatePublication(publication.id, publication, () => {
         props.navigation.navigate('Publicaciones');
       })
     } else {
-      newRequester.postPublication(publication, () => {
+      requester.postPublication(publication, () => {
         props.navigation.navigate('Publicaciones');
       })
     }

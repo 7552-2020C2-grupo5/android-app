@@ -51,7 +51,7 @@ class QuestionComment extends React.Component {
   }
 
   setAnswer = (answer) => {
-    this.context.newRequester.addAnswer(
+    this.context.requester.addAnswer(
       this.state.publicationID,
       this.state.question.id,
       { answer: answer },
@@ -148,14 +148,14 @@ function GuestCommentsSection(props) {
    * todas las publicaciones que se hacen se cargan como preguntas
    */
 
-  const { uid, newRequester } = React.useContext(UserContext);
+  const { uid, requester } = React.useContext(UserContext);
 
   const [questions, setQuestions] = React.useState(props.questions);
   const [currentComment, setCurrentComment] = React.useState(null);
 
   function handleNewQuestion() {
     let questionDetails = { question: currentComment, user_id: Number(uid) };
-    newRequester.addQuestion(
+    requester.addQuestion(
       props.publicationID,
       questionDetails,
       response => {
@@ -183,7 +183,7 @@ function GuestCommentsSection(props) {
 }
 
 export function PublicationScreen(props) {
-  const { uid, newRequester } = React.useContext(UserContext);
+  const { uid, requester } = React.useContext(UserContext);
   const [publication, setPublication] = React.useState(props.route.params.publication);
   const [stared, setStared] = React.useState(false);
 
@@ -194,7 +194,7 @@ export function PublicationScreen(props) {
   }, []);
 
   React.useEffect(() => {
-    newRequester.getPublicationStars(publication.id, uid, (response) => {
+    requester.getPublicationStars(publication.id, uid, (response) => {
       let starsByUserOnPublication = response.content();
       setStared(starsByUserOnPublication.length > 0);
     });
@@ -209,11 +209,11 @@ export function PublicationScreen(props) {
   }
 
   function handleStar() {
-    newRequester.starPublication(publication.id, uid, (response) => setStared(true));
+    requester.starPublication(publication.id, uid, (response) => setStared(true));
   }
 
   function handleUnstar() {
-    newRequester.unstarPublication(publication.id, uid, (response) => setStared(false));
+    requester.unstarPublication(publication.id, uid, (response) => setStared(false));
   }
 
   let image_url = Image.resolveAssetSource(defaultPublicationImg).uri;

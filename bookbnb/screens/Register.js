@@ -5,7 +5,7 @@ import { SimpleTextInput } from '../components/components';
 import { UserContext } from '../context/userContext';
 
 export function RegistrationScreen(props) {
-  const { newRequester } = React.useContext(UserContext);
+  const { requester } = React.useContext(UserContext);
 
   const [name, setName] = React.useState(null);
   const [lastName, setLastName] = React.useState(null);
@@ -13,16 +13,27 @@ export function RegistrationScreen(props) {
   const [password, setPassword] = React.useState(null);
   const [passwordConfirmation, setPasswordConfirmation] = React.useState(null);
 
-  async function handleRegister() {
+  function sanitize(data) {
+    return data.trim();
+  }
+
+  function validatePassword(password) {
+    if (password.trim() !== passwordConfirmation.trim())
+      alert('¡Las contraseñas no coinciden!');
+  }
+
+  function handleRegister() {
     const newUser = {
-        first_name: name,
-        last_name: lastName,
-        email: email,
-        password: password,
+        first_name: sanitize(name),
+        last_name: sanitize(lastName),
+        email: sanitize(email),
+        password: sanitize(password),
         profile_picture: '',
     };
 
-    newRequester.register(newUser, () => { props.navigation.goBack(null) });
+    validatePassword(password)
+
+    requester.register(newUser, () => { props.navigation.goBack(null) });
   }
 
   return (
@@ -35,9 +46,9 @@ export function RegistrationScreen(props) {
         <Text style={styles.fieldTitle}> Email </Text>
         <SimpleTextInput onChangeText={(value) => { setEmail(value); }} />
         <Text style={styles.fieldTitle}> Contraseña </Text>
-        <SimpleTextInput onChangeText={(value) => { setPassword(value); }} />
+        <SimpleTextInput secureTextEntry onChangeText={(value) => { setPassword(value); }} />
         <Text style={styles.fieldTitle}> Repetí la contraseña </Text>
-        <SimpleTextInput onChangeText={(value) => { setPasswordConfirmation(value); }} />
+        <SimpleTextInput secureTextEntry onChangeText={(value) => { setPasswordConfirmation(value); }} />
         <Button dark onPress={handleRegister} mode="contained"> Registrarme </Button>
       </ScrollView>
     </View>

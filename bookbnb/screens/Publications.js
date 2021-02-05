@@ -5,9 +5,10 @@ import {
 import { PublicationCardMinimal, AddNewButton } from '../components/components';
 import { UserContext } from '../context/userContext';
 import { CheckBox } from 'react-native-elements';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function PublicationsScreen({ route, navigation }) {
-  const { uid, requester, newRequester } = React.useContext(UserContext);
+  const { uid, requester } = React.useContext(UserContext);
   const [publications, setPublications] = React.useState([]);
 
   const fillPublications = () => {
@@ -18,13 +19,9 @@ export default function PublicationsScreen({ route, navigation }) {
       };
     }
 
-    newRequester.publications(publications => {
+    requester.publications(publications => {
       setPublications(publications.content());
     }, searchParams)
-
-    //requester.searchPublications(searchParams).then((foundedPublications) => {
-    //  setPublications(foundedPublications);
-    //});
   };
 
   React.useEffect(() => navigation.addListener('focus', () => {
@@ -45,7 +42,7 @@ export default function PublicationsScreen({ route, navigation }) {
                     publication, editing: true,
                   });
                 },
-              });
+             });
             }
             if (String(publication.user_id) !== String(uid)) {
               actions.push({
@@ -58,7 +55,7 @@ export default function PublicationsScreen({ route, navigation }) {
             return (
               <PublicationCardMinimal
                 actions={actions}
-                key={index}
+                key={uuidv4()}
                 onPress={() => {
                   navigation.navigate('Publicacion', { publication });
                 }}

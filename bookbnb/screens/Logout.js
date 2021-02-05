@@ -5,9 +5,9 @@ import { AppLogo } from '../components/components';
 import { UserContext } from '../context/userContext';
 
 export default function LogoutScreen(props) {
-  const { token, requester, cleanCtx, newRequester } = React.useContext(UserContext);
+  const { token, cleanCtx, requester } = React.useContext(UserContext);
 
-  newRequester.userLogout(token, response => cleanCtx());
+  requester.userLogout(token, response => cleanCtx());
 
   return (
     <View>

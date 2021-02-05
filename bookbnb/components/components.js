@@ -2,16 +2,13 @@ import * as React from 'react';
 import {
   Snackbar, Avatar, Button, Card, Title, Paragraph, DataTable, TextInput, Surface, List, Divider
 } from 'react-native-paper';
-
 import { Icon, CheckBox } from 'react-native-elements';
-
 import {
   AsyncStorage, StyleSheet, Text, View, TouchableHighlight, Dimensions, Image,
 } from 'react-native';
-
 import NumericInput from 'react-native-numeric-input';
-
 import defaultPublicationImg from '../assets/default_publication_img.jpeg';
+import { v4 as uuidv4 } from 'uuid';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -57,8 +54,8 @@ export function PublicationCardMinimal(props) {
   return (
     <Card {...props} style={styles.publicationCard}>
       {props.actions.map((action, i) => (
-        <Card.Actions style={styles.actions}>
-          <Button onPress={() => { action.onAction(); }}>{action.title}</Button>
+        <Card.Actions key={uuidv4()} style={styles.actions}>
+          <Button key={uuidv4()} onPress={() => { action.onAction(); }}>{action.title}</Button>
         </Card.Actions>
       ))}
       <Card.Cover source={{ uri: image_url }} />
@@ -115,7 +112,7 @@ export function SimpleTextInput(props) {
   );
 }
 
-export function SimpleNumericInput({label, onChange, value, onlyPositives}) {
+export function SimpleNumericInput({label, onChange, value, onlyPositives, description}) {
   const styles = StyleSheet.create({
     numericRow: {
       flexDirection: 'row',
@@ -132,7 +129,10 @@ export function SimpleNumericInput({label, onChange, value, onlyPositives}) {
 
   return(
     <View style={styles.numericRow}>
-      <Text style={{ fontWeight: 'bold' }}>{label}</Text>
+      <View style={{flex: 1, flexDirection: 'column'}}>
+        <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 5 }}>{label}</Text>
+        <Text style={{ fontSize: 12 }}>{description || ''}</Text>
+      </View>
       {
         /* Corregir el valor inicial como '' */
       //<NumericInput minValue={minValue} value={value} onChange={(value) => {

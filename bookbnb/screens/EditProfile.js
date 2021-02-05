@@ -13,7 +13,7 @@ import { UserContext } from '../context/userContext';
 import { SimpleTextInput } from '../components/components';
 
 function EditProfileScreen(props) {
-  const { uid, token, setToken, newRequester } = React.useContext(UserContext);
+  const { uid, token, setToken, requester } = React.useContext(UserContext);
   const [userImage, setUserImage] = React.useState(null);
   const [userData, setUserData] = React.useState(props.route.params.userData);
 
@@ -46,13 +46,13 @@ function EditProfileScreen(props) {
       setUserData({ ...userData, avatar: url });
     }
     if (url) {
-      newRequester.updateProfileData(userData.id, {
+      requester.updateProfileData(userData.id, {
         first_name: userData.firstName,
         last_name: userData.lastName,
         profile_picture: url,
       }, () => props.navigation.goBack());
     } else {
-      newRequester.updateProfileData(userData.id, {
+      requester.updateProfileData(userData.id, {
         first_name: userData.firstName,
         last_name: userData.lastName,
       }, () => props.navigation.goBack());

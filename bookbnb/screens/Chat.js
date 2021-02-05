@@ -39,7 +39,7 @@ function AnswerComment(props) {
 }
 
 export default function ChatScreen(props) {
-  const { uid, newRequester } = React.useContext(UserContext);
+  const { uid, requester } = React.useContext(UserContext);
   const [currentMsg, setCurrentMsg] = React.useState('');
   const [messages, setMessages] = React.useState([]);
   const [dstUserID, setDstUserID] = React.useState(props.route.params.dstUserID);
@@ -77,7 +77,7 @@ export default function ChatScreen(props) {
     };
     for (const userID of usersIDs) {
       let userData = null;
-      await newRequester.profileData(userID, response => {
+      await requester.profileData(userID, response => {
         userData = response.content();
       });
       metadata.members[String(userID)] = {
