@@ -65,7 +65,7 @@ function NewPublicationScreen(props) {
   async function handlePublish() {
     let photoURL = null;
     for (const image of images) {
-      if (isUploadedToFirebase(image)) {
+      if (!isUploadedToFirebase(image)) {
         /* si tiene type es porque la acabo de sacar */
         photoURL = await uploadImageToFirebase(image);
       } else {
@@ -74,14 +74,14 @@ function NewPublicationScreen(props) {
     }
     const publication = {
       user_id: Number(uid),
-      title,
-      description,
+      title: title,
+      description: description,
       rooms: Number(rooms),
       beds: Number(beds),
       bathrooms: Number(bathrooms),
       price_per_night: Number(price),
-      photoURL: [photoURL],
-      coordinates: [coordinates.latitude, coordinates.longitude],
+      images: [{ url: photoURL }],
+      loc: {latitude: coordinates.latitude, longitude: coordinates.longitude},
     };
     if (props.route.params.editing) {
       publication.id = props.route.params.publication.id;
