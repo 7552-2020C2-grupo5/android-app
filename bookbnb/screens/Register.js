@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  View,
-  ScrollView,
-  StatusBar,
-  Text,
-  Title,
-  StyleSheet,
-  AsyncStorage,
-} from 'react-native';
-
+import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { SimpleTextInput } from '../components/components';
 import { UserContext } from '../context/userContext';
@@ -35,23 +26,33 @@ export function RegistrationScreen(props) {
   }
 
   return (
-    <View style={{
-      flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center',
-    }}
-    >
-      <>
-        <Text style={{ fontWeight: 'bold' }}> Nombre </Text>
+    <View style={styles.registrationContainer}>
+      <ScrollView>
+        <Text style={styles.fieldTitle}> Nombre </Text>
         <SimpleTextInput onChangeText={(value) => { setName(value); }} />
-        <Text style={{ fontWeight: 'bold' }}> Apellido </Text>
+        <Text style={styles.fieldTitle}> Apellido </Text>
         <SimpleTextInput onChangeText={(value) => { setLastName(value); }} />
-        <Text style={{ fontWeight: 'bold' }}> Email </Text>
+        <Text style={styles.fieldTitle}> Email </Text>
         <SimpleTextInput onChangeText={(value) => { setEmail(value); }} />
-        <Text style={{ fontWeight: 'bold' }}> Contraseña </Text>
+        <Text style={styles.fieldTitle}> Contraseña </Text>
         <SimpleTextInput onChangeText={(value) => { setPassword(value); }} />
-        <Text style={{ fontWeight: 'bold' }}> Repetí la contraseña </Text>
+        <Text style={styles.fieldTitle}> Repetí la contraseña </Text>
         <SimpleTextInput onChangeText={(value) => { setPasswordConfirmation(value); }} />
         <Button dark onPress={handleRegister} mode="contained"> Registrarme </Button>
-      </>
+      </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+    fieldTitle: {
+        fontWeight: 'bold',
+        fontSize: 17,
+    },
+    registrationContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'stretch',
+        margin: 2,
+    },
+});

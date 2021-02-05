@@ -34,7 +34,7 @@ export function LoginScreen(props) {
         </View>
         <Button dark compact mode="contained" onPress={handleLogin}> Iniciar sesión </Button>
         <View style={{ flexDirection: 'row', paddingTop: 20 }}>
-          <SocialIcon type="google" dark compact style={{ margin: 30 }} mode="contained" onPress={() => doGoogleLogin()} />
+          <SocialIcon type="google" dark compact style={{ margin: 30 }} mode="contained" onPress={doGoogleLogin} />
         </View>
         <Text style={styles.register}> No estás registrado? </Text>
         <TouchableOpacity onPress={() => { props.navigation.navigate('Register'); }}>
