@@ -11,35 +11,27 @@ import {
 
 import { Button } from 'react-native-paper';
 import { SimpleTextInput } from '../components/components';
-import { Requester } from '../requester/requester';
+import { UserContext } from '../context/userContext';
 
-export default function RegistrationScreen(props) {
+export function RegistrationScreen(props) {
+  const { newRequester } = React.useContext(UserContext);
+
   const [name, setName] = React.useState(null);
   const [lastName, setLastName] = React.useState(null);
   const [email, setEmail] = React.useState(null);
   const [password, setPassword] = React.useState(null);
   const [passwordConfirmation, setPasswordConfirmation] = React.useState(null);
 
-  const requester = new Requester();
-
   async function handleRegister() {
     const newUser = {
-      name,
-      lastName,
-      email,
-      password,
+        first_name: name,
+        last_name: lastName,
+        email: email,
+        password: password,
+        profile_picture: '',
     };
 
-    try {
-      const registerResult = await requester.register(newUser);
-      await AsyncStorage.setItem('userToken', registerResult.token);
-      await AsyncStorage.setItem('userID', String(registerResult.id));
-      props.navigation.goBack(null);
-    } catch (e) {
-      console.log('Error: ');
-      console.log(e);
-      alert(e);
-    }
+    newRequester.register(newUser, () => { props.navigation.goBack(null) });
   }
 
   return (
@@ -63,5 +55,3 @@ export default function RegistrationScreen(props) {
     </View>
   );
 }
-
-export { RegistrationScreen };

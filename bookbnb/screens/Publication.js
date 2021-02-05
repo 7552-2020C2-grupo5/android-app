@@ -159,7 +159,8 @@ function GuestCommentsSection(props) {
       props.publicationID,
       questionDetails,
       response => {
-        setQuestions(currentQuestions => currentQuestions.push(response.content()));
+        let newQuestion = response.content();
+        setQuestions(questions.concat([newQuestion]));
         setCurrentComment('');
       }
     );

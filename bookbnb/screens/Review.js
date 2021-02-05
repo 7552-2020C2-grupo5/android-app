@@ -30,7 +30,7 @@ function Review(props) {
 }
 
 function ReviewsBox({ publicationID, userID, navigation }) {
-  const { uid, token, setToken, requester } = React.useContext(UserContext);
+  const { uid, token, setToken, requester, newRequester } = React.useContext(UserContext);
   const [reviews, setReviews] = React.useState([]);
   const [meanScore, setMeanScore] = React.useState(0);
 
@@ -38,25 +38,30 @@ function ReviewsBox({ publicationID, userID, navigation }) {
     const newReviews = [];
     let acumScore = 0;
     for (const review of reviews) {
-      const reviewerData = await requester.profileData({ id: review.reviewer_id });
+      let reviewerData = null;
+      await newRequester.profileData(review.reviewer_id, response => {
+        console.log('setting reviewer data')
+        reviewerData = response.content();
+      });
+      console.log('after reviewer data')
       newReviews.push({
         score: review.score,
         comment: review.comment,
         reviewerName: `${reviewerData.first_name} ${reviewerData.last_name}`,
-     });
+      });
       acumScore += Number(review.score);
     }
     setMeanScore(Math.round(acumScore / newReviews.length));
     setReviews(newReviews);
   }
 
-  async function fetchReviews() {
+  function fetchReviews() {
     console.log('fetching reviewss....')
     if (publicationID) {
-      requester.publicationReviews({ id: publicationID }).then(fetchReviewersDataFor);
+      newRequester.publicationReviews({ publication_id: publicationID }, response => fetchReviewersDataFor(response.content()) );
     }
     if (userID) {
-      requester.userReviews({ id: Number(userID) }).then(fetchReviewersDataFor);
+      newRequester.userReviews({ reviewee_id: Number(userID) }, response => fetchReviewersDataFor(response.content()) );
     }
   }
 
@@ -107,7 +112,7 @@ function NewReviewBox({ onFinishReview }) {
 
 export function ReviewScreen({ route, navigation }) {
   const [editing, setEditing] = React.useState(editing);
-  const { uid, token, setToken, requester } = React.useContext(UserContext);
+  const { uid, token, setToken, requester, newRequester } = React.useContext(UserContext);
   const [tick, setTick] = React.useState(0);
 
   function handleFinishReview({ score, review }) {
@@ -119,17 +124,18 @@ export function ReviewScreen({ route, navigation }) {
     };
     if (route.params.publication_id) {
       const { publication_id } = route.params;
-      requester.addPublicationReview({ ...base_review, publication_id }).then((value) => {
+      newRequester.addPublicationReview({ ...base_review, publication_id: publication_id }, () => {
         setEditing(false);
+        setTick(tick => tick + 1)
       });
     }
     if (route.params.user_id) {
       const { user_id } = route.params;
-      requester.addUserReview({ ...base_review, reviewee_id: Number(user_id) }).then((value) => {
+      newRequester.addUserReview({ ...base_review, reviewee_id: Number(user_id) }, () => {
         setEditing(false);
+        setTick(tick => tick + 1)
       });
     }
-    setTick(tick => tick + 1)
   }
 
   React.useEffect(() => {
