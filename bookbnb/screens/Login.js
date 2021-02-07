@@ -5,11 +5,13 @@ import { SocialIcon } from 'react-native-elements';
 import { SnackBar, AppLogo } from '../components/components';
 import { doGoogleLogin, login } from '../utils';
 import { UserContext } from '../context/userContext';
+import { LoadableView } from '../components/loading';
 
 export function LoginScreen(props) {
   const { token, setToken, requester } = React.useContext(UserContext);
   const [username, setUsername] = React.useState('');
   const [pass, setPass] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   function _handleResponse(response) {
     try {
@@ -26,12 +28,13 @@ export function LoginScreen(props) {
       password: pass.trim()
     }
     requester.userLogin(loginDetails, _handleResponse);
+    setLoading(true);
   }
 
   return (
-    <View style={styles.container}>
+    <LoadableView loading={loading} message="Iniciando sesión">
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <AppLogo />
+       <AppLogo />
         <View style={{ marginBottom: 30 }}>
           <TextInput mode="outlined" onChangeText={setUsername} style={styles.input} label="Nombre de usuario" />
           <TextInput mode="outlined" secureTextEntry onChangeText={setPass} style={styles.input} label="Contraseña" />
@@ -45,16 +48,11 @@ export function LoginScreen(props) {
           <Text style={{ ...styles.register, ...{ color: 'blue', fontSize: 20, textDecorationLine: 'underline' } }}>Registrate</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </LoadableView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   input: {
     margin: 10,
     width: 300,

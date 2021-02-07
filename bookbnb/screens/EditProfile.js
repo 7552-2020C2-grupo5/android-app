@@ -11,11 +11,13 @@ import * as Permissions from 'expo-permissions';
 import { uploadImageToFirebase, decodeJWTPayload } from '../utils';
 import { UserContext } from '../context/userContext';
 import { SimpleTextInput } from '../components/components';
+import { LoadableView } from '../components/loading';
 
 function EditProfileScreen(props) {
   const { uid, token, setToken, requester } = React.useContext(UserContext);
   const [userImage, setUserImage] = React.useState(null);
   const [userData, setUserData] = React.useState(props.route.params.userData);
+  const [loading, setLoading] = React.useState(false);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -39,60 +41,66 @@ function EditProfileScreen(props) {
     })();
   }, []);
 
-  async function handleSave() {
-    let url = null;
+  async function buildUserDetails() {
+    const userDetails = {
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+    }
+
     if (userImage) {
       url = await uploadImageToFirebase(userImage);
       setUserData({ ...userData, avatar: url });
+      userDetails.profile_picture = url
     }
-    if (url) {
-      requester.updateProfileData(userData.id, {
-        first_name: userData.firstName,
-        last_name: userData.lastName,
-        profile_picture: url,
-      }, () => props.navigation.goBack());
-    } else {
-      requester.updateProfileData(userData.id, {
-        first_name: userData.firstName,
-        last_name: userData.lastName,
-      }, () => props.navigation.goBack());
-    }
+
+    return userDetails
+  }
+
+  async function handleSave() {
+    const userDetails = await buildUserDetails();
+
+    requester.updateProfileData(
+      userData.id, userDetails, () => props.navigation.goBack()
+    );
+    setLoading(true);
   }
 
   return (
-    <ScrollView>
-      <View style={{ padding: 10 }}>
-        <View style={{ flex: 1, alignItems: 'center', padding: 30 }}>
-          {userImage ? (
-            <Avatar.Image source={{ uri: userImage.uri }} size={140} />
-          ) : (
-            <Icon name="pencil" type="evilicon" onPress={pickImage} reverse raised color="black" size={70} />
-          )}
+    <LoadableView loading={loading} message="Guardando tus cambios">
+      <ScrollView>
+        <View style={{ padding: 10 }}>
+          <View style={{ flex: 1, alignItems: 'center', padding: 30 }}>
+            {userImage ? (
+              <Avatar.Image source={{ uri: userImage.uri }} size={140} />
+            ) : (
+              <Icon name="pencil" type="evilicon" onPress={pickImage} reverse raised color="black" size={70} />
+            )}
+         </View>
+          <Text style={{ fontWeight: 'bold' }}>Nombre</Text>
+          <SimpleTextInput
+            value={userData.firstName}
+            onChangeText={(value) => {
+              setUserData({ ...userData, firstName: value });
+            }}
+          />
+          <Text style={{ fontWeight: 'bold' }}>Apellido</Text>
+          <SimpleTextInput
+            value={userData.lastName}
+            onChangeText={(value) => {
+              setUserData({ ...userData, lastName: value });
+            }}
+          />
+          <Text style={{ fontWeight: 'bold' }}>Email</Text>
+          <SimpleTextInput
+            value={userData.email}
+            onChangeText={(value) => {
+              setUserData({ ...userData, email: value });
+            }}
+          />
+          <Button dark onPress={handleSave} mode="contained"> Guardar </Button>
         </View>
-        <Text style={{ fontWeight: 'bold' }}>Nombre</Text>
-        <SimpleTextInput
-          value={userData.firstName}
-          onChangeText={(value) => {
-            setUserData({ ...userData, firstName: value });
-          }}
-        />
-        <Text style={{ fontWeight: 'bold' }}>Apellido</Text>
-        <SimpleTextInput
-          value={userData.lastName}
-          onChangeText={(value) => {
-            setUserData({ ...userData, lastName: value });
-          }}
-        />
-        <Text style={{ fontWeight: 'bold' }}>Email</Text>
-        <SimpleTextInput
-          value={userData.email}
-          onChangeText={(value) => {
-            setUserData({ ...userData, email: value });
-          }}
-        />
-        <Button dark onPress={handleSave} mode="contained"> Guardar </Button>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </LoadableView>
   );
 }
 
