@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import { AppLogo } from '../components/components';
 import { UserContext } from '../context/userContext';
+import { LoadableView } from '../components/loading';
 
 export default function LogoutScreen(props) {
   const { token, cleanCtx, requester } = React.useContext(UserContext);
@@ -10,9 +11,7 @@ export default function LogoutScreen(props) {
   requester.userLogout(token, response => cleanCtx());
 
   return (
-    <View>
-      <ActivityIndicator size="large" animating color={Colors.red800} />
-    </View>
+    <LoadableView loading={true} message="Cerrando sesión"/>
   );
 }
 
