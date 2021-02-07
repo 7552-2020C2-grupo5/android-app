@@ -58,40 +58,66 @@ function NewPublicationScreen(props) {
     }
   };
 
-  function isUploadedToFirebase(image) {
-    return !(image.type)
-  }
+  function isUploadedToFirebase(image) { return !(image.type) }
 
-  async function handlePublish() {
+  async function buildPublication() {
     let photoURL = null;
     for (const image of images) {
       if (!isUploadedToFirebase(image)) {
-        /* si tiene type es porque la acabo de sacar */
         photoURL = await uploadImageToFirebase(image);
       } else {
         photoURL = image.uri;
       }
     }
-    const publication = {
-      user_id: Number(uid),
-      title: title,
-      description: description,
-      rooms: Number(rooms),
-      beds: Number(beds),
-      bathrooms: Number(bathrooms),
-      price_per_night: Number(price),
-      images: [{ url: photoURL }],
-      loc: {latitude: coordinates.latitude, longitude: coordinates.longitude},
-    };
-    if (props.route.params.editing) {
-      publication.id = props.route.params.publication.id;
-      requester.updatePublication(publication.id, publication, () => {
-        props.navigation.navigate('Publicaciones');
-      })
-    } else {
-      requester.postPublication(publication, () => {
-        props.navigation.navigate('Publicaciones');
-      })
+
+    return {
+        user_id: Number(uid),
+        title: title,
+        description: description,
+        rooms: Number(rooms),
+        beds: Number(beds),
+        bathrooms: Number(bathrooms),
+        price_per_night: Number(price),
+        images: [{ url: photoURL }],
+        loc: {latitude: coordinates.latitude, longitude: coordinates.longitude},
+      };
+  }
+
+  function validatePublication(publication) {
+    if (publication.images[0].url == '')
+      throw new Error("No se pueden hacer publicaciones sin imágenes");
+
+    if (isNaN(publication.rooms))
+      throw new Error("La cantidad de cuartos tiene que ser un número");
+
+    if (isNaN(publication.beds))
+      throw new Error("La cantidad de camas tiene que ser un número");
+
+    if (isNaN(publication.bathrooms))
+      throw new Error("La cantidad de baños tiene que ser un número");
+
+    if (isNaN(publication.price_per_night))
+      throw new Error("El precio por noche tiene que ser un número");
+  }
+
+  async function handlePublish() {
+    try {
+      let publication = await buildPublication();
+
+      validatePublication(publication);
+
+      if (props.route.params.editing) {
+        publication.id = props.route.params.publication.id;
+        requester.updatePublication(publication.id, publication, () => {
+          props.navigation.navigate('Publicaciones');
+        })
+      } else {
+        requester.postPublication(publication, () => {
+          props.navigation.navigate('Publicaciones');
+        })
+      }
+    } catch(e) {
+      alert(e.message)
     }
   }
 

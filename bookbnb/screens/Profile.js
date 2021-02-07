@@ -5,12 +5,14 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { ProfileRowData } from '../components/components';
+import { LoadableView } from '../components/loading';
 import { UserContext } from '../context/userContext';
 
 // @refresh reset
 
 export function ProfileScreen(props) {
   const { uid, requester } = React.useContext(UserContext);
+  const [loading, setLoading] = React.useState(true);
   const [userData, setUserData] = React.useState({
     id: null,
     firstName: 'nothing',
@@ -27,7 +29,6 @@ export function ProfileScreen(props) {
     }
     requester.profileData(userID, response => {
       let userData = response.content();
-      console.log(`fetching data for user ${userID}`);
       setUserData({
         id: userID,
         firstName: userData.first_name,
@@ -36,6 +37,7 @@ export function ProfileScreen(props) {
         email: userData.email,
         registerDate: new Date(userData.register_date).toDateString(),
       });
+      setLoading(false);
     });
   }
 
@@ -47,8 +49,8 @@ export function ProfileScreen(props) {
     return unsuscribe;
   }, []);
 
-  return (
-    <View style={{ flex: 1 }}>
+ return (
+    <LoadableView loading={loading} message="Accediendo a perfil">
       <View style={styles.container}>
         {userData.avatar ? (
           <Avatar.Image size={140} source={{ uri: userData.avatar }} style={{ margin: 50 }} />
@@ -74,7 +76,7 @@ export function ProfileScreen(props) {
           <ProfileRowData keyValue="Fecha de registro" value={userData.registerDate} />
         </DataTable>
       </View>
-    </View>
+    </LoadableView>
   );
 }
 

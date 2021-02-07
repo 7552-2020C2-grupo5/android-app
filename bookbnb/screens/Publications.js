@@ -3,13 +3,16 @@ import {
   ScrollView, StyleSheet, View,
 } from 'react-native';
 import { PublicationCardMinimal, AddNewButton } from '../components/components';
+import { LoadableView } from '../components/loading';
 import { UserContext } from '../context/userContext';
 import { CheckBox } from 'react-native-elements';
 import { v4 as uuidv4 } from 'uuid';
 
+
 export default function PublicationsScreen({ route, navigation }) {
   const { uid, requester } = React.useContext(UserContext);
   const [publications, setPublications] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   const fillPublications = () => {
     let searchParams = route.params.searchParams || {};
@@ -21,6 +24,7 @@ export default function PublicationsScreen({ route, navigation }) {
 
     requester.publications(publications => {
       setPublications(publications.content());
+      setLoading(false);
     }, searchParams)
   };
 
@@ -29,7 +33,7 @@ export default function PublicationsScreen({ route, navigation }) {
   }), []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <LoadableView loading={loading} message='Buscando publicaciones'>
       <ScrollView>
         <View style={styles.publication}>
           {publications.map((publication, index) => {
@@ -67,7 +71,7 @@ export default function PublicationsScreen({ route, navigation }) {
       </ScrollView>
       { route.params.own
                 && <AddNewButton onPress={() => navigation.navigate('new_publication', { editing: false })} />}
-    </View>
+    </LoadableView>
   );
 }
 

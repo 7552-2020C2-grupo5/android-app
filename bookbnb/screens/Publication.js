@@ -6,6 +6,7 @@ import { FloatingSection, FloatingButton } from '../components/components';
 import { UserContext } from '../context/userContext';
 import defaultPublicationImg from '../assets/default_publication_img.jpeg';
 import { geoDecode } from '../utils';
+import { v4 as uuidv4 } from 'uuid';
 
 function Comment(props) {
   return (
@@ -54,7 +55,7 @@ class QuestionComment extends React.Component {
     this.context.requester.addAnswer(
       this.state.publicationID,
       this.state.question.id,
-      { answer: answer },
+      { reply: answer },
       () => {}
     );
     if (this.state.answer) {
@@ -123,9 +124,9 @@ function OwnerCommentsSection(props) {
 
   return (
     <View style={{ padding: 9 }}>
-      {props.questions.map((value) =>
+      {props.questions.map((value, i) =>
         <QuestionComment
-          key={value}
+          key={i}
           publicationID={props.publicationID}
           question={value}
           onPress={handleSelectComment}
@@ -168,9 +169,9 @@ function GuestCommentsSection(props) {
 
   return (
     <View style={{ padding: 9 }}>
-      {questions.map((value, i) =>
+      {questions.map((value) =>
           <QuestionComment
-            key={i}
+            key={uuidv4()}
             publicationID={props.publicationID}
             question={value}
             text={value.question}

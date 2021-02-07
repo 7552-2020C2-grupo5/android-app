@@ -30,15 +30,15 @@ export function ReservationCard(props) {
     <Card {...props} style={styles.reservationCard}>
       <Card.Content>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-          <Title> {props.reservation.title} </Title>
+          <Title key={props.key}> {props.reservation.title} </Title>
         </View>
         <ProfileRowData keyValue="Fecha de inicio" value={props.reservation.initial_date} />
         <ProfileRowData keyValue="Fecha de finalización" value={props.reservation.final_date} />
         <ProfileRowData keyValue="Owner" value={props.reservation.owner} />
-        <CheckBox title="Vencida" checked={props.reservation.expired} />
+        <CheckBox key={props.key} title="Vencida" checked={props.reservation.expired} />
         {props.actions && props.actions.map((action, i) => (
           <Card.Actions style={styles.actions}>
-            <Button onPress={() => { action.onAction(); }}>{action.title}</Button>
+            <Button key={props.key} onPress={() => { action.onAction(); }}>{action.title}</Button>
           </Card.Actions>
         ))}
       </Card.Content>

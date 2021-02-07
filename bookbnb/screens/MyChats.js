@@ -7,12 +7,14 @@ import { ListItem, Icon } from 'react-native-elements';
 import * as firebase from 'firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { UserContext } from '../context/userContext';
+import { LoadableView } from '../components/loading';
 
 // @reset refresh
 
-export default function MyChatsScreen(props) {
+export function MyChatsScreen(props) {
   const { uid, token, setToken } = React.useContext(UserContext);
   const [conversations, setConversations] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   function _getOppositeUserID(usersIDs) {
     const oppositeUser = usersIDs[0] == uid ? usersIDs[1] : usersIDs[0];
@@ -28,6 +30,7 @@ export default function MyChatsScreen(props) {
         __conversations[chatKey] = conversations_[chatKey];
       });
       setConversations(__conversations);
+      setLoading(false);
     });
   }
 
@@ -38,30 +41,27 @@ export default function MyChatsScreen(props) {
   const DEFAULT_USER_IMG = 'https://i0.wp.com/www.repol.copl.ulaval.ca/wp-content/uploads/2019/01/default-user-icon.jpg';
 
   return (
-    <View>
-      {
-                Object.keys(conversations).map((chat, i) => {
-                  const dstUserID = _getOppositeUserID(chat.split('-'));
-                  const userData = conversations[chat].members[dstUserID];
-                  return (
-                    <>
-                      <ListItem
-                        onPress={() => {
-                          props.navigation.navigate('_chatConversation', {
-                            dstUserID,
-                          });
-                        }}
-                        key={uuidv4()}
-                      >
-                        <Avatar.Image key={uuidv4()} source={{ uri: userData.profilePic || DEFAULT_USER_IMG }} size={40} />
-                        <Text key={uuidv4()}>{userData.name}</Text>
-                      </ListItem>
-                    </>
-                  );
-                })
-            }
-    </View>
+    <LoadableView loading={loading} message="Buscando tus consultas">
+      {Object.keys(conversations).map((chat, i) => {
+        const dstUserID = _getOppositeUserID(chat.split('-'));
+          const userData = conversations[chat].members[dstUserID];
+          return (
+            <>
+              <ListItem
+                onPress={() => {
+                  props.navigation.navigate('_chatConversation', {
+                    dstUserID,
+                  });
+                }}
+                key={uuidv4()}
+              >
+                <Avatar.Image key={uuidv4()} source={{ uri: userData.profilePic || DEFAULT_USER_IMG }} size={40} />
+                <Text key={uuidv4()}>{userData.name}</Text>
+              </ListItem>
+            </>
+          );
+        })
+      }
+    </LoadableView>
   );
 }
-
-export { MyChatsScreen };

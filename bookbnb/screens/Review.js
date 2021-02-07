@@ -8,6 +8,7 @@ import {
 import { Button } from 'react-native-paper';
 import { UserContext } from '../context/userContext';
 import { SimpleTextInput } from '../components/components';
+import { LoadableView } from '../components/loading';
 
 function Review(props) {
   return (
@@ -33,6 +34,7 @@ function ReviewsBox({ publicationID, userID, navigation }) {
   const { uid, token, setToken, requester } = React.useContext(UserContext);
   const [reviews, setReviews] = React.useState([]);
   const [meanScore, setMeanScore] = React.useState(0);
+  const [loading, setLoading] = React.useState(true);
 
   async function fetchReviewersDataFor(reviews) {
     const newReviews = [];
@@ -40,10 +42,8 @@ function ReviewsBox({ publicationID, userID, navigation }) {
     for (const review of reviews) {
       let reviewerData = null;
       await requester.profileData(review.reviewer_id, response => {
-        console.log('setting reviewer data')
         reviewerData = response.content();
       });
-      console.log('after reviewer data')
       newReviews.push({
         score: review.score,
         comment: review.comment,
@@ -53,22 +53,30 @@ function ReviewsBox({ publicationID, userID, navigation }) {
     }
     setMeanScore(Math.round(acumScore / newReviews.length));
     setReviews(newReviews);
+      setLoading(false);
   }
 
   function fetchReviews() {
-    console.log('fetching reviewss....')
     if (publicationID) {
-      requester.publicationReviews({ publication_id: publicationID }, response => fetchReviewersDataFor(response.content()) );
+      requester.publicationReviews({
+        publication_id: publicationID
+      }, response => {
+        fetchReviewersDataFor(response.content())
+      });
     }
     if (userID) {
-      requester.userReviews({ reviewee_id: Number(userID) }, response => fetchReviewersDataFor(response.content()) );
+      requester.userReviews({
+        reviewee_id: Number(userID)
+      }, response => {
+        fetchReviewersDataFor(response.content())
+      });
     }
   }
 
   React.useEffect(() => { fetchReviews(); }, []);
 
   return (
-    <View>
+    <LoadableView loading={loading} message="Buscando calificaciones">
       {reviews.map((review, i) => (
         <Review key={i} review={review} />
       ))}
@@ -79,7 +87,7 @@ function ReviewsBox({ publicationID, userID, navigation }) {
         defaultRating={meanScore}
         size={30}
       />
-    </View>
+    </LoadableView>
   );
 }
 
