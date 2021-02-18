@@ -22,6 +22,12 @@ export default function PublicationsScreen({ route, navigation }) {
       };
     }
 
+    if (route.params.favorites) {
+      searchParams = {
+        starring_user_id: uid,
+      }
+    }
+
     requester.publications(publications => {
       setPublications(publications.content());
       setLoading(false);

@@ -19,6 +19,7 @@ export function LoginScreen(props) {
       setToken(token);
     } catch(e) {
       alert(response.description());
+      setLoading(false);
     }
   }
 
@@ -27,6 +28,11 @@ export function LoginScreen(props) {
       email: username.trim(),
       password: pass.trim()
     }
+
+    if (!(loginDetails.email && loginDetails.password)) {
+      return alert("No se puede iniciar sesión sin usuario / contraseña")
+    }
+
     requester.userLogin(loginDetails, _handleResponse);
     setLoading(true);
   }

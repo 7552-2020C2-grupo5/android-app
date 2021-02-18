@@ -3,15 +3,17 @@ import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { SimpleTextInput } from '../components/components';
 import { UserContext } from '../context/userContext';
+import { LoadableView } from '../components/loading';
 
 export function RegistrationScreen(props) {
   const { requester } = React.useContext(UserContext);
 
-  const [name, setName] = React.useState(null);
-  const [lastName, setLastName] = React.useState(null);
-  const [email, setEmail] = React.useState(null);
-  const [password, setPassword] = React.useState(null);
-  const [passwordConfirmation, setPasswordConfirmation] = React.useState(null);
+  const [name, setName] = React.useState('');
+  const [lastName, setLastName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   function sanitize(data) {
     return data.trim();
@@ -20,6 +22,13 @@ export function RegistrationScreen(props) {
   function validatePassword(password) {
     if (password.trim() !== passwordConfirmation.trim())
       alert('¡Las contraseñas no coinciden!');
+  }
+
+  function handleResponse(response) {
+    setLoading(false);
+    if (response.hasErrors())
+      return alert(response.getMessage())
+    props.navigation.goBack(null);
   }
 
   function handleRegister() {
@@ -31,27 +40,35 @@ export function RegistrationScreen(props) {
         profile_picture: '',
     };
 
+    if (!email && password) {
+      return alert('No se puede crear usuario sin email / password');
+    }
+
     validatePassword(password)
 
-    requester.register(newUser, () => { props.navigation.goBack(null) });
+    requester.register(newUser, handleResponse);
+
+    setLoading(true);
   }
 
   return (
-    <View style={styles.registrationContainer}>
-      <ScrollView>
-        <Text style={styles.fieldTitle}> Nombre </Text>
-        <SimpleTextInput onChangeText={(value) => { setName(value); }} />
-        <Text style={styles.fieldTitle}> Apellido </Text>
-        <SimpleTextInput onChangeText={(value) => { setLastName(value); }} />
-        <Text style={styles.fieldTitle}> Email </Text>
-        <SimpleTextInput onChangeText={(value) => { setEmail(value); }} />
-        <Text style={styles.fieldTitle}> Contraseña </Text>
-        <SimpleTextInput secureTextEntry onChangeText={(value) => { setPassword(value); }} />
-        <Text style={styles.fieldTitle}> Repetí la contraseña </Text>
-        <SimpleTextInput secureTextEntry onChangeText={(value) => { setPasswordConfirmation(value); }} />
-        <Button dark onPress={handleRegister} mode="contained"> Registrarme </Button>
-      </ScrollView>
-    </View>
+    <LoadableView loading={loading} message="Creando usuario">
+      <View style={styles.registrationContainer}>
+        <ScrollView>
+          <Text style={styles.fieldTitle}> Nombre </Text>
+          <SimpleTextInput onChangeText={(value) => { setName(value); }} />
+          <Text style={styles.fieldTitle}> Apellido </Text>
+          <SimpleTextInput onChangeText={(value) => { setLastName(value); }} />
+          <Text style={styles.fieldTitle}> Email </Text>
+          <SimpleTextInput onChangeText={(value) => { setEmail(value); }} />
+          <Text style={styles.fieldTitle}> Contraseña </Text>
+          <SimpleTextInput secureTextEntry onChangeText={(value) => { setPassword(value); }} />
+          <Text style={styles.fieldTitle}> Repetí la contraseña </Text>
+          <SimpleTextInput secureTextEntry onChangeText={(value) => { setPasswordConfirmation(value); }} />
+          <Button dark onPress={handleRegister} mode="contained"> Registrarme </Button>
+        </ScrollView>
+      </View>
+    </LoadableView>
   );
 }
 
