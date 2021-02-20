@@ -250,7 +250,7 @@ export function PublicationScreen(props) {
           <List.Item title="Cantidad de cuartos" right={() => <Text>{publication.rooms}</Text>} />
           <List.Item title="Cantidad de baños" right={() => <Text>{publication.bathrooms}</Text>} />
           <List.Item title="Cantidad de camas" right={() => <Text>{publication.beds}</Text>} />
-          <List.Item title="Precio por noche" right={() => ( <Text> ARG ${publication.price_per_night} </Text>)} />
+          <List.Item title="Precio por noche" right={() => ( <Text> {publication.price_per_night} ETH </Text>)} />
         </FloatingSection>
           {publication.address && (
             <FloatingSection titleLabel="Ubicación">

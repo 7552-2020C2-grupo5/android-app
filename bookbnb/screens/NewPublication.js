@@ -150,7 +150,7 @@ function NewPublicationScreen(props) {
           <Text style={{ fontWeight: 'bold' }}> Cantidad de baños </Text>
           <SimpleTextInput value={bathrooms} onChangeText={(bathrooms) => { setBathrooms(bathrooms); }} />
 
-          <Text style={{ fontWeight: 'bold' }}> Precio por noche </Text>
+          <Text style={{ fontWeight: 'bold' }}> Precio por noche (ETH) </Text>
           <SimpleTextInput value={price} onChangeText={(price) => { setPrice(price); }} />
 
           <Map
