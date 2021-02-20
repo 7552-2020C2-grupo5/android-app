@@ -1,7 +1,9 @@
 import * as React from 'react';
 import * as firebase from 'firebase';
 /* TODO. esto se debería pasar a módulos aparte, módulo de publication ,etc */
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, AppRegistry } from 'react-native';
+import { name as appName } from './app.json';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -230,13 +232,27 @@ const Screens = () => {
 };
 
 export default function App() {
+  // TODO
+  const theme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: "#bf4358",
+      accent: "#3d57ff",
+    },
+  };
   return (
     <SafeAreaView style={SafeAreaStyle.droidSafeArea}>
       <UserContextProvider>
-        <NotificationsHandler>
-          <Screens />
-        </NotificationsHandler>
+        <PaperProvider theme={theme}>
+          <NotificationsHandler>
+            <Screens />
+          </NotificationsHandler>
+        </PaperProvider>
       </UserContextProvider>
     </SafeAreaView>
   );
 }
+
+AppRegistry.registerComponent(appName, () => App);
