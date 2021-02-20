@@ -16,11 +16,17 @@ export function LoginScreen(props) {
   const [recoverEmail, setRecoverEmail] = React.useState('');
 
   function _handleResponse(response) {
+    if (response.hasError()) {
+      alert(response.description());
+      setLoading(false);
+      return
+    }
+
     try {
       let token = response.content().token;
       setToken(token);
     } catch(e) {
-      alert(response.description());
+      console.log(e)
       setLoading(false);
     }
   }

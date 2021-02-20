@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataTable, Avatar } from 'react-native-paper';
 import {
-  StyleSheet, View, Text, AsyncStorage,
+  StyleSheet, View, Text, AsyncStorage, ScrollView
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { ProfileRowData } from '../components/components';
@@ -11,8 +11,9 @@ import { UserContext } from '../context/userContext';
 // @refresh reset
 
 export function ProfileScreen(props) {
-  const { uid, requester } = React.useContext(UserContext);
+  const { uid, requester, addr } = React.useContext(UserContext);
   const [loading, setLoading] = React.useState(true);
+  const [walletBalance, setWalletBalance] = React.useState({});
   const [userData, setUserData] = React.useState({
     id: null,
     firstName: 'nothing',
@@ -39,6 +40,12 @@ export function ProfileScreen(props) {
       });
       setLoading(false);
     });
+    requester.walletBalance(addr, (response) => {
+      if (response.hasError())
+        return alert('Fallo al fetchear wallet del usuario')
+
+      setWalletBalance(response.content());
+    })
   }
 
   React.useEffect(() => {
@@ -51,31 +58,36 @@ export function ProfileScreen(props) {
 
  return (
     <LoadableView loading={loading} message="Accediendo a perfil">
-      <View style={styles.container}>
-        {userData.avatar ? (
-          <Avatar.Image size={140} source={{ uri: userData.avatar }} style={{ margin: 50 }} />
-        ) : (
-          <Avatar.Text size={140} label={userData.firstName[0] + userData.lastName[0]} style={{ margin: 50 }} />
-        )}
-        <View style={{ flexDirection: 'row' }}>
-          {props.route.params.allowEditing
-                    && <Icon onPress={() => props.navigation.navigate('EditProfile', { userData })} name="pencil" type="evilicon" color="black" size={40} />}
-          {props.route.params.allowMessaging
-                    && <Icon onPress={() => props.navigation.navigate('chatConversation', { dstUserID: props.route.params.userID })} name="envelope" type="evilicon" color="black" size={40} />}
-          <Icon
-            onPress={() => props.navigation.navigate('reviews', { user_id: userData.id })}
-            size={40}
-            name="like"
-            type="evilicon"
-          />
+      <ScrollView>
+        <View style={styles.container}>
+          {userData.avatar ? (
+            <Avatar.Image size={140} source={{ uri: userData.avatar }} style={{ margin: 50 }} />
+          ) : (
+            <Avatar.Text size={140} label={userData.firstName[0] + userData.lastName[0]} style={{ margin: 50 }} />
+          )}
+          <View style={{ flexDirection: 'row' }}>
+            {props.route.params.allowEditing
+                      && <Icon onPress={() => props.navigation.navigate('EditProfile', { userData })} name="pencil" type="evilicon" color="black" size={40} />}
+            {props.route.params.allowMessaging
+                      && <Icon onPress={() => props.navigation.navigate('chatConversation', { dstUserID: props.route.params.userID })} name="envelope" type="evilicon" color="black" size={40} />}
+            <Icon
+              onPress={() => props.navigation.navigate('reviews', { user_id: userData.id })}
+              size={40}
+              name="like"
+              type="evilicon"
+            />
+          </View>
+          <DataTable>
+            <ProfileRowData keyValue="Nombre" value={userData.firstName} />
+            <ProfileRowData keyValue="Apellido" value={userData.lastName} />
+            <ProfileRowData keyValue="Email" value={userData.email} />
+            <ProfileRowData keyValue="Fecha de registro" value={userData.registerDate} />
+            <ProfileRowData keyValue="Saldo (ETH)" value={walletBalance.ETH} />
+            <ProfileRowData keyValue="Saldo (USD)" value={walletBalance.USD} />
+            <ProfileRowData keyValue="Saldo (EUR)" value={walletBalance.EUR} />
+          </DataTable>
         </View>
-        <DataTable>
-          <ProfileRowData keyValue="Nombre" value={userData.firstName} />
-          <ProfileRowData keyValue="Apellido" value={userData.lastName} />
-          <ProfileRowData keyValue="Email" value={userData.email} />
-          <ProfileRowData keyValue="Fecha de registro" value={userData.registerDate} />
-        </DataTable>
-      </View>
+      </ScrollView>
     </LoadableView>
   );
 }

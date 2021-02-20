@@ -26,8 +26,8 @@ export function RegistrationScreen(props) {
 
   function handleResponse(response) {
     setLoading(false);
-    if (response.hasErrors())
-      return alert(response.getMessage())
+    if (response.hasError())
+      return alert(response.description())
     props.navigation.goBack(null);
   }
 
