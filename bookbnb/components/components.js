@@ -9,8 +9,57 @@ import {
 import NumericInput from 'react-native-numeric-input';
 import defaultPublicationImg from '../assets/default_publication_img.jpeg';
 import { v4 as uuidv4 } from 'uuid';
+import { dateStringyfier as _dateStringyfier } from "../utils";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const windowWidth = Dimensions.get('window').width;
+
+export function DateInput(props) {
+  const [date, setDate] = React.useState(props.initialDate);
+  const [pickingDate, setPickingDate] = React.useState(false);
+
+  function onSelectedDate(date, e) {
+    if (e.type === 'neutralButtonPressed') {
+      setDate(null);
+      setPickingDate(false);
+      props.onChange && props.onChange(null);
+      return
+    }
+
+    setPickingDate(false);
+
+    if (!date) return;
+
+    setDate(date);
+    props.onChange && props.onChange(date);
+    console.log('setting date');
+    console.log(date);
+  }
+
+  if (pickingDate) {
+    return (
+      <DateTimePicker
+        value={date || new Date()}
+        mode="date"
+        neutralButtonLabel="Limpiar"
+        onChange={(e, date) => onSelectedDate(date, e)}
+      />
+    );
+  }
+
+  return (
+    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+      <SimpleTextInput editable={false} value={date && _dateStringyfier(date)} />
+      <Icon
+        onPress={() => setPickingDate(true)}
+        underlayColor="blue"
+        size={props.iconSize || 40}
+        name="calendar"
+        type="evilicon"
+      />
+    </View>
+  );
+}
 
 export function ProfileRowData(props) {
   return (

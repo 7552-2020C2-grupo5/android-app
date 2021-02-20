@@ -4,52 +4,9 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Button } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { SimpleTextInput } from '../components/components';
+import { SimpleTextInput, DateInput } from '../components/components';
 import { UserContext } from '../context/userContext';
-
-function _dateStringyfier(date) {
-  return `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
-}
-
-function DateInput(props) {
-  const [date, setDate] = React.useState(new Date());
-  const [pickingDate, setPickingDate] = React.useState(false);
-
-  function onSelectedDate(date) {
-    setPickingDate(false);
-
-    if (!date) return;
-
-    setDate(date);
-    props.onChange && props.onChange(date);
-    console.log('setting date');
-    console.log(date);
-  }
-
-  if (pickingDate) {
-    return (
-      <DateTimePicker
-        value={date}
-        mode="date"
-        onChange={(e, date) => onSelectedDate(date)}
-      />
-    );
-  }
-
-  return (
-    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-      <SimpleTextInput editable={false} value={_dateStringyfier(date)} />
-      <Icon
-        onPress={() => setPickingDate(true)}
-        underlayColor="blue"
-        size={40}
-        name="calendar"
-        type="evilicon"
-      />
-    </View>
-  );
-}
+import { dateStringyfier as _dateStringyfier } from "../utils";
 
 export function NewReservationScreen({ route, navigation }) {
   const { uid, token, requester } = React.useContext(UserContext);
@@ -73,11 +30,11 @@ export function NewReservationScreen({ route, navigation }) {
           <Text style={{ fontSize: 50, fontWeight: 'bold', textAlign: 'left' }}>Reservá</Text>
           <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
             <Text style={{ fontWeight: 'bold' }}> Fecha de inicio </Text>
-            <DateInput onChange={setInitialDate} />
+            <DateInput initialDate={new Date()} onChange={setInitialDate} />
           </View>
           <View style={{ justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
             <Text style={{ fontWeight: 'bold' }}> Fecha de finalización </Text>
-            <DateInput onChange={setFinalDate} />
+            <DateInput initialDate={new Date()} onChange={setFinalDate} />
           </View>
           <Button dark onPress={handleDoReservation} mode="contained"> Reservar </Button>
         </View>

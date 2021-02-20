@@ -7,6 +7,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 const PUBLICATIONS_ENDPOINT = 'https://bookbnb5-publications.herokuapp.com/v1/publication';
 
+export function dateStringyfier(date) {
+  return `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
+}
+
 async function uploadImageToFirebase(photo) {
   try {
     const response = await fetch(photo.uri);
