@@ -37,20 +37,20 @@ export default function Map(props) {
   }, [props.coordinates]);
 
   return (
-    <View style={{ margin: 5, justifyContent: 'center', alignItems: 'stretch' }}>
-      <Text style={{ fontWeight: 'bold' }}> Dirección </Text>
-      <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+    <View style={styles.container}>
+      <View style={styles.direction}>
         <TextInput
-          style={{ flex: 1 }}
+          label={"Dirección"}
+          style={styles.inputDirection}
           onChangeText={(text) => { setText(text); }}
           value={text}
           mode="outlined"
         />
         <Icon onPress={() => handleFind(text)} name="location" type="evilicon" color="black" size={50} />
       </View>
-      <View>
+      <View >
         <MapView
-          style={{ height: 200, width: 310, margin: 10 }}
+          style={styles.mapView}
           region={{
             latitude: coordinates[0], longitude: coordinates[1], latitudeDelta: 0.0922, longitudeDelta: 0.0421,
           }}
@@ -70,10 +70,22 @@ export default function Map(props) {
 }
 
 const styles = StyleSheet.create({
-  multiline: {
+  container: {
     flex: 1,
-    width: 330,
-    height: 150,
-    paddingBottom: 20,
+    margin: 5,
+    justifyContent: 'center',
+    alignItems: 'stretch'
   },
+  inputDirection: {
+    flex: 1,
+  },
+  direction: {
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  mapView: {
+    height: 200,
+    width: 310,
+    margin: 10
+  }
 });

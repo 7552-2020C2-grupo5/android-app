@@ -5,8 +5,6 @@ import * as Google from 'expo-google-app-auth';
 import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
 
-const PUBLICATIONS_ENDPOINT = 'https://bookbnb5-publications.herokuapp.com/v1/publication';
-
 export function dateStringyfier(date) {
   return `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
 }
@@ -40,28 +38,6 @@ async function doGoogleLogin() {
   });
   const credential = firebase.auth.GoogleAuthProvider.credential(loginResult.idToken);
   loginResult = await firebase.auth().signInWithCredential(credential);
-}
-
-async function postPublication(publication) {
-  fetch(PUBLICATIONS_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      title: publication.title,
-      description: publication.description,
-      rooms: publication.rooms,
-      beds: publication.beds,
-      bathrooms: publication.bathrooms,
-      price_per_night: publication.price_per_night,
-    }),
-  }).then(async (response) => {
-    const response_json = await response.json();
-    console.log(response_json);
-  }).catch((error) => {
-    console.log('error');
-  });
 }
 
 // MAPS
@@ -108,5 +84,5 @@ async function geoEncode(str) {
 }
 
 export {
-  doGoogleLogin, decodeJWTPayload, postPublication, geoEncode, geoDecode, uploadImageToFirebase,
+  doGoogleLogin, decodeJWTPayload, geoEncode, geoDecode, uploadImageToFirebase,
 };
