@@ -1,16 +1,13 @@
 import * as React from 'react';
-import {
-  Image, AsyncStorage, Text, View, StyleSheet, Dimensions, ScrollView,
-} from 'react-native';
-import { Divider, TextInput, Button } from 'react-native-paper';
-import { Input } from 'react-native-elements';
-import * as firebase from 'firebase';
+import {Image, ScrollView, StyleSheet, Text, View,} from 'react-native';
+import {Button} from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
-import { postPublication, uploadImageToFirebase } from '../utils';
+import {uploadImageToFirebase} from '../utils';
 import Map from '../components/maps';
-import { CameraInput, CameraPreview } from '../components/camera';
-import { SimpleTextInput, AddNewButton } from '../components/components';
-import { UserContext } from '../context/userContext';
+import {AddNewButton, SimpleTextInput} from '../components/components';
+import {UserContext} from '../context/userContext';
+import NumericInput from "../components/NumericInput";
+
 
 function NewPublicationScreen(props) {
   const { uid, requester, mnemonic } = React.useContext(UserContext);
@@ -60,6 +57,14 @@ function NewPublicationScreen(props) {
 
   function isUploadedToFirebase(image) { return !(image.type) }
 
+  function requiredFieldsCompleted() {
+    const normalRequiredFields = [title, rooms, beds, bathrooms, price];
+    const hasImages = images.length > 0;
+    const allNormalRequiredFieldsCompleted = normalRequiredFields.every(field => field !== "");
+    console.log("Normal fields: " + allNormalRequiredFieldsCompleted + " HasImages: " + hasImages);
+    return allNormalRequiredFieldsCompleted && hasImages;
+  }
+
   async function buildPublication() {
     let photoURL = null;
     for (const image of images) {
@@ -80,24 +85,28 @@ function NewPublicationScreen(props) {
         price_per_night: Number(price),
         images: [{ url: photoURL }],
         loc: {latitude: coordinates.latitude, longitude: coordinates.longitude},
-       mnemonic: mnemonic,
-      };
+        mnemonic: mnemonic,
+    };
   }
+
+  function isNotValidNumber(number) {
+    return isNaN(number) || number < 0;
+  };
 
   function validatePublication(publication) {
     if (publication.images[0].url == '')
       throw new Error("No se pueden hacer publicaciones sin imágenes");
 
-    if (isNaN(publication.rooms))
+    if (isNotValidNumber(publication.rooms))
       throw new Error("La cantidad de cuartos tiene que ser un número");
 
-    if (isNaN(publication.beds))
+    if (isNotValidNumber(publication.beds))
       throw new Error("La cantidad de camas tiene que ser un número");
 
-    if (isNaN(publication.bathrooms))
+    if (isNotValidNumber(publication.bathrooms))
       throw new Error("La cantidad de baños tiene que ser un número");
 
-    if (isNaN(publication.price_per_night))
+    if (isNotValidNumber(publication.price_per_night))
       throw new Error("El precio por noche tiene que ser un número");
   }
 
@@ -130,7 +139,7 @@ function NewPublicationScreen(props) {
         })
       }
     } catch(e) {
-      alert(e.message)
+      alert(e.message);
     }
   }
 
@@ -151,20 +160,15 @@ function NewPublicationScreen(props) {
             <AddNewButton onPress={pickImage} />
           </View>
 
-          <Text style={{ fontWeight: 'bold' }}> Título de la publicación </Text>
-          <SimpleTextInput value={title} onChangeText={(title) => { setTitle(title); }} />
+          <SimpleTextInput label={"Título"} required value={title} onChangeText={(title) => { setTitle(title); }} />
 
-          <Text style={{ fontWeight: 'bold' }}> Cantidad de cuartos </Text>
-          <SimpleTextInput numeric keyboardType="numeric" value={rooms} onChangeText={(rooms) => { setRooms(rooms); }} />
+          <NumericInput label={"Cant. de cuartos"} value={rooms} onChangeText={(rooms) => { setRooms(rooms); }} />
 
-          <Text style={{ fontWeight: 'bold' }}> Cantidad de camas </Text>
-          <SimpleTextInput value={beds} onChangeText={(beds) => { setBeds(beds); }} />
+          <NumericInput label={"Cant. de camas"} value={beds} onChangeText={(beds) => { setBeds(beds); }} />
 
-          <Text style={{ fontWeight: 'bold' }}> Cantidad de baños </Text>
-          <SimpleTextInput value={bathrooms} onChangeText={(bathrooms) => { setBathrooms(bathrooms); }} />
+          <NumericInput  label={"Cant. de baños"}  value={bathrooms} onChangeText={(bathrooms) => { setBathrooms(bathrooms); }} />
 
-          <Text style={{ fontWeight: 'bold' }}> Precio por noche (ETH) </Text>
-          <SimpleTextInput value={price} onChangeText={(price) => { setPrice(price); }} />
+          <NumericInput label={"Precio por noche (ETH)"}  value={price} onChangeText={(price) => { setPrice(price); }} />
 
           <Map
             coordinates={[coordinates.latitude, coordinates.longitude]}
@@ -173,10 +177,10 @@ function NewPublicationScreen(props) {
             }}
           />
 
-          <Text style={{ fontWeight: 'bold' }}> Descripción </Text>
-          <SimpleTextInput value={description} multiline onChangeText={(description) => { setDescription(description); }} />
+          <SimpleTextInput multiline numberOfLines={5} label={"Descripción"} value={description}
+                           onChangeText={(description) => { setDescription(description); }} />
 
-          <Button dark onPress={handlePublish} mode="contained"> Publicar </Button>
+          <Button dark onPress={handlePublish} disabled={!requiredFieldsCompleted()} mode="contained"> Publicar </Button>
         </View>
       </View>
     </ScrollView>
@@ -186,15 +190,14 @@ function NewPublicationScreen(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
   },
   imagePreview: {
     borderWidth: 3,
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 20,
+    margin: 17,
   },
 });
 
