@@ -10,7 +10,7 @@ import NumericInput from "../components/NumericInput";
 
 
 function NewPublicationScreen(props) {
-  const { uid, requester } = React.useContext(UserContext);
+  const { uid, requester, mnemonic } = React.useContext(UserContext);
 
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
@@ -85,12 +85,13 @@ function NewPublicationScreen(props) {
         price_per_night: Number(price),
         images: [{ url: photoURL }],
         loc: {latitude: coordinates.latitude, longitude: coordinates.longitude},
+        mnemonic: mnemonic,
     };
   }
 
   function isNotValidNumber(number) {
     return isNaN(number) || number < 0;
-  }
+  };
 
   function validatePublication(publication) {
     if (publication.images[0].url == '')
@@ -109,6 +110,15 @@ function NewPublicationScreen(props) {
       throw new Error("El precio por noche tiene que ser un número");
   }
 
+  async function checkForPublicationStatus(publicationId, onStatusConfirmed) {
+    requester.getPublication(publicationId, response => {
+      if (response.content().blockchain_status == 'UNSET') {
+        return setTimeout(() => checkForPublicationStatus(publicationId, onStatusConfirmed), 3000);
+      }
+      onStatusConfirmed(response.content());
+    });
+  }
+
   async function handlePublish() {
     try {
       let publication = await buildPublication();
@@ -116,13 +126,16 @@ function NewPublicationScreen(props) {
       validatePublication(publication);
 
       if (props.route.params.editing) {
+        //TODO. handlear errores
         publication.id = props.route.params.publication.id;
         requester.updatePublication(publication.id, publication, () => {
           props.navigation.navigate('Publicaciones');
         })
       } else {
-        requester.postPublication(publication, () => {
-          props.navigation.navigate('Publicaciones');
+        requester.postPublication(publication, response => {
+            checkForPublicationStatus(response.content().id, () => {
+            props.navigation.navigate('Publicaciones');
+          })
         })
       }
     } catch(e) {

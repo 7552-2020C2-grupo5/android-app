@@ -9,15 +9,18 @@ import { UserContext } from '../context/userContext';
 import { dateStringyfier as _dateStringyfier } from "../utils";
 
 export function NewReservationScreen({ route, navigation }) {
-  const { uid, token, requester } = React.useContext(UserContext);
+  const { uid, token, requester, mnemonic, addr } = React.useContext(UserContext);
   const [initialDate, setInitialDate] = React.useState(new Date());
   const [finalDate, setFinalDate] = React.useState(new Date());
 
   function handleDoReservation() {
-    requester.makeReservation({
+          console.log(route.params.publication)
+    requester.intentBooking({
       tenant_id: Number(uid),
+      tenant_mnemonic: mnemonic,
+      blockchain_id: route.params.publication.blockchain_id,
       publication_id: route.params.publication.id,
-      total_price: 100,
+      price_per_night: Number(route.params.publication.price_per_night),
       initial_date: _dateStringyfier(initialDate),
       final_date: _dateStringyfier(finalDate),
     }, () => { navigation.navigate('Mis Reservas'); });

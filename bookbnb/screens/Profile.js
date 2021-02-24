@@ -29,6 +29,10 @@ export function ProfileScreen(props) {
       userID = uid;
     }
     requester.profileData(userID, response => {
+      if (response.hasError()) {
+        alert(response.description())
+        return props.navigation.goBack(null);
+      }
       let userData = response.content();
       setUserData({
         id: userID,
@@ -63,7 +67,7 @@ export function ProfileScreen(props) {
           {userData.avatar ? (
             <Avatar.Image size={140} source={{ uri: userData.avatar }} style={{ margin: 50 }} />
           ) : (
-            <Avatar.Text size={140} label={userData.firstName[0] + userData.lastName[0]} style={{ margin: 50 }} />
+            <Avatar.Text size={140} label={userData.firstName[0] || '' + userData.lastName[0] || ''} style={{ margin: 50 }} />
           )}
           <View style={{ flexDirection: 'row' }}>
             {props.route.params.allowEditing
@@ -82,9 +86,9 @@ export function ProfileScreen(props) {
             <ProfileRowData keyValue="Apellido" value={userData.lastName} />
             <ProfileRowData keyValue="Email" value={userData.email} />
             <ProfileRowData keyValue="Fecha de registro" value={userData.registerDate} />
-            <ProfileRowData keyValue="Saldo (ETH)" value={walletBalance.ETH} />
-            <ProfileRowData keyValue="Saldo (USD)" value={walletBalance.USD} />
-            <ProfileRowData keyValue="Saldo (EUR)" value={walletBalance.EUR} />
+            <ProfileRowData keyValue="Saldo (ETH)" value={Number(walletBalance.ETH).toFixed(2)} />
+            <ProfileRowData keyValue="Saldo (USD)" value={Number(walletBalance.USD).toFixed(2)} />
+            <ProfileRowData keyValue="Saldo (EUR)" value={Number(walletBalance.EUR).toFixed(2)} />
           </DataTable>
         </View>
       </ScrollView>

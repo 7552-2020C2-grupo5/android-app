@@ -15,7 +15,7 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
   /* Reservas asociadas a una publicación, filtramos aquellas
    * reservas que hayan sido efectuadas con ese publication_id
    */
-  const { uid, token, requester } = React.useContext(UserContext);
+  const { uid, token, requester, mnemonic } = React.useContext(UserContext);
   const [reservations, setReservations] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
 
@@ -42,12 +42,52 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
     _fetchReservationsData();
   }), []);
 
+  function handleAcceptBooking(booking) {
+    requester.acceptBooking({
+      tenant_id: booking.tenant_id,
+      booking_id: booking.id,
+      publication_owner_mnemonic: mnemonic,
+      blockchain_id: publication.blockchain_id,
+      initial_date: booking.initial_date,
+      final_date: booking.final_date
+    }, response => {
+      if(response.hasError())
+        return alert(response.getDescription())
+      _fetchReservationsData()
+    })
+  }
+
+  function handleRejectBooking(booking) {
+    requester.rejectBooking({
+      tenant_id: booking.tenant_id,
+      booking_id: booking.id,
+      publication_owner_mnemonic: mnemonic,
+      blockchain_id: publication.blockchain_id,
+      initial_date: booking.initial_date,
+      final_date: booking.final_date
+    }, response => {
+      if(response.hasError())
+        return alert(response.getDescription())
+      _fetchReservationsData()
+    })
+  }
+
   return (
     <LoadableView loading={loading} message="Buscando reservas">
       <ScrollView>
         <View style={{ flex: 1, padding: 10 }}>
           {reservations.map((reservation, i) => {
             const actions = [];
+            if (reservation.booking_status === 'PENDING') {
+              actions.push({
+                title: 'Aceptar reserva',
+                onAction: () => handleAcceptBooking(reservation)
+              });
+              actions.push({
+                title: 'Rechazar reserva',
+                onAction: () => handleRejectBooking(reservation)
+              });
+            }
             if (reservation.expired) {
               actions.push({
                 title: 'Calificar huésped',
@@ -64,7 +104,7 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
           })}
         </View>
       </ScrollView>
-    </LoadableView>
+   </LoadableView>
   );
 }
 

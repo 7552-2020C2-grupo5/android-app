@@ -8,7 +8,7 @@ import { UserContext } from '../context/userContext';
 import { LoadableView } from '../components/loading';
 
 export function LoginScreen(props) {
-  const { token, setToken, requester } = React.useContext(UserContext);
+  const { token, setToken, requester, pushToken } = React.useContext(UserContext);
   const [username, setUsername] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [loading, setLoading] = React.useState(false);
@@ -34,7 +34,8 @@ export function LoginScreen(props) {
   function handleLogin() {
     let loginDetails = {
       email: username.trim(),
-      password: pass.trim()
+      password: pass.trim(),
+      push_token: pushToken
     }
 
     if (!(loginDetails.email && loginDetails.password)) {
