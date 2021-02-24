@@ -86,9 +86,9 @@ export function ProfileScreen(props) {
             <ProfileRowData keyValue="Apellido" value={userData.lastName} />
             <ProfileRowData keyValue="Email" value={userData.email} />
             <ProfileRowData keyValue="Fecha de registro" value={userData.registerDate} />
-            <ProfileRowData keyValue="Saldo (ETH)" value={walletBalance.ETH} />
-            <ProfileRowData keyValue="Saldo (USD)" value={walletBalance.USD} />
-            <ProfileRowData keyValue="Saldo (EUR)" value={walletBalance.EUR} />
+            <ProfileRowData keyValue="Saldo (ETH)" value={Number(walletBalance.ETH).toFixed(2)} />
+            <ProfileRowData keyValue="Saldo (USD)" value={Number(walletBalance.USD).toFixed(2)} />
+            <ProfileRowData keyValue="Saldo (EUR)" value={Number(walletBalance.EUR).toFixed(2)} />
           </DataTable>
         </View>
       </ScrollView>
