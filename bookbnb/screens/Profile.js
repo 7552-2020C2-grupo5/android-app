@@ -29,6 +29,10 @@ export function ProfileScreen(props) {
       userID = uid;
     }
     requester.profileData(userID, response => {
+      if (response.hasError()) {
+        alert(response.description())
+        return props.navigation.goBack(null);
+      }
       let userData = response.content();
       setUserData({
         id: userID,
@@ -63,7 +67,7 @@ export function ProfileScreen(props) {
           {userData.avatar ? (
             <Avatar.Image size={140} source={{ uri: userData.avatar }} style={{ margin: 50 }} />
           ) : (
-            <Avatar.Text size={140} label={userData.firstName[0] + userData.lastName[0]} style={{ margin: 50 }} />
+            <Avatar.Text size={140} label={userData.firstName[0] || '' + userData.lastName[0] || ''} style={{ margin: 50 }} />
           )}
           <View style={{ flexDirection: 'row' }}>
             {props.route.params.allowEditing

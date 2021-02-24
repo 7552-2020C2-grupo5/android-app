@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Notifications from 'expo-notifications';
 import { AsyncStorage } from 'react-native';
 import { decodeJWTPayload } from '../utils';
 import ApiClient from '../requester/client/ApiClient';
@@ -55,7 +56,13 @@ const UserContextProvider = (props) => {
     return (
       <>
         <UserContext.Provider value={{
-            uid: UID, token: token, requester: requester, setToken: setToken, cleanCtx: cleanCtx, addr: wallet_address, mnemonic: wallet_mnemonic
+            uid: UID,
+            token: token,
+            requester: requester,
+            setToken: setToken,
+            cleanCtx: cleanCtx,
+            addr: wallet_address,
+            mnemonic: wallet_mnemonic
         }}>
           {props.children}
         </UserContext.Provider>

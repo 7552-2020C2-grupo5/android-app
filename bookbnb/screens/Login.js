@@ -34,7 +34,8 @@ export function LoginScreen(props) {
   function handleLogin() {
     let loginDetails = {
       email: username.trim(),
-      password: pass.trim()
+      password: pass.trim(),
+      push_token: ''
     }
 
     if (!(loginDetails.email && loginDetails.password)) {

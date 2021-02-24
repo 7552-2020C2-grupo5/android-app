@@ -84,6 +84,7 @@ export function ReservationCard(props) {
         <ProfileRowData keyValue="Fecha de inicio" value={props.reservation.initial_date} />
         <ProfileRowData keyValue="Fecha de finalización" value={props.reservation.final_date} />
         <ProfileRowData keyValue="Owner" value={props.reservation.owner} />
+        <ProfileRowData keyValue="Estado" value={props.reservation.booking_status} />
         <CheckBox key={props.key} title="Vencida" checked={props.reservation.expired} />
         {props.actions && props.actions.map((action, i) => (
           <Card.Actions style={styles.actions}>

@@ -48,7 +48,7 @@ function EditProfileScreen(props) {
     }
 
     if (userImage) {
-      url = await uploadImageToFirebase(userImage);
+      let url = await uploadImageToFirebase(userImage);
       setUserData({ ...userData, avatar: url });
       userDetails.profile_picture = url
     }
@@ -93,6 +93,7 @@ function EditProfileScreen(props) {
           <Text style={{ fontWeight: 'bold' }}>Email</Text>
           <SimpleTextInput
             value={userData.email}
+            disabled={true}
             onChangeText={(value) => {
               setUserData({ ...userData, email: value });
             }}

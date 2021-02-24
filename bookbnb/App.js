@@ -26,6 +26,7 @@ import { SafeAreaStyle } from './styles/GlobalStyles';
 import { UserContextProvider, UserContext } from './context/userContext';
 import * as RootNavigation from './screens/RootNavigation';
 import { NotificationsHandler } from './components/notifications';
+import Toast from 'react-native-toast-message';
 
 // @refresh reset
 
@@ -50,7 +51,7 @@ function Publications({ route, navigation }) {
       initialRouteName="Publicaciones"
       headerMode="none"
     >
-      <Stack.Screen
+     <Stack.Screen
         name="Publicaciones"
         component={PublicationsScreen}
         initialParams={{ own: route.params.own, favorites: route.params.favorites }}
@@ -182,47 +183,39 @@ const Screens = () => {
           />
         </Stack.Navigator>
       ) : (
-        <Drawer.Navigator headerMode="none">
+        <Drawer.Navigator>
           <Drawer.Screen
             name="Mis Recomendaciones"
-            options={{ headerShown: false }}
             component={RecomendationsScreen}
           />
           <Drawer.Screen
             name="Buscar"
-            options={{ headerShown: false }}
             component={Search}
           />
           <Drawer.Screen
             name="Perfil"
-            options={{ headerShown: false }}
             component={Profile}
           />
           <Drawer.Screen
             name="Mis Reservas"
-            options={{ headerShown: false }}
             component={Reservations}
           />
           <Drawer.Screen
             name="Mis Publicaciones"
-            options={{ headerShown: false }}
             initialParams={{ own: true, favorites: false }}
             component={Publications}
           />
           <Drawer.Screen
             name="Publicaciones favoritas"
-            options={{ headerShown: false }}
             initialParams={{ own: false, favorites: true }}
             component={Publications}
           />
           <Drawer.Screen
             name="Mis consultas"
-            options={{ headerShown: false }}
             component={Chat}
           />
           <Drawer.Screen
             name="Salir"
-            options={{ headerShown: false }}
             component={LogoutScreen}
           />
         </Drawer.Navigator>
@@ -231,7 +224,7 @@ const Screens = () => {
   );
 };
 
-export default function App() {
+export default function App(props) {
   // TODO
   const theme = {
     ...DefaultTheme,
@@ -243,15 +236,18 @@ export default function App() {
     },
   };
   return (
-    <SafeAreaView style={SafeAreaStyle.droidSafeArea}>
-      <UserContextProvider>
-        <PaperProvider theme={theme}>
-          <NotificationsHandler>
-            <Screens />
-          </NotificationsHandler>
-        </PaperProvider>
-      </UserContextProvider>
-    </SafeAreaView>
+    <>
+      <SafeAreaView style={SafeAreaStyle.droidSafeArea}>
+        <UserContextProvider>
+          <PaperProvider theme={theme}>
+            <NotificationsHandler>
+              <Screens />
+            </NotificationsHandler>
+          </PaperProvider>
+        </UserContextProvider>
+      </SafeAreaView>
+    <Toast ref={(ref) => Toast.setRef(ref)}/>
+    </>
   );
 }
 
