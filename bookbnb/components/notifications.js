@@ -28,7 +28,7 @@ function handleOnTouch(notification_content) {
 
   if (data.type == 'newMessage') {
     /* TODO. ver cómo incrementar mostrar el badge desde los chats */
-    RootNavigation.navigate('Mis consultas', { screen: 'reviews', params: { dstUserID: data.origin_user_id } });
+    RootNavigation.navigate('Mis consultas', { screen: '_chatConversation', params: { dstUserID: data.origin_user_id } });
   }
 
   if (data.type == 'publicationReview') {
@@ -61,14 +61,17 @@ function handleBackgroundNotification(notification) {
 }
 
 export function NotificationsHandler(props) {
-  const { token } = React.useContext(UserContext);
+  const { token, setPushToken } = React.useContext(UserContext);
   const notificationListener = React.useRef();
   const responseListener = React.useRef();
 
   React.useEffect(() => {
     console.log('Mounting notification system!');
 
-    registerForPushNotificationsAsync().then(token => { console.log(token) });
+    registerForPushNotificationsAsync().then(pushToken => {
+      console.log('setting pushToken')
+      setPushToken(pushToken);
+    });
 
     // foreground
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
@@ -99,10 +102,11 @@ export function NotificationsHandler(props) {
     });
 
     return () => {
+      console.log('Unmounting notification system!')
       Notifications.removeNotificationSubscription(notificationListener);
       Notifications.removeNotificationSubscription(responseListener);
     };
-  });
+  }, [token]);
 
   return (
     <>

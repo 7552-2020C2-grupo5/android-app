@@ -68,6 +68,14 @@ export default function ChatScreen(props) {
       msg: currentMsg,
     };
     firebase.database().ref(msgRoute).set(msg);
+    requester.ackNewMessage({
+      origin_user_id: Number(uid), destination_user_id: Number(dstUserID), type: "newMessage"
+    }, response => {
+      if (response.hasError()) {
+        alert(response.description())
+        props.nagivation.navigate.goBack(null);
+      }
+    })
     setCurrentMsg('');
   }
 
