@@ -38,6 +38,7 @@ async function doGoogleLogin() {
   });
   const credential = firebase.auth.GoogleAuthProvider.credential(loginResult.idToken);
   loginResult = await firebase.auth().signInWithCredential(credential);
+  console.log(loginResult)
 }
 
 // MAPS

@@ -28,28 +28,37 @@ export function ProfileScreen(props) {
     if (typeof userID === 'undefined') {
       userID = uid;
     }
-    requester.profileData(userID, response => {
-      if (response.hasError()) {
-        alert(response.description())
-        return props.navigation.goBack(null);
-      }
-      let userData = response.content();
-      setUserData({
-        id: userID,
-        firstName: userData.first_name,
-        lastName: userData.last_name,
-        avatar: userData.profile_picture,
-        email: userData.email,
-        registerDate: new Date(userData.register_date).toDateString(),
-      });
+      requester.profileData(userID, response => {
+    try {
+        if (response.hasError()) {
+          alert(response.description())
+          return props.navigation.goBack(null);
+        }
+        let userData = response.content();
+        setUserData({
+          id: userID,
+          firstName: userData.first_name,
+          lastName: userData.last_name,
+          avatar: userData.profile_picture,
+          email: userData.email,
+          registerDate: new Date(userData.register_date).toDateString(),
+        });
+        setLoading(false);
+} catch(e) {
+      alert(e)
       setLoading(false);
-    });
-    requester.walletBalance(addr, (response) => {
-      if (response.hasError())
-        return alert('Fallo al fetchear wallet del usuario')
+    }
+      });
 
-      setWalletBalance(response.content());
-    })
+    if (userID === uid) {
+      // Solo fetcheamos data de la wallet si es nuestra
+      requester.walletBalance(addr, (response) => {
+        if (response.hasError())
+          return alert('Fallo al fetchear wallet del usuario')
+
+        setWalletBalance(response.content());
+      })
+    }
   }
 
   React.useEffect(() => {
@@ -86,9 +95,13 @@ export function ProfileScreen(props) {
             <ProfileRowData keyValue="Apellido" value={userData.lastName} />
             <ProfileRowData keyValue="Email" value={userData.email} />
             <ProfileRowData keyValue="Fecha de registro" value={userData.registerDate} />
-            <ProfileRowData keyValue="Saldo (ETH)" value={Number(walletBalance.ETH).toFixed(2)} />
-            <ProfileRowData keyValue="Saldo (USD)" value={Number(walletBalance.USD).toFixed(2)} />
-            <ProfileRowData keyValue="Saldo (EUR)" value={Number(walletBalance.EUR).toFixed(2)} />
+            {(Number(userData.id) == uid ) &&
+            <>
+              <ProfileRowData keyValue="Saldo (ETH)" value={Number(walletBalance.ETH).toFixed(2)} />
+              <ProfileRowData keyValue="Saldo (USD)" value={Number(walletBalance.USD).toFixed(2)} />
+              <ProfileRowData keyValue="Saldo (EUR)" value={Number(walletBalance.EUR).toFixed(2)} />
+            </>
+            }
           </DataTable>
         </View>
       </ScrollView>
