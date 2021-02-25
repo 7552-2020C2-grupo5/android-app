@@ -28,9 +28,13 @@ export default function PublicationsScreen({ route, navigation }) {
       }
     }
 
-    requester.publications(publications => {
-      setPublications(publications.content());
+    requester.publications(response => {
       setLoading(false);
+      if (response.hasError()) {
+        alert(response.description());
+        return navigation.goBack(null);
+      }
+      setPublications(response.content());
     }, searchParams)
   };
 

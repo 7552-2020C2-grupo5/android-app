@@ -6,6 +6,8 @@ import { SnackBar, AppLogo } from '../components/components';
 import { doGoogleLogin, login } from '../utils';
 import { UserContext } from '../context/userContext';
 import { LoadableView } from '../components/loading';
+import { ToastError } from "../components/ToastError";
+import { ToastSuccess } from "../components/ToastSuccess";
 
 export function LoginScreen(props) {
   const { token, setToken, requester, pushToken } = React.useContext(UserContext);
@@ -16,18 +18,17 @@ export function LoginScreen(props) {
   const [recoverEmail, setRecoverEmail] = React.useState('');
 
   function _handleResponse(response) {
+    setLoading(false);
     if (response.hasError()) {
-      alert(response.description());
-      setLoading(false);
+      ToastError(response.description());
       return
-    }
+   }
 
     try {
       let token = response.content().token;
       setToken(token);
     } catch(e) {
       console.log(e)
-      setLoading(false);
     }
   }
 
@@ -39,7 +40,7 @@ export function LoginScreen(props) {
     }
 
     if (!(loginDetails.email && loginDetails.password)) {
-      return alert("No se puede iniciar sesión sin usuario / contraseña")
+      return ToastError("No se puede iniciar sesión sin usuario o contraseña")
     }
 
     requester.userLogin(loginDetails, _handleResponse);
@@ -48,13 +49,13 @@ export function LoginScreen(props) {
 
   function handleRecoverPass() {
     if (!recoverEmail) {
-      return alert('Ingresá un email válido')
+      return ToastError('Ingresá un email válido')
     }
-    requester.resetPassword(recoverEmail.trim(), (response) => {
+    requester.resetPassword(recoverEmail.trim(), response => {
       if(response.hasError()) {
-        alert(response.description())
+        ToastError(response.description())
       } else {
-        alert(`Revisa tu correo (${recoverEmail})`, recoverEmail)
+        ToastSuccess(`Revisa tu correo (${recoverEmail})`, recoverEmail)
       }
       setRecoveringPass(false);
     })

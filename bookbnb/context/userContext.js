@@ -28,7 +28,7 @@ const UserContextProvider = (props) => {
                 setWalletAddress(jsonCtx.wallet_address);
             }
         })
-        _setRequester(new ApiClient(new RemoteRequester()))
+        _setRequester(new ApiClient(new RemoteRequester(), null, token))
     }, [])
 
     function setToken(token) {
@@ -46,6 +46,7 @@ const UserContextProvider = (props) => {
         }
         AsyncStorage.setItem('userContext', JSON.stringify(userContext))
         console.log('New userContext: %s', userContext)
+        _setRequester(new ApiClient(new RemoteRequester(), null, token))
     }
 
     function cleanCtx() {

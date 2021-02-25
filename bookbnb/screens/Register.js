@@ -4,6 +4,7 @@ import { Button } from 'react-native-paper';
 import { SimpleTextInput } from '../components/components';
 import { UserContext } from '../context/userContext';
 import { LoadableView } from '../components/loading';
+import { ToastError } from '../components/ToastError';
 
 export function RegistrationScreen(props) {
   const { requester } = React.useContext(UserContext);
@@ -20,33 +21,30 @@ export function RegistrationScreen(props) {
   }
 
   function validatePassword(password) {
-    if (password.trim() !== passwordConfirmation.trim())
-      alert('¡Las contraseñas no coinciden!');
-  }
-
-  function handleResponse(response) {
-    setLoading(false);
-    if (response.hasError())
-      return alert(response.description())
-    props.navigation.goBack(null);
+    return (password.trim() == passwordConfirmation.trim())
   }
 
   function handleRegister() {
     const newUser = {
-        first_name: sanitize(name),
-        last_name: sanitize(lastName),
-        email: sanitize(email),
-        password: sanitize(password),
-        profile_picture: '',
+      first_name: sanitize(name),
+      last_name: sanitize(lastName),
+      email: sanitize(email),
+      password: sanitize(password),
+      profile_picture: '',
     };
 
-    if (!email && password) {
-      return alert('No se puede crear usuario sin email / password');
-    }
+    if (! (email && password))
+      return ToastError('No se puede crear usuario sin email o password');
 
-    validatePassword(password)
+    if (!validatePassword(password))
+      return ToastError("Las contraseñas no coinciden");
 
-    requester.register(newUser, handleResponse);
+    requester.register(newUser, response => {
+      setLoading(false);
+      if (response.hasError())
+        return ToastError(response.description())
+      props.navigation.goBack(null);
+    });
 
     setLoading(true);
   }
