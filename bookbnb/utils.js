@@ -30,11 +30,11 @@ function decodeJWTPayload(jwt) {
 }
 
 // Abre una view para realizar logeo con google, devuelve las credenciales
-async function getGoogleLoginToken(onResult) {
+async function getGoogleLoginToken() {
   let loginResult = await Google.logInAsync({
     scopes: ['openid', 'profile'],
     clientId: '323498260525-irodasbifo350ic2lftmj226ltink5mp.apps.googleusercontent.com',
-    androidStandaloneAppClientId: 'AIzaSyDQV_tOPoqC9V8_muOya5qOgTLyRyqRAPc',
+    androidStandaloneAppClientId: '323498260525-ehrvng0r0fn7igkv3gflmchruda28g2s.apps.googleusercontent.com' ,
   });
   const credential = firebase.auth.GoogleAuthProvider.credential(loginResult.idToken);
 
