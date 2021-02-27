@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, AsyncStorage, TouchableOpacity } from 'react-na
 import { Button, TextInput, Dialog, Portal } from 'react-native-paper';
 import { SocialIcon } from 'react-native-elements';
 import { SnackBar, AppLogo } from '../components/components';
-import { doGoogleLogin, login } from '../utils';
+import { getGoogleLoginToken, getPublicationStars, login } from '../utils';
 import { UserContext } from '../context/userContext';
 import { LoadableView } from '../components/loading';
 import { ToastError } from "../components/ToastError";
@@ -30,6 +30,21 @@ export function LoginScreen(props) {
     } catch(e) {
       console.log(e)
     }
+  }
+
+  function doGoogleLogin() {
+    getGoogleLoginToken().then(result => {
+      requester.oauthLogin({ token: result.credential.idToken }, response => {
+        if(response.hasError())
+          return alert(response.description())
+        try {
+          let token = response.content().token;
+          setToken(token);
+        } catch(e) {
+          console.log(e)
+        }
+      })
+    })
   }
 
   function handleLogin() {

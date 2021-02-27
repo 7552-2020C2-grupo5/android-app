@@ -30,15 +30,15 @@ function decodeJWTPayload(jwt) {
 }
 
 // Abre una view para realizar logeo con google, devuelve las credenciales
-async function doGoogleLogin() {
+async function getGoogleLoginToken(onResult) {
   let loginResult = await Google.logInAsync({
     scopes: ['openid', 'profile'],
     clientId: '323498260525-irodasbifo350ic2lftmj226ltink5mp.apps.googleusercontent.com',
     androidStandaloneAppClientId: 'AIzaSyDQV_tOPoqC9V8_muOya5qOgTLyRyqRAPc',
   });
   const credential = firebase.auth.GoogleAuthProvider.credential(loginResult.idToken);
-  loginResult = await firebase.auth().signInWithCredential(credential);
-  console.log(loginResult)
+
+  return firebase.auth().signInWithCredential(credential)
 }
 
 // MAPS
@@ -85,5 +85,5 @@ async function geoEncode(str) {
 }
 
 export {
-  doGoogleLogin, decodeJWTPayload, geoEncode, geoDecode, uploadImageToFirebase,
+  getGoogleLoginToken, decodeJWTPayload, geoEncode, geoDecode, uploadImageToFirebase,
 };

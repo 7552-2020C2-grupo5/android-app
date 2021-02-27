@@ -231,7 +231,7 @@ export default function App(props) {
     roundness: 2,
     colors: {
       ...DefaultTheme.colors,
-      primary: "#bf4358",
+      primary: "#1f1238",
       accent: "#3d57ff",
     },
   };
