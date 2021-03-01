@@ -53,7 +53,7 @@ function ReviewsBox({ publicationID, userID, navigation }) {
     }
     setMeanScore(Math.round(acumScore / newReviews.length));
     setReviews(newReviews);
-      setLoading(false);
+    setLoading(false);
   }
 
   function fetchReviews() {
@@ -132,14 +132,20 @@ export function ReviewScreen({ route, navigation }) {
     };
     if (route.params.publication_id) {
       const { publication_id } = route.params;
-      requester.addPublicationReview({ ...base_review, publication_id: publication_id }, () => {
+      requester.addPublicationReview({ ...base_review, publication_id: publication_id }, response => {
+        if (response.hasError()) {
+          return alert(response.description())
+        }
         setEditing(false);
         setTick(tick => tick + 1)
       });
     }
     if (route.params.user_id) {
       const { user_id } = route.params;
-      requester.addUserReview({ ...base_review, reviewee_id: Number(user_id) }, () => {
+      requester.addUserReview({ ...base_review, reviewee_id: Number(user_id) }, response => {
+        if (response.hasError()) {
+          return alert(response.description())
+        }
         setEditing(false);
         setTick(tick => tick + 1)
       });

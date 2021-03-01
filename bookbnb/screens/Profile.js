@@ -7,6 +7,7 @@ import { Icon } from 'react-native-elements';
 import { ProfileRowData } from '../components/components';
 import { LoadableView } from '../components/loading';
 import { UserContext } from '../context/userContext';
+import * as RootNavigation from './RootNavigation';
 
 // @refresh reset
 
@@ -82,7 +83,7 @@ export function ProfileScreen(props) {
             {props.route.params.allowEditing
                       && <Icon onPress={() => props.navigation.navigate('EditProfile', { userData })} name="pencil" type="evilicon" color="black" size={40} />}
             {props.route.params.allowMessaging
-                      && <Icon onPress={() => props.navigation.navigate('chatConversation', { dstUserID: props.route.params.userID })} name="envelope" type="evilicon" color="black" size={40} />}
+                && <Icon onPress={() => RootNavigation.navigate('Mis consultas', { screen: '_chatConversation', params: { dstUserID: props.route.params.userID }})} name="envelope" type="evilicon" color="black" size={40} />}
             <Icon
               onPress={() => props.navigation.navigate('reviews', { user_id: userData.id })}
               size={40}

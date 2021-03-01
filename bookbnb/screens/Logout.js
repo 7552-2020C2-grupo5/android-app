@@ -8,7 +8,13 @@ import { LoadableView } from '../components/loading';
 export default function LogoutScreen(props) {
   const { token, cleanCtx, requester } = React.useContext(UserContext);
 
-  requester.userLogout(token, response => cleanCtx());
+  requester.userLogout(token, response => {
+    if(response.hasError()) {
+      props.navigation.goBack(null);
+      return alert(response.description())
+    }
+    cleanCtx()
+  });
 
   return (
     <LoadableView loading={true} message="Cerrando sesión"/>

@@ -20,8 +20,7 @@ export function LoginScreen(props) {
   function _handleResponse(response) {
     setLoading(false);
     if (response.hasError()) {
-      ToastError(response.description());
-      return
+      return ToastError(response.description());
    }
 
     try {
@@ -34,16 +33,10 @@ export function LoginScreen(props) {
 
   function doGoogleLogin() {
     getGoogleLoginToken().then(result => {
-      requester.oauthLogin({ token: result.credential.idToken }, response => {
-        if(response.hasError())
-          return alert(response.description())
-        try {
-          let token = response.content().token;
-          setToken(token);
-        } catch(e) {
-          console.log(e)
-        }
-      })
+      if (result) {
+        setLoading(true);
+        requester.oauthLogin({ token: result.credential.idToken, push_token: pushToken }, _handleResponse);
+      }
     })
   }
 
