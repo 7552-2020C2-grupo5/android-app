@@ -40,6 +40,8 @@ export function DateInput(props) {
     return (
       <DateTimePicker
         value={date || new Date()}
+        disabledDates={props.disabledDates}
+        allowDisabled={true}
         mode="date"
         neutralButtonLabel="Limpiar"
         onChange={(e, date) => onSelectedDate(date, e)}

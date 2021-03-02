@@ -45,6 +45,7 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
   function handleAcceptBooking(booking) {
     requester.acceptBooking({
       tenant_id: booking.tenant_id,
+      owner_id: Number(uid),
       booking_id: booking.id,
       publication_owner_mnemonic: mnemonic,
       blockchain_id: publication.blockchain_id,
