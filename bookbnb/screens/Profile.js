@@ -22,15 +22,16 @@ export function ProfileScreen(props) {
     email: 'nothing',
     avatar: 'nothing',
     registerDate: '',
+    USD: '',
+    ETH: '',
+    EUR: ''
   });
 
   async function fetchData() {
     let { userID } = props.route.params;
-    if (typeof userID === 'undefined') {
-      userID = uid;
-    }
-      requester.profileData(userID, response => {
-    try {
+    if (typeof userID === 'undefined') { userID = uid }
+    requester.profileData(userID, response => {
+      try {
         if (response.hasError()) {
           alert(response.description())
           return props.navigation.goBack(null);
@@ -42,24 +43,17 @@ export function ProfileScreen(props) {
           lastName: userData.last_name,
           avatar: userData.profile_picture,
           email: userData.email,
+          ETH: userData.ETH,
+          USD: userData.USD,
+          EUR: userData.EUR,
           registerDate: new Date(userData.register_date).toDateString(),
         });
         setLoading(false);
-} catch(e) {
-      alert(e)
-      setLoading(false);
-    }
-      });
-
-    if (userID === uid) {
-      // Solo fetcheamos data de la wallet si es nuestra
-      requester.walletBalance(addr, (response) => {
-        if (response.hasError())
-          return alert('Fallo al fetchear wallet del usuario')
-
-        setWalletBalance(response.content());
-      })
-    }
+      } catch(e) {
+        alert(e)
+        setLoading(false);
+      }
+    });
   }
 
   React.useEffect(() => {
@@ -83,7 +77,7 @@ export function ProfileScreen(props) {
             {props.route.params.allowEditing
                       && <Icon onPress={() => props.navigation.navigate('EditProfile', { userData })} name="pencil" type="evilicon" color="black" size={40} />}
             {props.route.params.allowMessaging
-                && <Icon onPress={() => RootNavigation.navigate('Mis consultas', { screen: '_chatConversation', params: { dstUserID: props.route.params.userID }})} name="envelope" type="evilicon" color="black" size={40} />}
+                && <Icon onPress={() => props.navigation.navigate('_chatConversation', { dstUserID: props.route.params.userID })} name="envelope" type="evilicon" color="black" size={40} />}
             <Icon
               onPress={() => props.navigation.navigate('reviews', { user_id: userData.id })}
               size={40}
@@ -98,9 +92,9 @@ export function ProfileScreen(props) {
             <ProfileRowData keyValue="Fecha de registro" value={userData.registerDate} />
             {(Number(userData.id) == uid ) &&
             <>
-              <ProfileRowData keyValue="Saldo (ETH)" value={Number(walletBalance.ETH).toFixed(2)} />
-              <ProfileRowData keyValue="Saldo (USD)" value={Number(walletBalance.USD).toFixed(2)} />
-              <ProfileRowData keyValue="Saldo (EUR)" value={Number(walletBalance.EUR).toFixed(2)} />
+              <ProfileRowData keyValue="Saldo (ETH)" value={Number(userData.ETH).toFixed(2)} />
+              <ProfileRowData keyValue="Saldo (USD)" value={Number(userData.USD).toFixed(2)} />
+              <ProfileRowData keyValue="Saldo (EUR)" value={Number(userData.EUR).toFixed(2)} />
             </>
             }
           </DataTable>

@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {
-  View, Text, TextInput, ScrollView,
-} from 'react-native';
+import { View, Text, TextInput, ScrollView } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Button } from 'react-native-paper';
 import { SimpleTextInput, DateInput } from '../components/components';

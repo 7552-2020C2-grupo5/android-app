@@ -7,6 +7,8 @@ import Map from '../components/maps';
 import {AddNewButton, SimpleTextInput} from '../components/components';
 import {UserContext} from '../context/userContext';
 import NumericInput from "../components/NumericInput";
+import { LoadableView } from "../components/loading";
+import { ToastError } from "../components/ToastError";
 
 
 function NewPublicationScreen(props) {
@@ -18,9 +20,9 @@ function NewPublicationScreen(props) {
   const [beds, setBeds] = React.useState('');
   const [bathrooms, setBathrooms] = React.useState('');
   const [price, setPrice] = React.useState('');
-
   const [coordinates, setCoordinates] = React.useState({ longitude: 0, latitude: 0 });
   const [images, setImages] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     if (props.route.params.editing) {
@@ -125,21 +127,34 @@ function NewPublicationScreen(props) {
 
       validatePublication(publication);
 
+      setLoading(true);
       if (props.route.params.editing) {
         //TODO. handlear errores
         publication.id = props.route.params.publication.id;
-        requester.updatePublication(publication.id, publication, () => {
-          props.navigation.navigate('Publicaciones');
-        })
+        requester.updatePublication(publication.id, publication, response => {
+          if (response.hasError()) {
+            setLoading(false);
+            return ToastError(response.description())
+          }
+          checkForPublicationStatus(response.content().id, () => {
+            setLoading(false);
+            props.navigation.navigate('Publicaciones');
+          });
+        });
       } else {
         requester.postPublication(publication, response => {
-            checkForPublicationStatus(response.content().id, () => {
+          if (response.hasError()) {
+            setLoading(false);
+            return ToastError(response.description())
+          }
+          checkForPublicationStatus(response.content().id, () => {
+            setLoading(false);
             props.navigation.navigate('Publicaciones');
-          })
-        })
+          });
+        });
       }
     } catch(e) {
-      alert(e.message);
+      ToastError(e.message);
     }
   }
 
@@ -147,42 +162,41 @@ function NewPublicationScreen(props) {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
-        <View style={{ margin: 10 }}>
-          <Text style={{ fontSize: 50, fontWeight: 'bold', textAlign: 'left' }}> Publicá </Text>
-          <View style={styles.imagePreview}>
-            <Image
-              source={{ uri: (images.length && images[0].uri || DEFAULT_IMG) }}
-              style={{
-                flex: 1, width: '100%', height: 300, aspectRatio: 1,
+      <LoadableView loading={loading} message={"Publicando"}>
+        <View style={styles.container}>
+          <View style={{ margin: 10 }}>
+            <Text style={{ fontSize: 50, fontWeight: 'bold', textAlign: 'left' }}> Publicá </Text>
+            <View style={styles.imagePreview}>
+              <Image
+                source={{ uri: (images.length && images[0].uri || DEFAULT_IMG) }}
+                style={{
+                  flex: 1, width: '100%', height: 300, aspectRatio: 1,
+                }}
+              />
+              <AddNewButton onPress={pickImage} />
+            </View>
+            <SimpleTextInput label={"Título"} required value={title} onChangeText={setTitle} />
+            <NumericInput label={"Cant. de cuartos"} value={rooms} onChangeText={setRooms} />
+            <NumericInput label={"Cant. de camas"} value={beds} onChangeText={setBeds} />
+            <NumericInput  label={"Cant. de baños"}  value={bathrooms} onChangeText={setBathrooms} />
+            <NumericInput label={"Precio por noche (ETH)"}  value={price} onChangeText={setPrice} />
+            <Map
+              coordinates={[coordinates.latitude, coordinates.longitude]}
+              onChangeCoordinates={(coordinates) => {
+                setCoordinates({ latitude: coordinates[0], longitude: coordinates[1] });
               }}
             />
-            <AddNewButton onPress={pickImage} />
+            <SimpleTextInput
+              multiline
+              numberOfLines={5}
+              label={"Descripción"}
+              value={description}
+              onChangeText={setDescription}
+            />
+            <Button dark onPress={handlePublish} disabled={!requiredFieldsCompleted()} mode="contained"> Publicar </Button>
           </View>
-
-          <SimpleTextInput label={"Título"} required value={title} onChangeText={(title) => { setTitle(title); }} />
-
-          <NumericInput label={"Cant. de cuartos"} value={rooms} onChangeText={(rooms) => { setRooms(rooms); }} />
-
-          <NumericInput label={"Cant. de camas"} value={beds} onChangeText={(beds) => { setBeds(beds); }} />
-
-          <NumericInput  label={"Cant. de baños"}  value={bathrooms} onChangeText={(bathrooms) => { setBathrooms(bathrooms); }} />
-
-          <NumericInput label={"Precio por noche (ETH)"}  value={price} onChangeText={(price) => { setPrice(price); }} />
-
-          <Map
-            coordinates={[coordinates.latitude, coordinates.longitude]}
-            onChangeCoordinates={(coordinates) => {
-              setCoordinates({ latitude: coordinates[0], longitude: coordinates[1] });
-            }}
-          />
-
-          <SimpleTextInput multiline numberOfLines={5} label={"Descripción"} value={description}
-                           onChangeText={(description) => { setDescription(description); }} />
-
-          <Button dark onPress={handlePublish} disabled={!requiredFieldsCompleted()} mode="contained"> Publicar </Button>
         </View>
-      </View>
+      </LoadableView>
     </ScrollView>
   );
 }

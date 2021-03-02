@@ -7,11 +7,12 @@ import * as firebase from 'firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { SimpleTextInput } from '../components/components';
 import { UserContext } from '../context/userContext';
+import { ToastError } from "../components/ToastError";
 
 // @reset refresh
 
 function Comment(props) {
-  return (
+ return (
     <View>
       <Text style={{
         padding: 8, fontSize: 14, flex: 1, fontWeight: 'bold',
@@ -53,8 +54,6 @@ export default function ChatScreen(props) {
       firebase.database().ref(`metadata/${msgKey}`).off('value', refs[0]);
       firebase.database().ref(`messages/${msgKey}`).off('value', refs[1]);
     };
-
-    //        return () => firebase.database().ref().off('value')
   }, []);
 
   function buildMessagesKey(userIDs) {
@@ -72,8 +71,7 @@ export default function ChatScreen(props) {
       origin_user_id: Number(uid), destination_user_id: Number(dstUserID), type: "newMessage"
     }, response => {
       if (response.hasError()) {
-        alert(response.description())
-        props.nagivation.navigate.goBack(null);
+        ToastError(response.description())
       }
     })
     setCurrentMsg('');
@@ -86,6 +84,10 @@ export default function ChatScreen(props) {
     for (const userID of usersIDs) {
       let userData = null;
       await requester.profileData(userID, response => {
+        if (response.hasError()) {
+          ToastError(response.description)
+          return props.navigation.goBack(null);
+        }
         userData = response.content();
       });
       metadata.members[String(userID)] = {
@@ -133,7 +135,7 @@ export default function ChatScreen(props) {
       <Divider />
       <View style={{ flex: 0.3, alignItems: 'stretch' }}>
         <SimpleTextInput placeholder="Escribe una consulta..." value={currentMsg} onChangeText={(value) => { setCurrentMsg(value); }} />
-        <Button mode="contained" onPress={handleOnSend}>Enviar</Button>
+        <Button mode="contained" disabled={!currentMsg} onPress={handleOnSend}>Enviar</Button>
       </View>
     </View>
   );

@@ -32,11 +32,14 @@ export function LoginScreen(props) {
   }
 
   function doGoogleLogin() {
+    setLoading(true)
     getGoogleLoginToken().then(result => {
       if (result) {
-        setLoading(true);
         requester.oauthLogin({ token: result.credential.idToken, push_token: pushToken }, _handleResponse);
       }
+    }).catch(e => {
+      setLoading(false);
+      alert(e)
     })
   }
 

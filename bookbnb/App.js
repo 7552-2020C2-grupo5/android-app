@@ -117,8 +117,16 @@ function Search() {
         initialParams={{ own: false }}
       />
       <Stack.Screen
+        name="relatedBookings"
+        component={ReservationsScreen}
+      />
+      <Stack.Screen
         name="UserProfile"
         component={ProfileScreen}
+      />
+      <Stack.Screen
+        name="_chatConversation"
+        component={ChatScreen}
       />
       <Stack.Screen
         name="Publicacion"
