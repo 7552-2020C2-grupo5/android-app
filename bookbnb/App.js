@@ -69,7 +69,7 @@ function Publications({ route, navigation }) {
         component={ProfileScreen}
       />
       <Stack.Screen
-        name="chatConversation"
+        name="_chatConversation"
         component={ChatScreen}
       />
       <Stack.Screen

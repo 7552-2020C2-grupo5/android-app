@@ -9,6 +9,7 @@ import { Button } from 'react-native-paper';
 import { UserContext } from '../context/userContext';
 import { SimpleTextInput } from '../components/components';
 import { LoadableView } from '../components/loading';
+import { ToastError } from '../components/ToastError';
 
 function Review(props) {
   return (
@@ -93,9 +94,12 @@ function ReviewsBox({ publicationID, userID, navigation }) {
 
 function NewReviewBox({ onFinishReview }) {
   const [currentReview, setCurrentReview] = React.useState('');
-  const [currentScore, setCurrentScore] = React.useState(0);
+  const [currentScore, setCurrentScore] = React.useState(1);
 
   function handleFinishReview() {
+    if (!currentScore)
+      return ToastError("No se puede hacer una review sin puntaje")
+
     onFinishReview({ score: currentScore, review: currentReview });
   }
 
@@ -113,7 +117,7 @@ function NewReviewBox({ onFinishReview }) {
         value={currentReview}
         onChangeText={setCurrentReview}
       />
-      <Button mode="contained" onPress={handleFinishReview}>Enviar</Button>
+      <Button mode="contained" disabled={!currentReview} onPress={handleFinishReview}>Enviar</Button>
     </View>
   );
 }
@@ -165,7 +169,7 @@ export function ReviewScreen({ route, navigation }) {
           userID={route.params.user_id}
           navigation={navigation}
         />
-        <Divider />
+        <Divider style={{margin: 30}}/>
         {editing && <NewReviewBox onFinishReview={handleFinishReview} />}
       </ScrollView>
     </View>
