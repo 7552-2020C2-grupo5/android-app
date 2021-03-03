@@ -26,17 +26,20 @@ const UserContextProvider = (props) => {
                 _setToken(jsonCtx.token);
                 setWalletMnemonic(jsonCtx.wallet_mnemonic);
                 setWalletAddress(jsonCtx.wallet_address);
-                _setRequester(new ApiClient(new RemoteRequester(), null, jsonCtx.token, () => {
-                alert('Sesión expirada')
-                cleanCtx()
-        }))
-
+                _setRequester(
+                    new ApiClient(new RemoteRequester(), null, jsonCtx.token, () => {
+                        alert('Sesión expirada')
+                        cleanCtx()
+                    })
+                )
             }
         })
-        _setRequester(new ApiClient(new RemoteRequester(), null, token, () => {
-            alert('Sesión expirada')
-            cleanCtx()
-        }))
+        _setRequester(
+            new ApiClient(new RemoteRequester(), null, token, () => {
+                alert('Sesión expirada')
+                cleanCtx()
+            })
+        )
     }, [])
 
     function setToken(token) {

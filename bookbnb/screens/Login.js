@@ -37,6 +37,7 @@ export function LoginScreen(props) {
       if (result) {
         requester.oauthLogin({ token: result.credential.idToken, push_token: pushToken }, _handleResponse);
       }
+      setLoading(false);
     }).catch(e => {
       setLoading(false);
       alert(e)
@@ -48,6 +49,10 @@ export function LoginScreen(props) {
       email: username.trim(),
       password: pass.trim(),
       push_token: pushToken
+    }
+
+    if (!pushToken) {
+      return ToastError("Falló al encontrar token push")
     }
 
     if (!(loginDetails.email && loginDetails.password)) {
