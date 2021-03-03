@@ -17,7 +17,7 @@ export function LoginScreen(props) {
   const [recoveringPass, setRecoveringPass] = React.useState(false);
   const [recoverEmail, setRecoverEmail] = React.useState('');
 
-  function _handleResponse(response) {
+  async function _handleResponse(response) {
     setLoading(false);
     if (response.hasError()) {
       return ToastError(response.description());
@@ -25,17 +25,19 @@ export function LoginScreen(props) {
 
     try {
       let token = response.content().token;
-      setToken(token);
+      await setToken(token);
     } catch(e) {
       console.log(e)
     }
   }
 
-  function doGoogleLogin() {
-    setLoading(true)
-    getGoogleLoginToken().then(result => {
+  async function doGoogleLogin() {
+    await getGoogleLoginToken().then(async result => {
       if (result) {
-        requester.oauthLogin({ token: result.credential.idToken, push_token: pushToken }, _handleResponse);
+        setLoading(true);
+        await requester.oauthLogin({ token: result.credential.idToken, push_token: pushToken }, _handleResponse);
+      } else {
+        setLoading(false);
       }
     }).catch(e => {
       setLoading(false);
@@ -43,18 +45,22 @@ export function LoginScreen(props) {
     })
   }
 
-  function handleLogin() {
+  async function handleLogin() {
     let loginDetails = {
       email: username.trim(),
       password: pass.trim(),
       push_token: pushToken
     }
 
+    if (!pushToken) {
+      return ToastError("Falló al encontrar token push")
+    }
+
     if (!(loginDetails.email && loginDetails.password)) {
       return ToastError("No se puede iniciar sesión sin usuario o contraseña")
     }
 
-    requester.userLogin(loginDetails, _handleResponse);
+    await requester.userLogin(loginDetails, _handleResponse);
     setLoading(true);
   }
 

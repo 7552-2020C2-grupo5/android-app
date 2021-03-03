@@ -21,51 +21,54 @@ const UserContextProvider = (props) => {
         AsyncStorage.getItem('userContext').then(ctx => {
             if (ctx) {
                 let jsonCtx = JSON.parse(ctx)
-                console.log('Contexto encontrado: %s', jsonCtx)
+                _setRequester(
+                    new ApiClient(new RemoteRequester(), null, jsonCtx.token, () => {
+                        alert('Sesión expirada')
+                        cleanCtx()
+                    })
+                )
                 setUID(jsonCtx.uid);
                 _setToken(jsonCtx.token);
                 setWalletMnemonic(jsonCtx.wallet_mnemonic);
                 setWalletAddress(jsonCtx.wallet_address);
-                _setRequester(new ApiClient(new RemoteRequester(), null, jsonCtx.token, () => {
-                alert('Sesión expirada')
-                cleanCtx()
-        }))
-
+                console.log('Contexto encontrado: %s', jsonCtx)
             }
         })
-        _setRequester(new ApiClient(new RemoteRequester(), null, token, () => {
+        _setRequester(
+            new ApiClient(new RemoteRequester(), null, token, () => {
+                alert('Sesión expirada')
+                cleanCtx()
+            })
+        )
+    }, [])
+
+    async function setToken(token_) {
+        await _setRequester(new ApiClient(new RemoteRequester(), null, token_, () => {
             alert('Sesión expirada')
             cleanCtx()
         }))
-    }, [])
-
-    function setToken(token) {
         /* Parsea el JWT y persiste toda la información */
-        let jsonPayload = decodeJWTPayload(token)
+        let jsonPayload = await decodeJWTPayload(token_)
         setUID(jsonPayload.sub);
         setWalletMnemonic(jsonPayload.wallet_mnemonic);
         setWalletAddress(jsonPayload.wallet_address);
-        _setToken(token);
+        _setToken(token_);
         let userContext = {
             uid: String(jsonPayload.sub),
             wallet_mnemonic: jsonPayload.wallet_mnemonic,
             wallet_address: jsonPayload.wallet_address,
-            token: token,
+            token: token_,
         }
-        AsyncStorage.setItem('userContext', JSON.stringify(userContext))
+        await AsyncStorage.setItem('userContext', JSON.stringify(userContext))
         console.log('New userContext: %s', userContext)
-        _setRequester(new ApiClient(new RemoteRequester(), null, token, () => {
-            alert('Sesión expirada')
-            cleanCtx()
-        }))
     }
 
-    function cleanCtx() {
+    async function cleanCtx() {
         _setToken(null);
         setUID(null);
         setWalletAddress(null);
         setWalletMnemonic(null);
-        AsyncStorage.removeItem('userContext');
+        await AsyncStorage.removeItem('userContext');
     }
 
     return (

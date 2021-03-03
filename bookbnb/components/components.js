@@ -77,6 +77,16 @@ export function ProfileRowData(props) {
 }
 
 export function ReservationCard(props) {
+  let bookingStatus = null;
+
+  if (props.reservation.booking_status == 'ACCEPTED') {
+    bookingStatus = 'Aceptada';
+  } else if (props.reservation.booking_status == 'PENDING') {
+    bookingStatus = 'Pendiente';
+  } else {
+    bookingStatus = 'Inválida';
+  }
+
   return (
     <Card {...props} style={styles.reservationCard}>
       <Card.Content>
@@ -86,7 +96,7 @@ export function ReservationCard(props) {
         <ProfileRowData keyValue="Fecha de inicio" value={props.reservation.initial_date} />
         <ProfileRowData keyValue="Fecha de finalización" value={props.reservation.final_date} />
         <ProfileRowData keyValue="Owner" value={props.reservation.owner} />
-        <ProfileRowData keyValue="Estado" value={props.reservation.booking_status} />
+        <ProfileRowData keyValue="Estado" value={bookingStatus} />
         <CheckBox key={props.key} title="Vencida" checked={props.reservation.expired} />
         {props.actions && props.actions.map((action, i) => (
           <Card.Actions style={styles.actions}>
@@ -164,14 +174,14 @@ export function SimpleTextInput(props) {
   );
 }
 
-export function SimpleNumericInput({label, onChange, value, onlyPositives, description}) {
+export function SimpleNumericInput({label, onChange, value, onlyPositives, description, style}) {
   const styles = StyleSheet.create({
     numericRow: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       margin: 10,
-    }
+    },
   });
 
   let minValue = null;
@@ -191,7 +201,7 @@ export function SimpleNumericInput({label, onChange, value, onlyPositives, descr
       //  console.log('Change= %s', value)
       //}} />
       }
-      <TextInput mode="outlined" style={styles.input} value={value} onChangeText={onChange} />
+      <TextInput mode="outlined" style={style} value={value} onChangeText={onChange} />
     </View>
   );
 }

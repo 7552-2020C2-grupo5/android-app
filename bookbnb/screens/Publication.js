@@ -136,7 +136,7 @@ function OwnerCommentsSection(props) {
       { selectedComment? (
           <>
             <TextInput mode="outlined" onChangeText={(value) => setCurrentComment(value)} />
-            <Button onPress={() => selectedComment.setAnswer(currentComment)}> Enviar </Button>
+            <Button dark mode="contained" onPress={() => selectedComment.setAnswer(currentComment)}> Enviar </Button>
           </>
         )
         : null}
