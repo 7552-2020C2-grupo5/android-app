@@ -4,7 +4,7 @@ import {
   StyleSheet, View, Text, AsyncStorage, ScrollView
 } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { ProfileRowData } from '../components/components';
+import { ProfileRowData, SimpleTextInput } from '../components/components';
 import { LoadableView } from '../components/loading';
 import { UserContext } from '../context/userContext';
 import * as RootNavigation from './RootNavigation';
@@ -90,11 +90,16 @@ export function ProfileScreen(props) {
             <ProfileRowData keyValue="Apellido" value={userData.lastName} />
             <ProfileRowData keyValue="Email" value={userData.email} />
             <ProfileRowData keyValue="Fecha de registro" value={userData.registerDate} />
-            {(Number(userData.id) == uid ) &&
+           {(Number(userData.id) == uid ) &&
             <>
               <ProfileRowData keyValue="Saldo (ETH)" value={Number(userData.ETH).toFixed(2)} />
               <ProfileRowData keyValue="Saldo (USD)" value={Number(userData.USD).toFixed(2)} />
               <ProfileRowData keyValue="Saldo (EUR)" value={Number(userData.EUR).toFixed(2)} />
+              <View style={styles.container}>
+                <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 15}}>Dirección de tu wallet</Text>
+                <Text selectable={true} style={{fontSize: 17}}>{addr}</Text>
+              </View>
+
             </>
             }
           </DataTable>
