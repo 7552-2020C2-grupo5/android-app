@@ -7,6 +7,7 @@ import { LoadableView } from '../components/loading';
 import { UserContext } from '../context/userContext';
 import { CheckBox } from 'react-native-elements';
 import { v4 as uuidv4 } from 'uuid';
+import InformationText from "../components/InformationText";
 
 
 export default function PublicationsScreen({ route, navigation }) {
@@ -42,8 +43,15 @@ export default function PublicationsScreen({ route, navigation }) {
     fillPublications();
   }), []);
 
-  return (
-    <LoadableView loading={loading} message='Buscando publicaciones'>
+  const renderPublications = () => {
+    console.log(publications);
+    if (publications.length === 0) {
+      return (
+        <InformationText message={"No hay publicaciones disponibles para mostrar"}/>
+      );
+    }
+    console.log("No entre")
+    return (
       <ScrollView>
         <View style={styles.publication}>
           {publications.map((publication, index) => {
@@ -56,7 +64,7 @@ export default function PublicationsScreen({ route, navigation }) {
                     publication, editing: true,
                   });
                 },
-             });
+              });
             }
             if (String(publication.user_id) !== String(uid)) {
               actions.push({
@@ -79,6 +87,12 @@ export default function PublicationsScreen({ route, navigation }) {
           })}
         </View>
       </ScrollView>
+    );
+  };
+
+  return (
+    <LoadableView loading={loading} message='Buscando publicaciones'>
+      {renderPublications()}
       { route.params.own
                 && <AddNewButton onPress={() => navigation.navigate('new_publication', { editing: false })} />}
     </LoadableView>

@@ -161,8 +161,8 @@ function NewPublicationScreen(props) {
   const DEFAULT_IMG = 'https://i.stack.imgur.com/y9DpT.jpg';
 
   return (
-    <ScrollView>
-      <LoadableView loading={loading} message={"Publicando"}>
+    <LoadableView loading={loading} message={"Publicando"}>
+      <ScrollView>
         <View style={styles.container}>
           <View style={{ margin: 10 }}>
             <Text style={{ fontSize: 50, fontWeight: 'bold', textAlign: 'left' }}> Publicá </Text>
@@ -196,8 +196,8 @@ function NewPublicationScreen(props) {
             <Button dark onPress={handlePublish} disabled={!requiredFieldsCompleted()} mode="contained"> Publicar </Button>
           </View>
         </View>
-      </LoadableView>
-    </ScrollView>
+      </ScrollView>
+    </LoadableView>
   );
 }
 

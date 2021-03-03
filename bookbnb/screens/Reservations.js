@@ -4,6 +4,8 @@ import { ReservationCard } from '../components/components';
 import { UserContext } from '../context/userContext';
 import { v4 as uuidv4 } from 'uuid';
 import { LoadableView } from '../components/loading';
+import InformationText from "../components/InformationText";
+import {ToastError} from "../components/ToastError";
 
 function _reservationIsExpired(reservation) {
   const finalDate = new Date(reservation.final_date);
@@ -53,7 +55,7 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
       final_date: booking.final_date
     }, response => {
       if(response.hasError())
-        return alert(response.getDescription())
+        return ToastError(response.description())
       _fetchReservationsData()
     })
   }
@@ -68,15 +70,18 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
       final_date: booking.final_date
     }, response => {
       if(response.hasError())
-        return alert(response.getDescription())
+        return ToastError(response.description())
       _fetchReservationsData()
     })
   }
 
-  return (
-    <LoadableView loading={loading} message="Buscando reservas">
+  const renderReservations = () => {
+    if (reservations.length === 0) {
+      return <InformationText message={"No hay reservas disponibles para mostrar"}/>
+    }
+    return (
       <ScrollView>
-        <View style={{ flex: 1, padding: 10 }}>
+        <View style={{ flex: 1, padding: 10}}>
           {reservations.map((reservation, i) => {
             const actions = [];
             if (reservation.booking_status === 'PENDING') {
@@ -105,6 +110,12 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
           })}
         </View>
       </ScrollView>
+    )
+  }
+
+  return (
+    <LoadableView loading={loading} message="Buscando reservas">
+      {renderReservations()}
    </LoadableView>
   );
 }
@@ -144,8 +155,11 @@ function OwnReservationsList({ navigationRef }) {
     _fetchReservationsData();
   }), []);
 
-  return (
-    <LoadableView loading={loading} message="Buscando tus reservas">
+  const renderReservations = () => {
+    if (reservations.length === 0) {
+      return <InformationText message={"No tenés reservas disponibles para mostrar"}/>
+    }
+    return (
       <ScrollView>
         <View style={{ flex: 1, padding: 10 }}>
           {reservations.map((reservation, i) => {
@@ -166,6 +180,12 @@ function OwnReservationsList({ navigationRef }) {
           })}
         </View>
       </ScrollView>
+    );
+  };
+
+  return (
+    <LoadableView loading={loading} message="Buscando tus reservas">
+      {renderReservations()}
     </LoadableView>
   );
 }
@@ -181,7 +201,7 @@ export function ReservationsScreen({ navigation, route }) {
   }), []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'grey' }}>
+    <View style={{ flex: 1, backgroundColor: "grey"}}>
         {route.params && route.params.publication ? (
           <PublicationRelatedReservationList
             navigationRef={navigation}

@@ -80,8 +80,8 @@ export function NewReservationScreen({ route, navigation }) {
   }
 
   return (
-    <ScrollView>
-      <LoadableView message={"Intentando reservar"} loading={loading}>
+    <LoadableView message={"Intentando reservar"} loading={loading}>
+      <ScrollView>
         <View style={{ flex: 1, justifyContent: 'center' }}>
           <View style={{ margin: 10 }}>
             <Text style={{ fontSize: 50, fontWeight: 'bold', textAlign: 'left' }}>Reservá</Text>
@@ -101,7 +101,7 @@ export function NewReservationScreen({ route, navigation }) {
             <Button dark onPress={handleDoReservation} mode="contained"> Reservar </Button>
           </View>
         </View>
-      </LoadableView>
-    </ScrollView>
+      </ScrollView>
+    </LoadableView>
   );
 }
