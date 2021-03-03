@@ -45,6 +45,41 @@ if (!firebase.apps.length) {
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
+function Recommendations({ route, navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Recomendaciones"
+      headerMode="none"
+    >
+     <Stack.Screen
+        name="Recomendaciones"
+        component={RecomendationsScreen}
+      />
+      <Stack.Screen
+        name="Publicacion"
+        component={PublicationScreen}
+      />
+      <Stack.Screen
+        name="UserProfile"
+        component={ProfileScreen}
+      />
+      <Stack.Screen
+        name="_chatConversation"
+        component={ChatScreen}
+      />
+      <Stack.Screen
+        name="reviews"
+        component={ReviewScreen}
+      />
+      <Stack.Screen
+        name="relatedBookings"
+        component={ReservationsScreen}
+      />
+    </Stack.Navigator>
+  );
+}
+
+
 function Publications({ route, navigation }) {
   return (
     <Stack.Navigator
@@ -194,7 +229,7 @@ const Screens = () => {
         <Drawer.Navigator>
           <Drawer.Screen
             name="Mis Recomendaciones"
-            component={RecomendationsScreen}
+            component={Recommendations}
           />
           <Drawer.Screen
             name="Buscar"

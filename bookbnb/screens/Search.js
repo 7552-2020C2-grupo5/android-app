@@ -9,6 +9,7 @@ import { dateStringyfier } from "../utils";
 import Map from '../components/maps';
 import * as Location from 'expo-location';
 
+// @refresh reset
 
 export default function SearchScreen(props) {
   const [minBathCount, setMinBathCount] = React.useState('');
@@ -24,15 +25,41 @@ export default function SearchScreen(props) {
 
   const handleSearch = async () => {
     let searchParams = {}
-    if (minBathCount != '') { searchParams.bathrooms = Number(minBathCount); }
+    if (minBathCount != '') {
+      searchParams.bathrooms = Number(minBathCount);
+      console.log("***** %s *****", searchParams.bathrooms)
+      if (Object.is(searchParams.bathrooms, NaN)) {
+        return alert('Filtro de cantidad de baños tiene valor inválido')
+      }
+    }
 
-    if (minRoomCount != '') { searchParams.rooms = Number(minRoomCount); }
+    if (minRoomCount != '') {
+      searchParams.rooms = Number(minRoomCount);
+      if (Object.is(searchParams.room, NaN)) {
+        return alert('Filtro de cantidad de habitaciones tiene valor inválido')
+      }
+    }
 
-    if (minBedCount != '') { searchParams.beds = Number(minBedCount); }
+    if (minBedCount != '') {
+      searchParams.beds = Number(minBedCount);
+      if (Object.is(searchParams.bed, NaN)) {
+        return alert('Filtro de cantidad de camas tiene valor inválido')
+      }
+    }
 
-    if (maxPrice != '') { searchParams.price_per_night_max = Number(maxPrice); }
+    if (maxPrice != '') {
+      searchParams.price_per_night_max = Number(maxPrice);
+      if (Object.is(searchParams.price_per_night_max, NaN)) {
+        return alert('Filtro de precio por noche máximo tiene valor inválido')
+      }
+    }
 
-    if (minPrice != '') { searchParams.price_per_night_min = Number(minPrice); }
+    if (minPrice != '') {
+      searchParams.price_per_night_min = Number(minPrice);
+      if (Object.is(searchParams.price_per_night_min, NaN)) {
+        return alert('Filtro de cantidad de baños mínimo tiene valor inválido')
+      }
+    }
 
     if (checkinDate) { searchParams.initial_date = dateStringyfier(checkinDate) }
 
@@ -89,6 +116,7 @@ export default function SearchScreen(props) {
             Encontrá
           </Text>
           <SimpleNumericInput
+            style={{width: 50}}
             onlyPositives
             label="Cantidad de baños"
             value={minBathCount}
@@ -96,6 +124,7 @@ export default function SearchScreen(props) {
             description="Cantidad de baños mínima que tiene el lugar"
            />
           <SimpleNumericInput
+            style={{width: 50}}
             onlyPositives
             label="Cantidad de cuartos"
             value={minRoomCount}
@@ -103,6 +132,7 @@ export default function SearchScreen(props) {
             description="Cantidad de cuatros mínima que tiene el lugar"
           />
           <SimpleNumericInput
+            style={{width: 50}}
             onlyPositives
             label="Cantidad de camas"
             value={minBedCount}
@@ -110,6 +140,7 @@ export default function SearchScreen(props) {
             description="Cantidad de camas mínimas que tiene el lugar"
           />
           <SimpleNumericInput
+            style={{width: 50}}
             onlyPositives
             label="Precio mínimo"
             value={minPrice}
@@ -117,6 +148,7 @@ export default function SearchScreen(props) {
             description="Precio mínimo en ethers del lugar"
           />
           <SimpleNumericInput
+            style={{width: 50}}
             onlyPositives
             label="Precio máximo"
             value={maxPrice}

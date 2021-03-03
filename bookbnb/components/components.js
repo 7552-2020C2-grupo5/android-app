@@ -174,14 +174,14 @@ export function SimpleTextInput(props) {
   );
 }
 
-export function SimpleNumericInput({label, onChange, value, onlyPositives, description}) {
+export function SimpleNumericInput({label, onChange, value, onlyPositives, description, style}) {
   const styles = StyleSheet.create({
     numericRow: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       margin: 10,
-    }
+    },
   });
 
   let minValue = null;
@@ -201,7 +201,7 @@ export function SimpleNumericInput({label, onChange, value, onlyPositives, descr
       //  console.log('Change= %s', value)
       //}} />
       }
-      <TextInput mode="outlined" style={styles.input} value={value} onChangeText={onChange} />
+      <TextInput mode="outlined" style={style} value={value} onChangeText={onChange} />
     </View>
   );
 }

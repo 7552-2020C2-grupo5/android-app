@@ -5,19 +5,25 @@ import { AppLogo } from '../components/components';
 import { UserContext } from '../context/userContext';
 import { LoadableView } from '../components/loading';
 
-export default function LogoutScreen(props) {
+export default function LogoutScreen({ route, navigation }) {
   const { token, cleanCtx, requester } = React.useContext(UserContext);
 
-  React.useState(() => {
+  async function doLogout() {
     console.log('logging out...')
-    requester.userLogout(token, response => {
+    await requester.userLogout(token, async response => {
       if(response.hasError()) {
         props.navigation.goBack(null);
         return alert(response.description())
       }
-      cleanCtx()
+      await cleanCtx()
+      console.log("*** finished logging out ****")
     });
-  })
+  }
+
+  React.useEffect(() => navigation.addListener('focus', () => {
+    doLogout();
+  }), []);
+
 
   return (
     <LoadableView loading={true} message="Cerrando sesión"/>
