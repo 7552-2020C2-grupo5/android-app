@@ -64,11 +64,12 @@ const UserContextProvider = (props) => {
     }
 
     async function cleanCtx() {
+        await AsyncStorage.removeItem('userContext');
         _setToken(null);
         setUID(null);
         setWalletAddress(null);
         setWalletMnemonic(null);
-        await AsyncStorage.removeItem('userContext');
+        requester.setToken(null);
     }
 
     return (

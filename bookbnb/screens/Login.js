@@ -72,7 +72,7 @@ export function LoginScreen(props) {
       if(response.hasError()) {
         ToastError(response.description())
       } else {
-        ToastSuccess(`Revisa tu correo (${recoverEmail})`, recoverEmail)
+        ToastSuccess(`Revisa tu correo (${recoverEmail})`)
       }
       setRecoveringPass(false);
     })
