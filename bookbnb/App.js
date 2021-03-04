@@ -75,6 +75,10 @@ function Recommendations({ route, navigation }) {
         name="relatedBookings"
         component={ReservationsScreen}
       />
+      <Stack.Screen
+        name="newReservation"
+        component={NewReservationScreen}
+      />
     </Stack.Navigator>
   );
 }
@@ -151,7 +155,7 @@ function Search() {
         component={PublicationsScreen}
         initialParams={{ own: false }}
       />
-      <Stack.Screen
+     <Stack.Screen
         name="relatedBookings"
         component={ReservationsScreen}
       />

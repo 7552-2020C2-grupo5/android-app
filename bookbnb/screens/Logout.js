@@ -24,7 +24,6 @@ export default function LogoutScreen({ route, navigation }) {
     doLogout();
   }), []);
 
-
   return (
     <LoadableView loading={true} message="Cerrando sesión"/>
   );

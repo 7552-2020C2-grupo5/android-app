@@ -21,6 +21,15 @@ function PublicationRelatedReservationList({ publication, navigationRef }) {
   const [reservations, setReservations] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
 
+  async function checkForBookingStatus(bid, onStatusConfirmed) {
+    requester.booking(bid, response => {
+      if (response.content().blockchain_status == 'UNSET') {
+        return setTimeout(() => checkForBookingStatus(bid, onStatusConfirmed), 3000);
+      }
+      onStatusConfirmed(response.content());
+    });
+  }
+
   function _fetchReservationsData() {
     requester.bookings({ publication_id: publication.id }, async response => {
       const _reservations = response.content();

@@ -83,6 +83,8 @@ export function ReservationCard(props) {
     bookingStatus = 'Aceptada';
   } else if (props.reservation.booking_status == 'PENDING') {
     bookingStatus = 'Pendiente';
+  } else if (props.reservation.booking_status == 'REJECTED') {
+    bookingStatus = 'Rechazada';
   } else {
     bookingStatus = 'Inválida';
   }

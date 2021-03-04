@@ -65,10 +65,10 @@ const UserContextProvider = (props) => {
 
     async function cleanCtx() {
         await AsyncStorage.removeItem('userContext');
-        _setToken(null);
         setUID(null);
         setWalletAddress(null);
         setWalletMnemonic(null);
+        _setToken(null);
         requester.setToken(null);
     }
 
