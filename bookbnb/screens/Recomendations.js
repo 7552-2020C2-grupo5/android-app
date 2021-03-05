@@ -19,7 +19,7 @@ export function RecomendationsScreen({ route, navigation }) {
         return alert(response.description());
       }
       let _newRecommendations = [];
-      const _recommendations = response.content().recommendations;
+      const _recommendations = response.recommendations();
       for (const recommendation of _recommendations) {
         await requester.getPublication(recommendation.publication_id, response => {
           if (response.hasError())
